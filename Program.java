@@ -4,19 +4,9 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
 /**
- * @author ash
- * @version 2016-01-05
- *
- * This example reads the temperature from the temperature sensor
- * every second. If the tempertaure is too high, the led turns
- * red. Otherwise it is blue.
- *
- * Your task is to chage the current program so that if the
- * temperature is above 27 degress, set the board led is red, if
- * the temperature is equal to or below 24 it turns blue, and is
- * green if it is between these two thresholds.
- * 
+ * Originally based on 'Driving Test C' by ash
  */
 public class Program {
     // The object for interacting with the FRDM/MBED.
@@ -42,9 +32,6 @@ public class Program {
      */
     public void run()
     {
-        LCD lcd = mbed.getLCD();
-        lcd.print(0, 0, "Driving Test C");
-        LED led = mbed.getLEDBoard();
         Thermometer therm = mbed.getThermometer();
         try {
             MqttClient sampleClient = new MqttClient(broker, clientId, persistence);
@@ -56,15 +43,7 @@ public class Program {
 
             while(mbed.isOpen()) {
                 Double temperature = therm.getTemperature();
-
-                if(temperature>27.0) {
-                    led.setColor(LEDColor.RED);
-                } else if(temperature <= 24.0) {
-                    led.setColor(LEDColor.BLUE);
-                } else {
-                    led.setColor(LEDColor.GREEN);
-                }
-
+                
                 System.out.println("Publishing message: "+content);
 
                 MqttMessage message = new MqttMessage(temperature.toString().getBytes());
