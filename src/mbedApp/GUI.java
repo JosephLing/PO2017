@@ -1,8 +1,6 @@
 package mbedApp;
 
- 
-
-import mbedApp.mttq.MttqClient;
+import mbedApp.mqtt.MqttClient;
 import shed.mbed.ButtonListener;
 import shed.mbed.MBed;
 import shed.mbed.MBedUtils;
@@ -18,7 +16,7 @@ public class GUI {
 
     public static MBed mBed = MBedUtils.getMBed();
 
-    private MttqClient mttqClient;
+    private MqttClient mqttClient;
 
     private Menu mainMenu;
     private LightsMainMenu lightsMainMenu;
@@ -31,7 +29,7 @@ public class GUI {
     };
 
     public GUI(){
-        mttqClient = new MttqClient();
+        mqttClient = new MqttClient();
         mainMenu();
     }
 
@@ -69,7 +67,7 @@ public class GUI {
 
     private interfaceUI Lights(){
         interfaceUI cmd = () -> {
-            lightsMainMenu = new LightsMainMenu(mttqClient.getLights());
+            lightsMainMenu = new LightsMainMenu(mqttClient.getLights());
             lightsMainMenu.enableControls();
             mBed.getJoystickFire().addListener(backButtonToMainMenu);
             lightsMainMenu.update();

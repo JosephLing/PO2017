@@ -1,11 +1,9 @@
 package mbedApp;
 
- 
 
 import shed.mbed.ButtonListener;
 import shed.mbed.LCD;
 import shed.mbed.PixelColor;
-
 
 /**
  * Menu does.............
@@ -92,9 +90,9 @@ public class Menu implements InterfaceMenu {
      * @param index
      */
     public void setMenuCmd(interfaceUI newMenuCmd, int index) {
-       if (index < menuCmd.length){
-           menuCmd[index] = newMenuCmd;
-       }
+        if (index < menuCmd.length){
+            menuCmd[index] = newMenuCmd;
+        }
     }
 
     /**
