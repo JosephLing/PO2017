@@ -11,7 +11,7 @@ import shed.mbed.PixelColor;
  * @author josephling
  * @version 1.0 08/02/2017
  */
-public class Menu implements interfaceUI {
+public class Menu implements InterfaceMenu {
 
     private int screenSize = 10;
 
@@ -137,7 +137,7 @@ public class Menu implements interfaceUI {
     /**
      *
      */
-    private void increaseSelected(){
+    public void increaseSelected(){
         if (selected + 1 < menuCmd.length){
             selected ++;
         }
@@ -146,7 +146,7 @@ public class Menu implements interfaceUI {
     /**
      *
      */
-    private void decreaseSelected(){
+    public void decreaseSelected(){
         if (selected - 1 >= 0){
             selected --;
         }

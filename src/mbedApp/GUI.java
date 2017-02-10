@@ -1,5 +1,6 @@
 package mbedApp;
 
+import mbedApp.mttq.MttqClient;
 import shed.mbed.ButtonListener;
 import shed.mbed.MBed;
 import shed.mbed.MBedUtils;
@@ -15,7 +16,11 @@ public class GUI {
 
     public static MBed mBed = MBedUtils.getMBed();
 
+    private MttqClient mttqClient;
+
     private Menu mainMenu;
+    private LightsMainMenu lightsMainMenu;
+
     private ButtonListener backButtonToMainMenu  = (isPressed) -> {
         if(isPressed) {
             GUI.disableAllControls();
@@ -25,6 +30,8 @@ public class GUI {
     };
 
     public GUI(){
+        mttqClient = new MttqClient();
+
         mainMenu();
     }
 
@@ -67,11 +74,11 @@ public class GUI {
 
     private interfaceUI Lights(){
         interfaceUI cmd = () -> {
-
-            TextBox textBox = new TextBox("Lights:\nLamp\nTHing");
-            textBox.clear();
-            textBox.render();
+            lightsMainMenu = new LightsMainMenu(mttqClient.getLights());
+            lightsMainMenu.enableControls();
             mBed.getJoystickFire().addListener(backButtonToMainMenu);
+            lightsMainMenu.update();
+
         };
         return cmd;
     }
@@ -111,10 +118,12 @@ public class GUI {
      * disables all the controls
      */
     public static void disableAllControls(){
-        ProjectLogger.Log("disabling all controls");
+        ProjectLogger.Log("----disabling all controls----");
         GUI.mBed.getJoystickDown().removeAllListeners();
         GUI.mBed.getJoystickUp().removeAllListeners();
         GUI.mBed.getJoystickFire().removeAllListeners();
+        GUI.mBed.getJoystickLeft().removeAllListeners();
+        GUI.mBed.getJoystickRight().removeAllListeners();
 
     }
 }
