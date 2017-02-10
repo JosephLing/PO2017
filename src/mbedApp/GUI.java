@@ -1,5 +1,6 @@
 package mbedApp;
 
+import shed.mbed.ButtonListener;
 import shed.mbed.MBed;
 import shed.mbed.MBedUtils;
 
@@ -14,23 +15,34 @@ public class GUI {
 
     public static MBed mBed = MBedUtils.getMBed();
 
+    private Menu mainMenu;
+    private ButtonListener backButtonToMainMenu  = (isPressed) -> {
+        if(isPressed) {
+            GUI.disableAllControls();
+            mainMenu.enableControls();
+            mainMenu.update();
+        }
+    };
+
     public GUI(){
         mainMenu();
     }
+
+
 
     public void mainMenu(){
 
         String[] itemNames = {"lights", "temprature", "Settings", "Credits", "Quit"};
 
         interfaceUI[] itemCmds = {
-                ()->{System.out.println("load next item 1");}, // lights
-                ()->{System.out.println("load next item 2");}, // temprature
-                ()->{System.out.println("load next item 3");}, // settings
+                Lights(), // lights
+                Temprature(), // temprature
+                Settings(),// , // settings
                 Credits(), // credits
                 ()->{} // quit
         };
 
-        Menu mainMenu = new Menu(itemNames, itemCmds);
+        mainMenu = new Menu(itemNames, itemCmds);
         mainMenu.setMenuCmd(
                 ()->{
                     System.out.println("closing");
@@ -42,13 +54,67 @@ public class GUI {
 
     }
 
-    public interfaceUI Credits(){
+    private interfaceUI Credits(){
+        interfaceUI cmd = () -> {
+
+            TextBox textBox = new TextBox("Joe\nWill\nPierre\nKhem");
+            textBox.clear();
+            textBox.render();
+            mBed.getJoystickFire().addListener(backButtonToMainMenu);
+        };
+        return cmd;
+    }
+
+    private interfaceUI Lights(){
         interfaceUI cmd = () -> {
 
             TextBox textBox = new TextBox("Lights:\nLamp\nTHing");
             textBox.clear();
             textBox.render();
+            mBed.getJoystickFire().addListener(backButtonToMainMenu);
         };
         return cmd;
+    }
+
+    private interfaceUI Settings(){
+        interfaceUI cmd = () -> {
+            TextBox textBox = new TextBox("settings");
+            textBox.clear();
+            textBox.render();
+            mBed.getJoystickFire().addListener(backButtonToMainMenu);
+        };
+        return cmd;
+    }
+
+    private interfaceUI Temprature(){
+        interfaceUI cmd = () -> {
+            TextBox textBox = new TextBox("temprature");
+            textBox.clear();
+            textBox.render();
+            mBed.getJoystickFire().addListener(backButtonToMainMenu);
+        };
+        return cmd;
+    }
+
+
+    public static void sleep(long millis){
+        try {
+            Thread.sleep(millis);
+        }
+        catch (InterruptedException ex) {
+            // Nothing we can do.
+        }
+
+    }
+
+    /**
+     * disables all the controls
+     */
+    public static void disableAllControls(){
+        ProjectLogger.Log("disabling all controls");
+        GUI.mBed.getJoystickDown().removeAllListeners();
+        GUI.mBed.getJoystickUp().removeAllListeners();
+        GUI.mBed.getJoystickFire().removeAllListeners();
+
     }
 }

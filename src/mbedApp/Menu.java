@@ -50,6 +50,9 @@ public class Menu implements interfaceUI {
         this.menuCmd = menuCmd;
         this.menuName = menuName;
 
+        // might need to disable later on
+        GUI.disableAllControls();
+
         up = (isPressed) -> {
             if(isPressed) {
                 this.decreaseSelected();
