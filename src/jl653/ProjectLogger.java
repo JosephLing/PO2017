@@ -1,0 +1,27 @@
+package jl653;
+
+import java.util.logging.Logger;
+
+/**
+ * Logger does.............
+ *
+ * @author josephling
+ * @version 1.0 10/02/2017
+ */
+public class ProjectLogger {
+
+
+    private static final Logger  LOGGER = Logger.getLogger("mbedjl653");
+    {
+
+    }
+
+
+    public static void Log(String msg){
+        LOGGER.info(msg);
+    }
+
+    public static void Warning(String msg){
+        LOGGER.warning(msg);
+    }
+}
