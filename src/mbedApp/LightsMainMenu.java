@@ -57,28 +57,21 @@ public class LightsMainMenu implements InterfaceMenu {
 
     @Override
     public void update() {
+        // TODO: work out how on earth this to only render two items at a time
+        // TODO: OR just render on and off better
         lcd.clear();
-        int maxDisplay = screenHeight / menuSpacing;
-
+        int maxDisplay = screenHeight /   menuSpacing; // hard coded for now as we have header (screenHeight / menuSpacing)
         int index = 0;
         if (maxDisplay < lights.length){
             if (selected >= maxDisplay){
-                index = selected - maxDisplay + 1;
+                index = selected - maxDisplay;
+                System.out.println("selected: " + selected + " index: " + index);
             }
         }
         int y = 0;
-        int count = 1;
-        // heading
-        lcd.print(0, 0, "Options On|Off");
-
-        // background
-        // lcd.fillRectangle(50, menuSpacing*count, screenWidth,maxDisplay*menuSpacing, PixelColor.BLACK);
-
-
+        int count = 0;
         while (y < screenHeight && count < maxDisplay && index < lights.length){
             y = menuSpacing * count;
-
-            lcd.print(0, y+2, lights[index].toString());
             if (lights[index].isOn()){
                 lcd.print(65,y+2,"[x]");
                 lcd.print(90,y+2,"[ ]");
@@ -88,7 +81,9 @@ public class LightsMainMenu implements InterfaceMenu {
             }
 
             if (index == selected){
-
+                lcd.print(0, y+2, "*"+lights[index].toString());
+            }else{
+                lcd.print(0, y+2, " "+lights[index].toString());
             }
             count ++;
             index ++;
@@ -125,11 +120,6 @@ public class LightsMainMenu implements InterfaceMenu {
             selected ++;
         }
     }
-
-    private void foo(){
-
-    }
-
 
     @Override
     public void runSelected() {
