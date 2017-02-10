@@ -1,6 +1,5 @@
 package mbedApp;
 
- 
 
 import shed.mbed.PixelColor;
 import shed.mbed.ButtonListener;
@@ -50,10 +49,10 @@ public class LightsMainMenu implements InterfaceMenu {
             }};
 
         switchLight = (isPressed) -> {
-          if(isPressed){
-              lights[selected].toggle();
-              this.update();
-          }
+            if(isPressed){
+                lights[selected].toggle();
+                this.update();
+            }
         };
     }
 
