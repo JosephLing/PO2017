@@ -20,18 +20,16 @@ public class GUI {
 
     private Menu mainMenu;
     private LightsMainMenu lightsMainMenu;
+    private Menu settings;
 
     private ButtonListener backButtonToMainMenu  = (isPressed) -> {
         if(isPressed) {
-            GUI.disableAllControls();
-            mainMenu.enableControls();
-            mainMenu.update();
+            backToMainMenu();
         }
     };
 
     public GUI(){
         mqttClient = new MqttClient();
-
         mainMenu();
     }
 
@@ -61,15 +59,10 @@ public class GUI {
 
     }
 
-    private interfaceUI Credits(){
-        interfaceUI cmd = () -> {
-
-            TextBox textBox = new TextBox("Joe\nWill\nPierre\nKhem");
-            textBox.clear();
-            textBox.render();
-            mBed.getJoystickFire().addListener(backButtonToMainMenu);
-        };
-        return cmd;
+    private void backToMainMenu(){
+        GUI.disableAllControls();
+        mainMenu.enableControls();
+        mainMenu.update();
     }
 
     private interfaceUI Lights(){
@@ -83,9 +76,9 @@ public class GUI {
         return cmd;
     }
 
-    private interfaceUI Settings(){
+    private interfaceUI Temprature(){
         interfaceUI cmd = () -> {
-            TextBox textBox = new TextBox("settings");
+            TextBox textBox = new TextBox("temprature");
             textBox.clear();
             textBox.render();
             mBed.getJoystickFire().addListener(backButtonToMainMenu);
@@ -93,9 +86,29 @@ public class GUI {
         return cmd;
     }
 
-    private interfaceUI Temprature(){
+    private interfaceUI Settings(){
         interfaceUI cmd = () -> {
-            TextBox textBox = new TextBox("temprature");
+            String[] settingsTitles = {
+                    "MQTT",
+                    "Temprature",
+                    "back"
+            };
+            interfaceUI[] settingsCmds = {
+                    ()->{System.out.println("mqtt stuff");},
+                    ()->{System.out.println("temprature settings");},
+                    ()->{backToMainMenu();}
+            };
+            settings = new Menu(settingsTitles, settingsCmds);
+            settings.enableControls();
+            settings.update();
+        };
+        return cmd;
+    }
+
+    private interfaceUI Credits(){
+        interfaceUI cmd = () -> {
+
+            TextBox textBox = new TextBox("Joe\nWill\nPierre\nKhem");
             textBox.clear();
             textBox.render();
             mBed.getJoystickFire().addListener(backButtonToMainMenu);
