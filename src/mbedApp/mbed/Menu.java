@@ -39,7 +39,7 @@ public class Menu implements InterfaceMenu {
      */
     public Menu(String[] menuName, interfaceUI[] menuCmd) {
 
-        lcd = Main.mBed.getLCD();
+        lcd = HomeAutomator.mBed.getLCD();
         screenWidth = lcd.getWidth();
         screenHeight = lcd.getHeight();
 

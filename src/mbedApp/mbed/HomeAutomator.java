@@ -32,6 +32,7 @@ public class HomeAutomator {
      * loaded. Starts of with generating an mqtt client to access the data.
      */
     public HomeAutomator(){
+        HomeAutomator.genMbed();
         mqttClient = new MessageClient();
         mainMenu();
     }

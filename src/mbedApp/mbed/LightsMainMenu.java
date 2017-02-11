@@ -34,7 +34,7 @@ public class LightsMainMenu implements InterfaceMenu {
         this.lights = lights;
         selected = 0;
         menuSpacing = 10;
-        lcd = Main.mBed.getLCD();
+        lcd = HomeAutomator.mBed.getLCD();
         screenWidth = lcd.getWidth();
         screenHeight = lcd.getHeight();
         up = (isPressed) -> {
