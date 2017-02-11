@@ -1,6 +1,6 @@
 package mbedApp;
 
-import mbedApp.mqtt.MqttClient;
+import mbedApp.mqtt.MessageClient;
 import shed.mbed.ButtonListener;
 import shed.mbed.MBed;
 import shed.mbed.MBedUtils;
@@ -16,7 +16,7 @@ public class GUI {
 
     public static MBed mBed = MBedUtils.getMBed();
 
-    private MqttClient mqttClient;
+    private MessageClient mqttClient;
 
     private Menu mainMenu;
     private LightsMainMenu lightsMainMenu;
@@ -29,7 +29,7 @@ public class GUI {
     };
 
     public GUI(){
-        mqttClient = new MqttClient();
+        mqttClient = new MessageClient();
         mainMenu();
     }
 
