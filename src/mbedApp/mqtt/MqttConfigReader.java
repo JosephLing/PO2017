@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * MqttConfigReader does.............
@@ -20,48 +21,25 @@ public class MqttConfigReader {
     private  String broker       = null;
     private  String clientId     = null;
 
+    public MqttConfigReader() {
+        readData();
+    }
 
     public void readData(){
+        Properties properties = new Properties();
         // grab the file data
-        InputStream input = getClass().getResourceAsStream("mqtt.config");
-        String data = "";
-        try{
-            int i =  input.read();
-            while (i != -1){
-                data += Character.toString ((char) i);
-                i = input.read();
-
-            }
-        }catch (IOException e){
-            e.printStackTrace();
-
+        try {
+            InputStream input = getClass().getResourceAsStream("mqtt.config");
+            properties.load(input);
+            
+            topic = properties.getProperty("topic");
+            qos = Integer.parseInt(properties.getProperty("qos"));
+            broker = properties.getProperty("broker");
+            clientId = properties.getProperty("clientId");
+        } catch(IOException exception) {
+            exception.printStackTrace();
         }
-        // map it to a multi dimensional array
-        String[][] mainData = new String[5][1];
-        int count = 0;
-        for (String line : data.split("\n")) {
-            mainData[count] = line.split("=");
-            count ++;
-        }
-
-        // search the data for the varaibles
-        for (int i = 0; i < mainData.length; i++) {
-            switch (mainData[0][0]){
-                case "topic":
-                    topic = mainData[i][1];
-                    break;
-                case "qos":
-                    qos =  Integer.parseInt(mainData[i][1]);
-                    break;
-                case "broker":
-                    broker = mainData[i][1];
-                    break;
-                case "clientId":
-                    clientId = mainData[i][1];
-                    break;
-            }
-        }
-    }
+     }
 
     public String getTopic() {
         return topic;
