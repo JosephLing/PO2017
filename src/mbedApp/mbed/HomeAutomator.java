@@ -14,8 +14,10 @@ import shed.mbed.MBedUtils;
  */
 public class HomeAutomator {
 
-
-    public static MBed mBed;
+    /**
+     * this field is package private
+     */
+    static MBed mBed;
 
     private static void genMbed(){
         HomeAutomator.mBed = MBedUtils.getMBed();
@@ -138,8 +140,9 @@ public class HomeAutomator {
 
     /**
      * disables all the controls
+     * Package private
      */
-    public static void disableAllControls(){
+    static void disableAllControls(){
         ProjectLogger.Log("----disabling all controls----");
         HomeAutomator.mBed.getJoystickDown().removeAllListeners();
         HomeAutomator.mBed.getJoystickUp().removeAllListeners();
