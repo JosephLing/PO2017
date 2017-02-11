@@ -1,10 +1,6 @@
 package mbedApp.mqtt;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -16,13 +12,14 @@ import java.util.Properties;
 public class MqttConfigReader {
 
 
-    private  String topic        = null;
-    private  int qos             = 0; // Default to 0
-    private  String broker       = null;
-    private  String clientId     = null;
+    private String topic        = null;
+    private int qos             = 0; // Default to 0
+    private String broker       = null;
+    private String clientId     = null;
 
     public MqttConfigReader() {
         readData();
+        qos = 0;
     }
 
     public void readData(){
@@ -33,7 +30,6 @@ public class MqttConfigReader {
             properties.load(input);
             
             topic = properties.getProperty("topic");
-            qos = Integer.parseInt(properties.getProperty("qos"));
             broker = properties.getProperty("broker");
             clientId = properties.getProperty("clientId");
         } catch(IOException exception) {
@@ -45,7 +41,7 @@ public class MqttConfigReader {
         return topic;
     }
 
-    public  int getQos() {
+    public int getQos() {
         return qos;
     }
 

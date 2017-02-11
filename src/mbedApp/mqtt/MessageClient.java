@@ -22,21 +22,27 @@ public class MessageClient {
     private MqttConfigReader config;
     private boolean connected;
     private MqttClient client;
-    private MemoryPersistence memoryPersistence;
     
+    /**
+     * Initialise a new MessageClient by connecting to the broker and setting up required variables.
+     * Note: This will exit the whole program if a connection cannot be made to the broker.
+     */
     public MessageClient() {
         this.lights = new Light[10];
         Random rnd = new Random();
         for (int i = 0; i < this.lights.length; i++) {
             this.lights[i] = new Light(rnd.nextBoolean(), "light" + Integer.toString(i));
         }
-        
-        MqttConfigReader config = new MqttConfigReader();
+        // Get our configuration options
+        config = new MqttConfigReader();
         MemoryPersistence memoryPersistence = new MemoryPersistence();
         try {
-            MqttClient client = new MqttClient(config.getBroker(), config.getClientId(), memoryPersistence);
+            System.out.println(config.getQos());
+            // Set up our MQTT client
+            client = new MqttClient(config.getBroker(), config.getClientId(), memoryPersistence);
             MqttConnectOptions clientConnectionOptions = new MqttConnectOptions();
             clientConnectionOptions.setCleanSession(true);
+            // Actually connect
             client.connect(clientConnectionOptions);
         } catch(MqttException exception) {
             ProjectLogger.Log("Exception encountered when trying to connect to broker");
@@ -48,11 +54,15 @@ public class MessageClient {
     public Light[] getLights() {
         return lights;
     }
-
+    
+    
     public void setLight(int index, Light light){
         lights[index] = light;
     }
     
+    /**
+     * Send a message to the MQTT broker (and therefore all connected clients on the same topic)
+     */
     public void send(String content) {
         try {
             MqttMessage message = new MqttMessage(content.getBytes());
@@ -64,6 +74,9 @@ public class MessageClient {
         }
     }
     
+    /**
+     * Disconnect from the broker.
+     */
     public void disconnect() {
         try {
             client.disconnect();
