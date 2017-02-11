@@ -1,20 +1,25 @@
-package mbedApp;
+package mbedApp.mbed;
 
+import mbedApp.ProjectLogger;
 import mbedApp.mqtt.MessageClient;
 import shed.mbed.ButtonListener;
 import shed.mbed.MBed;
 import shed.mbed.MBedUtils;
 
 /**
- * GUI does.............
+ * HomeAutomator does.............
  *
  * @author josephling
  * @version 1.0 09/02/2017
  */
-public class GUI {
+public class HomeAutomator {
 
 
-    public static MBed mBed = MBedUtils.getMBed();
+    public static MBed mBed;
+
+    private static void genMbed(){
+        HomeAutomator.mBed = MBedUtils.getMBed();
+    }
 
     private MessageClient mqttClient;
 
@@ -22,17 +27,20 @@ public class GUI {
     private LightsMainMenu lightsMainMenu;
     private Menu settings;
 
+    /**
+     * Creates the Mbed controller and creates the main menu when
+     * loaded. Starts of with generating an mqtt client to access the data.
+     */
+    public HomeAutomator(){
+        mqttClient = new MessageClient();
+        mainMenu();
+    }
+
     private ButtonListener backButtonToMainMenu  = (isPressed) -> {
         if(isPressed) {
             backToMainMenu();
         }
     };
-
-    public GUI(){
-        mqttClient = new MessageClient();
-        mainMenu();
-    }
-
 
 
     public void mainMenu(){
@@ -60,7 +68,7 @@ public class GUI {
     }
 
     private void backToMainMenu(){
-        GUI.disableAllControls();
+        HomeAutomator.disableAllControls();
         mainMenu.enableControls();
         mainMenu.update();
     }
@@ -132,11 +140,11 @@ public class GUI {
      */
     public static void disableAllControls(){
         ProjectLogger.Log("----disabling all controls----");
-        GUI.mBed.getJoystickDown().removeAllListeners();
-        GUI.mBed.getJoystickUp().removeAllListeners();
-        GUI.mBed.getJoystickFire().removeAllListeners();
-        GUI.mBed.getJoystickLeft().removeAllListeners();
-        GUI.mBed.getJoystickRight().removeAllListeners();
+        HomeAutomator.mBed.getJoystickDown().removeAllListeners();
+        HomeAutomator.mBed.getJoystickUp().removeAllListeners();
+        HomeAutomator.mBed.getJoystickFire().removeAllListeners();
+        HomeAutomator.mBed.getJoystickLeft().removeAllListeners();
+        HomeAutomator.mBed.getJoystickRight().removeAllListeners();
 
     }
 }

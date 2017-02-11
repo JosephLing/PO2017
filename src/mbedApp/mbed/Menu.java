@@ -1,6 +1,8 @@
-package mbedApp;
+package mbedApp.mbed;
 
 
+import mbedApp.Main;
+import mbedApp.ProjectLogger;
 import shed.mbed.ButtonListener;
 import shed.mbed.LCD;
 import shed.mbed.PixelColor;
@@ -51,7 +53,7 @@ public class Menu implements InterfaceMenu {
         this.menuName = menuName;
 
         // might need to disable later on
-        GUI.disableAllControls();
+        HomeAutomator.disableAllControls();
 
         up = (isPressed) -> {
             if(isPressed) {
@@ -157,9 +159,9 @@ public class Menu implements InterfaceMenu {
      */
     public void enableControls(){
         ProjectLogger.Log("loading up menu controls");
-        GUI.mBed.getJoystickUp().addListener(up);
-        GUI.mBed.getJoystickDown().addListener(down);
-        GUI.mBed.getJoystickFire().addListener(fire);
+        HomeAutomator.mBed.getJoystickUp().addListener(up);
+        HomeAutomator.mBed.getJoystickDown().addListener(down);
+        HomeAutomator.mBed.getJoystickFire().addListener(fire);
     }
 
     /**
@@ -167,9 +169,9 @@ public class Menu implements InterfaceMenu {
      */
     public void disableControls(){
         ProjectLogger.Log("disabling menu controls");
-        GUI.mBed.getJoystickDown().removeListener(down);
-        GUI.mBed.getJoystickUp().removeListener(up);
-        GUI.mBed.getJoystickFire().removeListener(fire);
+        HomeAutomator.mBed.getJoystickDown().removeListener(down);
+        HomeAutomator.mBed.getJoystickUp().removeListener(up);
+        HomeAutomator.mBed.getJoystickFire().removeListener(fire);
 
     }
 }

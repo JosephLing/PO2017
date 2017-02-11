@@ -1,7 +1,8 @@
-package mbedApp;
+package mbedApp.mbed;
 
 
-import shed.mbed.PixelColor;
+import mbedApp.Light;
+import mbedApp.Main;
 import shed.mbed.ButtonListener;
 import shed.mbed.LCD;
 /**
@@ -93,19 +94,19 @@ public class LightsMainMenu implements InterfaceMenu {
 
     @Override
     public void disableControls() {
-        GUI.mBed.getJoystickDown().removeListener(down);
-        GUI.mBed.getJoystickUp().removeListener(up);
-        GUI.mBed.getJoystickLeft().removeListener(switchLight);
-        GUI.mBed.getJoystickRight().removeListener(switchLight);
+        HomeAutomator.mBed.getJoystickDown().removeListener(down);
+        HomeAutomator.mBed.getJoystickUp().removeListener(up);
+        HomeAutomator.mBed.getJoystickLeft().removeListener(switchLight);
+        HomeAutomator.mBed.getJoystickRight().removeListener(switchLight);
 
     }
 
     @Override
     public void enableControls() {
-        GUI.mBed.getJoystickDown().addListener(down);
-        GUI.mBed.getJoystickUp().addListener(up);
-        GUI.mBed.getJoystickLeft().addListener(switchLight);
-        GUI.mBed.getJoystickRight().addListener(switchLight);
+        HomeAutomator.mBed.getJoystickDown().addListener(down);
+        HomeAutomator.mBed.getJoystickUp().addListener(up);
+        HomeAutomator.mBed.getJoystickLeft().addListener(switchLight);
+        HomeAutomator.mBed.getJoystickRight().addListener(switchLight);
     }
 
     @Override

@@ -1,5 +1,6 @@
-package mbedApp;
+package mbedApp.mbed;
 
+import mbedApp.Main;
 import shed.mbed.LCD;
 /**
  * TextBox does.............
