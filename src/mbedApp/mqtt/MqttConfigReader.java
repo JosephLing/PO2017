@@ -16,8 +16,7 @@ public class MqttConfigReader {
 
 
     private  String topic        = null;
-    private  String content      = null;
-    private  int qos             = -1;
+    private  int qos             = 0; // Default to 0
     private  String broker       = null;
     private  String clientId     = null;
 
@@ -51,9 +50,6 @@ public class MqttConfigReader {
                 case "topic":
                     topic = mainData[i][1];
                     break;
-                case "content":
-                    content = mainData[i][1];
-                    break;
                 case "qos":
                     qos =  Integer.parseInt(mainData[i][1]);
                     break;
@@ -69,10 +65,6 @@ public class MqttConfigReader {
 
     public String getTopic() {
         return topic;
-    }
-
-    public  String getContent() {
-        return content;
     }
 
     public  int getQos() {
