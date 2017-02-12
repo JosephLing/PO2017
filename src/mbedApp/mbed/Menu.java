@@ -53,7 +53,7 @@ public class Menu implements InterfaceMenu {
         this.menuName = menuName;
 
         // might need to disable later on
-        HomeAutomator.disableAllControls();
+        ScreenInterface.disableAllControls();
 
         up = (isPressed) -> {
             if(isPressed) {

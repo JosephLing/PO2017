@@ -2,6 +2,7 @@ package mbedApp.mbed;
 
 import shed.mbed.ButtonListener;
 import mbedApp.mqtt.MessageClient;
+import mbedApp.ProjectLogger;
 
 /**
  * Write a description of class ScreenInterface here.
@@ -57,7 +58,7 @@ public class ScreenInterface
     }
 
     private void backToMainMenu(){
-        HomeAutomator.disableAllControls();
+        disableAllControls();
         mainMenu.enableControls();
         mainMenu.update();
     }
@@ -111,6 +112,19 @@ public class ScreenInterface
             HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
         };
         return cmd;
+    }
+    
+    /**
+     * disables all the controls
+     * Package private
+     */
+    static void disableAllControls(){
+        ProjectLogger.Log("----disabling all controls----");
+        HomeAutomator.getMBed().getJoystickDown().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickUp().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickFire().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickLeft().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickRight().removeAllListeners();
     }
     
 }

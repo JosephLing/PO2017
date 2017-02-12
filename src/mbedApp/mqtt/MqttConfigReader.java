@@ -2,6 +2,7 @@ package mbedApp.mqtt;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  * MqttConfigReader does.............
@@ -20,6 +21,7 @@ public class MqttConfigReader {
     public MqttConfigReader() {
         readData();
         qos = 0;
+        clientId = UUID.randomUUID().toString(); // have a unique client ID
     }
 
     public void readData(){
@@ -31,7 +33,6 @@ public class MqttConfigReader {
             
             topic = properties.getProperty("topic");
             broker = properties.getProperty("broker");
-            clientId = properties.getProperty("clientId");
         } catch(IOException exception) {
             exception.printStackTrace();
         }
@@ -45,11 +46,11 @@ public class MqttConfigReader {
         return qos;
     }
 
-    public  String getBroker() {
+    public String getBroker() {
         return broker;
     }
 
-    public  String getClientId() {
+    public String getClientId() {
         return clientId;
     }
 }
