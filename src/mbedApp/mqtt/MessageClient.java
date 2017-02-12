@@ -28,36 +28,34 @@ public class MessageClient {
      * Note: This will exit the whole program if a connection cannot be made to the broker.
      */
     public MessageClient() {
-        this.lights = new Light[10];
-        Random rnd = new Random();
-        for (int i = 0; i < this.lights.length; i++) {
-            this.lights[i] = new Light(rnd.nextBoolean(), "light" + Integer.toString(i));
-        }
         // Get our configuration options
         config = new MqttConfigReader();
         MemoryPersistence memoryPersistence = new MemoryPersistence();
         try {
-            System.out.println(config.getQos());
+            ProjectLogger.Log("Qos var: " + config.getQos());
+
             // Set up our MQTT client
             client = new MqttClient(config.getBroker(), config.getClientId(), memoryPersistence);
             MqttConnectOptions clientConnectionOptions = new MqttConnectOptions();
             clientConnectionOptions.setCleanSession(true);
+
             // Actually connect
             client.connect(clientConnectionOptions);
+
         } catch(MqttException exception) {
             ProjectLogger.Log("Exception encountered when trying to connect to broker");
             exception.printStackTrace();
             System.exit(0);
         }
-    }
+        ProjectLogger.Log("connected to MQTT successfully");
 
-    public Light[] getLights() {
-        return lights;
-    }
-    
-    
-    public void setLight(int index, Light light){
-        lights[index] = light;
+
+        // gen test lights
+        this.lights = new Light[10];
+        Random rnd = new Random();
+        for (int i = 0; i < this.lights.length; i++) {
+            this.lights[i] = new Light(rnd.nextBoolean(), "light" + Integer.toString(i));
+        }
     }
     
     /**
@@ -84,5 +82,14 @@ public class MessageClient {
             ProjectLogger.Log("Exception encountered when trying to disconnect");
             exception.printStackTrace();
         }
+    }
+
+    public Light[] getLights() {
+        return lights;
+    }
+
+
+    public void setLight(int index, Light light){
+        lights[index] = light;
     }
 }

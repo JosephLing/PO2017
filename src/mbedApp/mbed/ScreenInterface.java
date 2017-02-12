@@ -16,45 +16,31 @@ public class ScreenInterface
     private LightsMainMenu lightsMainMenu;
     private Menu settings;
     private MessageClient messageClient;
-   
+
     /**
      * Constructor for objects of class ScreenInterface
      */
-    public ScreenInterface()
+    public ScreenInterface(MessageClient messageClient)
     {
+        this.messageClient = messageClient;
         mainMenu();
-        messageClient = new MessageClient();
     }
-    
-    private ButtonListener backButtonToMainMenu  = (isPressed) -> {
-        if(isPressed) {
-            backToMainMenu();
-        }
-    };
 
-
-    public void mainMenu(){
+    private void mainMenu(){
 
         String[] itemNames = {"lights", "temprature", "Settings", "Credits", "Quit"};
 
-        interfaceUI[] itemCmds = {
-                Lights(), // lights
-                Temprature(), // temprature
-                Settings(),// , // settings
-                Credits(), // credits
-                ()->{} // quit
+        InterfaceUI[] itemCmds = {
+                Lights, // lights
+                Temprature, // temprature
+                Settings,// , // settings
+                Credits, // credits
+                Quit // quit
         };
 
         mainMenu = new Menu(itemNames, itemCmds);
-        mainMenu.setMenuCmd(
-                ()->{
-                    System.out.println("closing");
-                    HomeAutomator.getMBed().close();
-                }, 4);
         mainMenu.enableControls();
         mainMenu.update();
-
-
     }
 
     private void backToMainMenu(){
@@ -63,56 +49,60 @@ public class ScreenInterface
         mainMenu.update();
     }
 
-    private interfaceUI Lights(){
-        interfaceUI cmd = () -> {
-            lightsMainMenu = new LightsMainMenu(messageClient.getLights());
-            lightsMainMenu.enableControls();
-            HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
-            lightsMainMenu.update();
+    /**
+     * ButtonListener for the back button to main menu.
+     * TODO: maybe make it dynamic?
+     */
+    private ButtonListener backButtonToMainMenu  = (isPressed) -> {
+        if(isPressed) {
+            backToMainMenu();
+        }
+    };
 
+    private InterfaceUI Lights = () -> {
+        lightsMainMenu = new LightsMainMenu(messageClient.getLights());
+        lightsMainMenu.enableControls();
+        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
+        lightsMainMenu.update();
+
+    };
+
+    private InterfaceUI Temprature = () -> {
+        TextBox textBox = new TextBox("temprature");
+        textBox.clear();
+        textBox.render();
+        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
+    };
+
+    private InterfaceUI Settings = () -> {
+        String[] settingsTitles = {
+                "MQTT",
+                "Temprature",
+                "back"
         };
-        return cmd;
-    }
-
-    private interfaceUI Temprature(){
-        interfaceUI cmd = () -> {
-            TextBox textBox = new TextBox("temprature");
-            textBox.clear();
-            textBox.render();
-            HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
+        InterfaceUI[] settingsCmds = {
+                ()->{System.out.println("mqtt stuff");},
+                ()->{System.out.println("temprature settings");},
+                ()->{backToMainMenu();}
         };
-        return cmd;
-    }
+        settings = new Menu(settingsTitles, settingsCmds);
+        settings.enableControls();
+        settings.update();
+    };
 
-    private interfaceUI Settings(){
-        interfaceUI cmd = () -> {
-            String[] settingsTitles = {
-                    "MQTT",
-                    "Temprature",
-                    "back"
-            };
-            interfaceUI[] settingsCmds = {
-                    ()->{System.out.println("mqtt stuff");},
-                    ()->{System.out.println("temprature settings");},
-                    ()->{backToMainMenu();}
-            };
-            settings = new Menu(settingsTitles, settingsCmds);
-            settings.enableControls();
-            settings.update();
-        };
-        return cmd;
-    }
+    private InterfaceUI Credits = () -> {
+        TextBox textBox = new TextBox("Joe\nWill\nPierre\nKhem");
+        textBox.clear();
+        textBox.render();
+        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
+    };
 
-    private interfaceUI Credits(){
-        interfaceUI cmd = () -> {
-
-            TextBox textBox = new TextBox("Joe\nWill\nPierre\nKhem");
-            textBox.clear();
-            textBox.render();
-            HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
-        };
-        return cmd;
-    }
+    private InterfaceUI Quit = ()->{
+        ProjectLogger.Log("closing down messageClient and mbed");
+        this.messageClient.disconnect();
+        HomeAutomator.getMBed().close();
+        System.exit(0);
+    };
     
     /**
      * disables all the controls

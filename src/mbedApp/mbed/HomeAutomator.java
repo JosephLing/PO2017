@@ -15,29 +15,17 @@ import mbedApp.mqtt.MessageClient;
  * @version 1.0 09/02/2017
  */
 public class HomeAutomator {
-    
-    private static MBed mbed;
-    private ScreenInterface screenInterface;
-    private MessageClient messageClient;
 
-    /**
-     * Creates the Mbed controller and creates the main menu when
-     * loaded. Starts of with generating an mqtt client to access the data.
-     */
-    public HomeAutomator() {
-        genMBed();
-        screenInterface = new ScreenInterface();
-        messageClient = new MessageClient();
-        dimmer();
-    }
-    
+    //------------------------------------------------------------------------//
+    private static MBed mbed;
+
     /**
      * Generate a new MBed object, be it a physical device or emulator
      */
-    private void genMBed() {
+    private static void genMBed() {
         mbed = MBedUtils.getMBed();
     }
-    
+
     /**
      * Get our MBed object - you don't need to initialise a HomeAutomator class
      * to use this method.
@@ -45,9 +33,30 @@ public class HomeAutomator {
     public static MBed getMBed() {
         return mbed;
     }
-    
     //------------------------------------------------------------------------//
-    
+
+
+    private ScreenInterface screenInterface;
+    private MessageClient messageClient;
+    /**
+     * Creates the Mbed controller and creates the main menu when
+     * loaded. Starts of with generating an mqtt client to access the data.
+     */
+    public HomeAutomator() {
+        genMBed();
+        messageClient = new MessageClient();
+        screenInterface = new ScreenInterface(messageClient);
+        dimmer();
+    }
+
+    /**
+     * gets the message client used by the HomeAutomator.
+     * @return MessageClient
+     */
+    public MessageClient getMessageClient() {
+        return messageClient;
+    }
+
     /**
      * Every time a potentiometer changes send the value using the Messaging
      * Client

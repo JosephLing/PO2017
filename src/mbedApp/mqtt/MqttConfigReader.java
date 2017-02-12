@@ -24,7 +24,7 @@ public class MqttConfigReader {
         clientId = UUID.randomUUID().toString(); // have a unique client ID
     }
 
-    public void readData(){
+    private void readData(){
         Properties properties = new Properties();
         // grab the file data
         try {

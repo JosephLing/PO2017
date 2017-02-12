@@ -1,7 +1,6 @@
 package mbedApp.mbed;
 
 
-import mbedApp.Main;
 import mbedApp.ProjectLogger;
 import shed.mbed.ButtonListener;
 import shed.mbed.LCD;
@@ -24,7 +23,7 @@ public class Menu implements InterfaceMenu {
     private int menuSpacing;
 
     private String[] menuName;
-    private interfaceUI[] menuCmd;
+    private InterfaceUI[] menuCmd;
 
     private LCD lcd;
 
@@ -37,7 +36,7 @@ public class Menu implements InterfaceMenu {
      * @param menuName
      * @param menuCmd
      */
-    public Menu(String[] menuName, interfaceUI[] menuCmd) {
+    public Menu(String[] menuName, InterfaceUI[] menuCmd) {
 
         lcd = HomeAutomator.getMBed().getLCD();
         screenWidth = lcd.getWidth();
@@ -91,7 +90,7 @@ public class Menu implements InterfaceMenu {
      * @param newMenuCmd
      * @param index
      */
-    public void setMenuCmd(interfaceUI newMenuCmd, int index) {
+    public void setMenuCmd(InterfaceUI newMenuCmd, int index) {
         if (index < menuCmd.length){
             menuCmd[index] = newMenuCmd;
         }
@@ -155,7 +154,7 @@ public class Menu implements InterfaceMenu {
     }
 
     /**
-     *
+     * enables the controls
      */
     public void enableControls(){
         ProjectLogger.Log("loading up menu controls");
