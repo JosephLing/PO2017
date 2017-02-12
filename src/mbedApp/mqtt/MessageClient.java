@@ -1,6 +1,6 @@
 package mbedApp.mqtt;
 
-import mbedApp.Light;
+import mbedApp.devices.Light;
 import mbedApp.ProjectLogger;
 import java.util.Random;
 

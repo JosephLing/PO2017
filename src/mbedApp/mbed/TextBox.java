@@ -14,7 +14,7 @@ public class TextBox {
     private String[] text;
 
     public TextBox(String text){
-        lcd = HomeAutomator.mBed.getLCD();
+        lcd = HomeAutomator.getMBed().getLCD();
         this.text = text.split("\n");
     }
 

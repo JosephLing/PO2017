@@ -1,4 +1,4 @@
-package mbedApp;
+package mbedApp.devices;
 
 
 /**

@@ -13,15 +13,8 @@ import shed.mbed.MBedUtils;
  * @version 1.0 09/02/2017
  */
 public class HomeAutomator {
-
-    /**
-     * this field is package private
-     */
-    static MBed mBed;
-
-    private static void genMbed(){
-        HomeAutomator.mBed = MBedUtils.getMBed();
-    }
+    
+    private static MBed mbed;
 
     private MessageClient mqttClient;
 
@@ -34,9 +27,17 @@ public class HomeAutomator {
      * loaded. Starts of with generating an mqtt client to access the data.
      */
     public HomeAutomator(){
-        HomeAutomator.genMbed();
+        genMBed();
         mqttClient = new MessageClient();
         mainMenu();
+    }
+    
+    private void genMBed() {
+        mbed = MBedUtils.getMBed();
+    }
+    
+    public static MBed getMBed() {
+        return mbed;
     }
 
     private ButtonListener backButtonToMainMenu  = (isPressed) -> {
@@ -62,7 +63,7 @@ public class HomeAutomator {
         mainMenu.setMenuCmd(
                 ()->{
                     System.out.println("closing");
-                    mBed.close();
+                    mbed.close();
                 }, 4);
         mainMenu.enableControls();
         mainMenu.update();
@@ -80,7 +81,7 @@ public class HomeAutomator {
         interfaceUI cmd = () -> {
             lightsMainMenu = new LightsMainMenu(mqttClient.getLights());
             lightsMainMenu.enableControls();
-            mBed.getJoystickFire().addListener(backButtonToMainMenu);
+            mbed.getJoystickFire().addListener(backButtonToMainMenu);
             lightsMainMenu.update();
 
         };
@@ -92,7 +93,7 @@ public class HomeAutomator {
             TextBox textBox = new TextBox("temprature");
             textBox.clear();
             textBox.render();
-            mBed.getJoystickFire().addListener(backButtonToMainMenu);
+            mbed.getJoystickFire().addListener(backButtonToMainMenu);
         };
         return cmd;
     }
@@ -122,7 +123,7 @@ public class HomeAutomator {
             TextBox textBox = new TextBox("Joe\nWill\nPierre\nKhem");
             textBox.clear();
             textBox.render();
-            mBed.getJoystickFire().addListener(backButtonToMainMenu);
+            mbed.getJoystickFire().addListener(backButtonToMainMenu);
         };
         return cmd;
     }
@@ -144,11 +145,11 @@ public class HomeAutomator {
      */
     static void disableAllControls(){
         ProjectLogger.Log("----disabling all controls----");
-        HomeAutomator.mBed.getJoystickDown().removeAllListeners();
-        HomeAutomator.mBed.getJoystickUp().removeAllListeners();
-        HomeAutomator.mBed.getJoystickFire().removeAllListeners();
-        HomeAutomator.mBed.getJoystickLeft().removeAllListeners();
-        HomeAutomator.mBed.getJoystickRight().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickDown().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickUp().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickFire().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickLeft().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickRight().removeAllListeners();
 
     }
 }

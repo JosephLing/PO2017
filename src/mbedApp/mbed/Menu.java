@@ -39,7 +39,7 @@ public class Menu implements InterfaceMenu {
      */
     public Menu(String[] menuName, interfaceUI[] menuCmd) {
 
-        lcd = HomeAutomator.mBed.getLCD();
+        lcd = HomeAutomator.getMBed().getLCD();
         screenWidth = lcd.getWidth();
         screenHeight = lcd.getHeight();
 
@@ -159,9 +159,9 @@ public class Menu implements InterfaceMenu {
      */
     public void enableControls(){
         ProjectLogger.Log("loading up menu controls");
-        HomeAutomator.mBed.getJoystickUp().addListener(up);
-        HomeAutomator.mBed.getJoystickDown().addListener(down);
-        HomeAutomator.mBed.getJoystickFire().addListener(fire);
+        HomeAutomator.getMBed().getJoystickUp().addListener(up);
+        HomeAutomator.getMBed().getJoystickDown().addListener(down);
+        HomeAutomator.getMBed().getJoystickFire().addListener(fire);
     }
 
     /**
@@ -169,9 +169,9 @@ public class Menu implements InterfaceMenu {
      */
     public void disableControls(){
         ProjectLogger.Log("disabling menu controls");
-        HomeAutomator.mBed.getJoystickDown().removeListener(down);
-        HomeAutomator.mBed.getJoystickUp().removeListener(up);
-        HomeAutomator.mBed.getJoystickFire().removeListener(fire);
+        HomeAutomator.getMBed().getJoystickDown().removeListener(down);
+        HomeAutomator.getMBed().getJoystickUp().removeListener(up);
+        HomeAutomator.getMBed().getJoystickFire().removeListener(fire);
 
     }
 }

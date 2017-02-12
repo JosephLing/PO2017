@@ -1,7 +1,7 @@
 package mbedApp.mbed;
 
 
-import mbedApp.Light;
+import mbedApp.devices.Light;
 import mbedApp.Main;
 import shed.mbed.ButtonListener;
 import shed.mbed.LCD;
@@ -34,7 +34,7 @@ public class LightsMainMenu implements InterfaceMenu {
         this.lights = lights;
         selected = 0;
         menuSpacing = 10;
-        lcd = HomeAutomator.mBed.getLCD();
+        lcd = HomeAutomator.getMBed().getLCD();
         screenWidth = lcd.getWidth();
         screenHeight = lcd.getHeight();
         up = (isPressed) -> {
@@ -94,19 +94,19 @@ public class LightsMainMenu implements InterfaceMenu {
 
     @Override
     public void disableControls() {
-        HomeAutomator.mBed.getJoystickDown().removeListener(down);
-        HomeAutomator.mBed.getJoystickUp().removeListener(up);
-        HomeAutomator.mBed.getJoystickLeft().removeListener(switchLight);
-        HomeAutomator.mBed.getJoystickRight().removeListener(switchLight);
+        HomeAutomator.getMBed().getJoystickDown().removeListener(down);
+        HomeAutomator.getMBed().getJoystickUp().removeListener(up);
+        HomeAutomator.getMBed().getJoystickLeft().removeListener(switchLight);
+        HomeAutomator.getMBed().getJoystickRight().removeListener(switchLight);
 
     }
 
     @Override
     public void enableControls() {
-        HomeAutomator.mBed.getJoystickDown().addListener(down);
-        HomeAutomator.mBed.getJoystickUp().addListener(up);
-        HomeAutomator.mBed.getJoystickLeft().addListener(switchLight);
-        HomeAutomator.mBed.getJoystickRight().addListener(switchLight);
+        HomeAutomator.getMBed().getJoystickDown().addListener(down);
+        HomeAutomator.getMBed().getJoystickUp().addListener(up);
+        HomeAutomator.getMBed().getJoystickLeft().addListener(switchLight);
+        HomeAutomator.getMBed().getJoystickRight().addListener(switchLight);
     }
 
     @Override
