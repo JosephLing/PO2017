@@ -2,6 +2,8 @@ package mbedApp.room.objects;
 
 import mbedApp.devices.Light;
 
+import java.awt.*;
+
 /**
  * Light does.............
  *
@@ -12,19 +14,20 @@ public class LightObj extends Light implements InterfaceScreenObject {
 
     private int x;
     private int y;
+    private Graphics graphic;
 
-
-    public LightObj(boolean state, String name) {
-        super(state, name);
+    public LightObj(String name) {
+        super(false, name);
     }
 
     @Override
-    public void update() {
+    public Graphics update(Canvas canvas) {
         if (isOn()){
 
         }else{
 
         }
+        return null;
     }
 
     @Override

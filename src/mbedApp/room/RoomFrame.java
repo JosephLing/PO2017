@@ -1,8 +1,13 @@
 package mbedApp.room;
 
 import mbedApp.ProjectLogger;
+import mbedApp.room.objects.InterfaceScreenObject;
+import mbedApp.room.objects.LightObj;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
 
 /**
  * RoomFrame does.............
@@ -12,12 +17,37 @@ import javax.swing.*;
  */
 public class RoomFrame extends JFrame {
 
+    private ArrayList<InterfaceScreenObject> renderList;
+
+    private Canvas canvas;
+
     public RoomFrame() {
-        ProjectLogger.Log("creating RoomFrame");
-        setTitle("Simple example");
-        setSize(300, 200);
+        renderList = new ArrayList<InterfaceScreenObject>();
+        renderList.add(new LightObj("asdf"));
+
+        init_Jframe();
+        init_Canvas();
+        setVisible(true);
+    }
+
+    /**
+     * initialises the application window
+     */
+    private void init_Jframe(){
+        setTitle("Example Room");
+        setSize(600, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setVisible(true);
+        canvas = new Canvas(500, 500, Color.black);
+        setContentPane(canvas.getCanvas());
+        pack();
+        canvas.setVisible(true);
     }
+
+    private void init_Canvas(){
+        canvas.draw(this, Color.red, new Ellipse2D.Double(250, 250, 50, 50));
+    }
+
+
+
 }

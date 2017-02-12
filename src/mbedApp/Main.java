@@ -16,7 +16,7 @@ public class Main {
         }else{
             switch (args[0]){
                 case "room":
-                    createMbedApp();
+                    createRoomApp();
                     break;
                 case "mbed":
                     createMbedApp();
