@@ -1,15 +1,41 @@
 package mbedApp;
 
 import mbedApp.mbed.HomeAutomator;
+import mbedApp.room.RoomMain;
 
 public class Main {
     private static Main main;
     
     public Main() {
-        HomeAutomator ha = new HomeAutomator();
+        currentlyTesting();
     }
 
     public static void main(String[] args) {
-        main = new Main();
+        if (args.length == 0){
+            currentlyTesting();
+        }else{
+            switch (args[0]){
+                case "room":
+                    createMbedApp();
+                    break;
+                case "mbed":
+                    createMbedApp();
+                    break;
+                default:
+                    ProjectLogger.Log("no option found in args");
+            }
+        }
+    }
+
+    public static void currentlyTesting(){
+        createRoomApp();
+    }
+
+    public static void createRoomApp(){
+        RoomMain.main();
+    }
+
+    public static void createMbedApp(){
+        HomeAutomator test = new HomeAutomator();
     }
 }
