@@ -9,6 +9,8 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 
 /**
  * MessageClient
@@ -50,13 +52,6 @@ public class MessageClient {
         }
         ProjectLogger.Log("["+clientType+"] connected to MQTT successfully");
         connected = true;
-
-        // gen test lights
-        this.lights = new Light[10];
-        Random rnd = new Random();
-        for (int i = 0; i < this.lights.length; i++) {
-            this.lights[i] = new Light(rnd.nextBoolean(), "light" + Integer.toString(i));
-        }
     }
     
     /**
@@ -64,7 +59,7 @@ public class MessageClient {
      */
     public void send(String topic, String content) {
         try {
-            MqttMessage message = new MqttMessage(content).getBytes());
+            MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(config.getQos());
             client.publish(config.getTopic() + topic, message);
         } catch(MqttException exception) {
@@ -72,6 +67,8 @@ public class MessageClient {
             exception.printStackTrace();
         }
     }
+    
+    
     
     /**
      * Disconnect from the broker.
@@ -84,14 +81,5 @@ public class MessageClient {
             ProjectLogger.Log("["+clientType+"] Exception encountered when trying to disconnect");
             exception.printStackTrace();
         }
-    }
-
-    public Light[] getLights() {
-        return lights;
-    }
-
-
-    public void setLight(int index, Light light){
-        lights[index] = light;
     }
 }
