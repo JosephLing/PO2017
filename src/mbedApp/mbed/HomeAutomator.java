@@ -45,12 +45,25 @@ public class HomeAutomator {
      * loaded. Starts of with generating an mqtt client to access the data.
      */
     public HomeAutomator() {
-        genMBed();
+//        genMBed();
         messageClient = new MessageClient(ClientType.MBED);
-        messageClient.subscribe("cat", (String topic, MqttMessage message)->{
-            System.out.println("Response: " + new String(message.getPayload()));
+
+        messageClient.advanceSubscribe("cat", (String topic, String name, String[][]args)->{
+
         });
-        messageClient.send("cat", "cat");
+        messageClient.send("testing all the things}", "cat");
+        messageClient.send("{testing all the things", "cat");
+        messageClient.send("{name}", "cat");
+        messageClient.send("{name:}", "cat");
+        messageClient.send("{name:arg1}", "cat");
+        messageClient.send("{testname:arg1=va1}", "cat");
+        messageClient.send("{testname:arg1=va1,arg2=va2}", "cat");
+
+//        messageClient = new MessageClient(ClientType.MBED);
+//        messageClient.subscribe("cat", (String topic, MqttMessage message)->{
+//            System.out.println("Response: " + new String(message.getPayload()));
+//        });
+//        messageClient.send("cat", "cat");
         //        screenInterface = new ScreenInterface(messageClient);
     }
 
