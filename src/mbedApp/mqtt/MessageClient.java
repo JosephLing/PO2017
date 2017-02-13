@@ -62,11 +62,11 @@ public class MessageClient {
     /**
      * Send a message to the MQTT broker (and therefore all connected clients on the same topic)
      */
-    public void send(String topic, String content) {
+    public void send(String content) {
         try {
-            MqttMessage message = new MqttMessage(content).getBytes());
+            MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(config.getQos());
-            client.publish(config.getTopic() + topic, message);
+            client.publish(config.getTopic() + "["+clientType+"]", message);
         } catch(MqttException exception) {
             ProjectLogger.Log("["+clientType+"] Exception encountered when trying to send message");
             exception.printStackTrace();

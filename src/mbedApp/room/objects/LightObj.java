@@ -1,8 +1,9 @@
 package mbedApp.room.objects;
 
 import mbedApp.devices.Light;
+import mbedApp.room.Canvas;
 
-import java.awt.*;
+import java.awt.Graphics;
 
 /**
  * Light does.............
