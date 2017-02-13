@@ -31,7 +31,7 @@ public class MessageClient {
     public MessageClient(ClientType clientType)  {
         // Get our configuration options
         config = new MqttConfigReader();
-        clientTopic = config.getTopic() + "/" + clientType + "/";
+        clientTopic = config.getTopic();
         MemoryPersistence memoryPersistence = new MemoryPersistence();
         try {
             ProjectLogger.Log("["+clientType+"] Qos var: " + config.getQos());

@@ -1,6 +1,7 @@
 package mbedApp.mbed;
 
 import mbedApp.ProjectLogger;
+import mbedApp.devices.Light;
 import mbedApp.mqtt.ClientType;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import shed.mbed.ButtonListener;
@@ -9,6 +10,8 @@ import shed.mbed.PotentiometerListener;
 import shed.mbed.MBed;
 import shed.mbed.MBedUtils;
 import mbedApp.mqtt.MessageClient;
+
+import java.util.ArrayList;
 
 /**
  * HomeAutomator does.............
@@ -48,23 +51,34 @@ public class HomeAutomator {
 //        genMBed();
         messageClient = new MessageClient(ClientType.MBED);
 
-        messageClient.advanceSubscribe("cat", (String topic, String name, String[][]args)->{
-
+        ArrayList<Light> lights = new ArrayList<Light>();
+        messageClient.advanceSubscribe("devices_set", (String topic, String name, String[][]args) -> {
+            if (name.contains("Light")){
+                if (args[0][0].equals("state")){
+                    lights.add(new Light(Boolean.parseBoolean(args[0][1]), name));
+                    System.out.println(name);
+                }
+            }
         });
-        messageClient.send("testing all the things}", "cat");
-        messageClient.send("{testing all the things", "cat");
-        messageClient.send("{name}", "cat");
-        messageClient.send("{name:}", "cat");
-        messageClient.send("{name:arg1}", "cat");
-        messageClient.send("{testname:arg1=va1}", "cat");
-        messageClient.send("{testname:arg1=va1,arg2=va2}", "cat");
+        messageClient.send("{start:devices=true}", "devices_register");
 
-//        messageClient = new MessageClient(ClientType.MBED);
-//        messageClient.subscribe("cat", (String topic, MqttMessage message)->{
-//            System.out.println("Response: " + new String(message.getPayload()));
-//        });
-//        messageClient.send("cat", "cat");
-        //        screenInterface = new ScreenInterface(messageClient);
+        messageClient.advanceSubscribe("device_register", (String topic, String name, String[][]args) -> {
+            if (name.contains("start")){
+                if (args[0][0].equals("devices")){
+                    if (Boolean.parseBoolean(args[0][1])){
+                        messageClient.send("{Light1:state=false}","devices_change");
+                    }
+                }
+            }
+        });
+
+        while (true){
+            System.out.println(lights.size());
+            sleep(1000);
+        }
+
+
+//        screenInterface = new ScreenInterface(messageClient);
     }
 
     /**
@@ -84,5 +98,18 @@ public class HomeAutomator {
             // Nothing we can do.
         }
 
+    }
+
+    public void test(){
+        messageClient.advanceSubscribe("cat", (String topic, String name, String[][]args)->{
+
+        });
+        messageClient.send("testing all the things}", "cat");
+        messageClient.send("{testing all the things", "cat");
+        messageClient.send("{name}", "cat");
+        messageClient.send("{name:}", "cat");
+        messageClient.send("{name:arg1}", "cat");
+        messageClient.send("{testname:arg1=va1}", "cat");
+        messageClient.send("{testname:arg1=va1,arg2=va2}", "cat");
     }
 }

@@ -29,5 +29,18 @@ public class Light {
     public void toggle(){
         state = !state;
     }
+
+    public void setState(boolean state){
+        this.state = state;
+    }
+
+
+    /**
+     * gets the name
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
 }
 

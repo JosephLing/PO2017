@@ -29,6 +29,7 @@ public class Main {
 
     public static void currentlyTesting(){
         createRoomApp();
+        createMbedApp();
     }
 
     public static void createRoomApp(){

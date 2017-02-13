@@ -6,10 +6,13 @@ import mbedApp.mqtt.MessageClient;
 import mbedApp.room.objects.InterfaceScreenObject;
 import mbedApp.room.objects.LightObj;
 import mbedApp.devices.Light;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * RoomFrame does.............
@@ -24,13 +27,15 @@ public class RoomFrame extends JFrame {
     private Canvas canvas;
     private MessageClient messageClient;
 
+    private HashMap<String, LightObj> lights;
+
     public RoomFrame() {
         messageClient = new MessageClient(ClientType.ROOM);
         renderList = new ArrayList<InterfaceScreenObject>();
         renderList.add(new LightObj("asdf"));
 
         init_Jframe();
-        init_objects();
+        registerLights();
         setVisible(true);
     }
 
@@ -75,12 +80,51 @@ public class RoomFrame extends JFrame {
         canvas.draw(this, Color.red, new Ellipse2D.Double(250, 250, 50, 50));
     }
 
-    public void init_objects(){
-        LightObj[] lights = new LightObj[10];
-        for (int i = 0; i < lights.length; i++) {
-            lights[i] = new LightObj("Light"+i);
-            registerDevice(lights[i]);
+    public void registerLights(){
+
+        lights = new HashMap<String, LightObj>();
+        for (int i = 0; i < 10; i++) {
+            lights.put("Light"+i, new LightObj("Light"+i));
+            registerDevice(lights.get("Light"+i));
         }
+
+        // receives: topic=devices_register  {start:devices=true}
+        // sends: topic=devices_set {light1:state=false}
+        messageClient.advanceSubscribe("devices_register", (String topic, String name, String[][]args)->{
+            if (name.contains("start")){
+                if (args.length == 1){
+                    if (args[0][0].equals("devices")){
+                        if (Boolean.parseBoolean(args[0][1])){
+                            System.out.println("starting devices registration");
+
+                            lights.keySet().forEach(s -> {System.out.println(s);
+                                messageClient.send("{"+s+":state="+Boolean.toString(lights.get(s).isOn())+"}", "devices_set");});
+                            try {
+                                wait(5000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            messageClient.send("{finish:devices=true}", "devices_register");
+                        }
+                    }
+                }
+            }
+        });
+
+        // receives: topic=devices_change {light1:state=false}
+        // response: alters lights hash map to the new change
+        messageClient.advanceSubscribe("devices_change", (String topic, String name, String[][]args)->{
+            if (name.contains("Light")){
+                if (args.length == 1){
+                    if (args[0][0].equals("state")){
+                        lights.get(name).setState(Boolean.parseBoolean(args[0][1]));
+                        lights.get(name).update(canvas);
+                    }
+                }
+            }
+        });
+
+
     }
 
 
