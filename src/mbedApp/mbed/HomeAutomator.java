@@ -49,7 +49,7 @@ public class HomeAutomator {
      */
     public HomeAutomator() {
 //        genMBed();
-        messageClient = new MessageClient(ClientType.MBED);
+        messageClient = new MessageClient();
 
         ArrayList<Light> lights = new ArrayList<Light>();
         messageClient.advanceSubscribe("devices_set", (String topic, String name, String[][]args) -> {

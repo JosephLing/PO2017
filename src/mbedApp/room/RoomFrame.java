@@ -30,7 +30,7 @@ public class RoomFrame extends JFrame {
     private HashMap<String, LightObj> lights;
 
     public RoomFrame() {
-        messageClient = new MessageClient(ClientType.ROOM);
+        messageClient = new MessageClient();
         renderList = new ArrayList<InterfaceScreenObject>();
         renderList.add(new LightObj("asdf"));
 
