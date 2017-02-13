@@ -97,14 +97,22 @@ public class RoomFrame extends JFrame {
                         if (Boolean.parseBoolean(args[0][1])){
                             System.out.println("starting devices registration");
 
-                            lights.keySet().forEach(s -> {System.out.println(s);
-                                messageClient.send("{"+s+":state="+Boolean.toString(lights.get(s).isOn())+"}", "devices_set");});
+                            lights.keySet().forEach(s ->
+                            {
+                                System.out.println(s);
+                                messageClient.send("devices_set", "{"+s+":state="+Boolean.toString(lights.get(s).isOn())+"}");
+                                try {
+                                    this.wait(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            });
                             try {
-                                wait(5000);
+                                wait(1000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            messageClient.send("{finish:devices=true}", "devices_register");
+                            messageClient.send("devices_register", "{finish:devices=true}");
                         }
                     }
                 }

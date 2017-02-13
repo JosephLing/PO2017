@@ -45,10 +45,11 @@ public class HomeAutomator {
     private MessageClient messageClient;
     /**
      * Creates the Mbed controller and creates the main menu when
-     * loaded. Starts of with generating an mqtt client to access the data.
+     * loaded. Starts of with generating a messaging client to access the data.
      */
     public HomeAutomator() {
-//        genMBed();
+        //        genMBed();
+
         messageClient = new MessageClient();
 
         ArrayList<Light> lights = new ArrayList<Light>();
@@ -57,26 +58,26 @@ public class HomeAutomator {
                 if (args[0][0].equals("state")){
                     lights.add(new Light(Boolean.parseBoolean(args[0][1]), name));
                     System.out.println(name);
+                    System.out.println(lights.size());
                 }
             }
         });
-        messageClient.send("{start:devices=true}", "devices_register");
+        messageClient.send("devices_register", "{start:devices=true}");
 
         messageClient.advanceSubscribe("device_register", (String topic, String name, String[][]args) -> {
             if (name.contains("start")){
                 if (args[0][0].equals("devices")){
                     if (Boolean.parseBoolean(args[0][1])){
-                        messageClient.send("{Light1:state=false}","devices_change");
+                        messageClient.send("devices_change", "{Light1:state=false}");
                     }
                 }
             }
         });
 
-        while (true){
-            System.out.println(lights.size());
-            sleep(1000);
-        }
-
+//        while (true){
+//            System.out.println(lights.size());
+//            sleep(1000);
+//        }
 
 //        screenInterface = new ScreenInterface(messageClient);
     }

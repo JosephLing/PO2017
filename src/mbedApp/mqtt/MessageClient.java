@@ -23,15 +23,13 @@ public class MessageClient {
 
     private MqttConfigReader config;
     private MqttClient client;
-    private String clientTopic;
     /**
      * Initialise a new MessageClient by connecting to the broker and setting up required variables.
      * Note: This will exit the whole program if a connection cannot be made to the broker.
      */
-    public MessageClient()  {
+    public MessageClient() {
         // Get our configuration options
         config = new MqttConfigReader();
-        clientTopic = config.getTopic();
         MemoryPersistence memoryPersistence = new MemoryPersistence();
         try {
             ProjectLogger.Log("Connecting to " + config.getBroker() + " with ID " + config.getClientId());
@@ -59,7 +57,7 @@ public class MessageClient {
      */
     public void subscribe(String topic, IMqttMessageListener listener){
         try {
-            client.subscribe(clientTopic+"/"+topic, config.getQos(), listener);
+            client.subscribe(config.getTopic() + "/" + topic, config.getQos(), listener);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -72,7 +70,7 @@ public class MessageClient {
      */
     public void advanceSubscribe(String topic, InterfaceAdvMsg listener){
         try {
-            client.subscribe(clientTopic+"/"+topic, config.getQos(),
+            client.subscribe(config.getTopic() + "/" + topic, config.getQos(),
                     (String msgTopic, MqttMessage message)->{
                         // {name:state=true,other=1}
                         final String topic_final = msgTopic;
@@ -93,10 +91,7 @@ public class MessageClient {
                                        }
                                     }
                                     listener.getMsg(topic_final, name, test);
-//                                    System.out.println("parsed successfully: " + msgTopic + " " + test.length);
                                 }
-
-
                             }else{
                                 throw new MqttExceptionParsingData("Syntax error: no '}' found at the end of " + msgTopic);
                             }
@@ -115,10 +110,10 @@ public class MessageClient {
      * @param topic The topic to send the message to (added to the base topic)
      * @param content The content of the message you want to send
      */
-    public void send(String content, String topic) {
+    public void send(String topic, String content) {
         ProjectLogger.Log("sending message: " + content + " to " + config.getTopic() + "/" + topic);
         try {
-            client.publish(clientTopic+"/"+topic, content.getBytes(), 0, false);
+            client.publish(config.getTopic()+"/"+topic, content.getBytes(), 0, false);
         } catch(MqttException exception) {
             ProjectLogger.Log("MQTT Client: Exception encountered when trying to send message");
             exception.printStackTrace();
