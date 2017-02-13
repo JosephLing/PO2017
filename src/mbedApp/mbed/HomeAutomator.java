@@ -1,6 +1,7 @@
 package mbedApp.mbed;
 
 import mbedApp.ProjectLogger;
+import mbedApp.mqtt.ClientType;
 import shed.mbed.ButtonListener;
 import shed.mbed.Potentiometer;
 import shed.mbed.PotentiometerListener;
@@ -44,7 +45,7 @@ public class HomeAutomator {
      */
     public HomeAutomator() {
         genMBed();
-        messageClient = new MessageClient();
+        messageClient = new MessageClient(ClientType.MBED);
         screenInterface = new ScreenInterface(messageClient);
         dimmer();
     }

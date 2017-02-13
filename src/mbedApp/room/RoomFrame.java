@@ -1,6 +1,8 @@
 package mbedApp.room;
 
 import mbedApp.ProjectLogger;
+import mbedApp.mqtt.ClientType;
+import mbedApp.mqtt.MessageClient;
 import mbedApp.room.objects.InterfaceScreenObject;
 import mbedApp.room.objects.LightObj;
 
@@ -20,8 +22,10 @@ public class RoomFrame extends JFrame {
     private ArrayList<InterfaceScreenObject> renderList;
 
     private Canvas canvas;
+    private MessageClient messageClient;
 
     public RoomFrame() {
+        messageClient = new MessageClient(ClientType.ROOM);
         renderList = new ArrayList<InterfaceScreenObject>();
         renderList.add(new LightObj("asdf"));
 
@@ -42,12 +46,20 @@ public class RoomFrame extends JFrame {
         setContentPane(canvas.getCanvas());
         pack();
         canvas.setVisible(true);
+
+
+//        addWindowListener(new WindowAdapter()
+//        {
+//            public void windowClosing(WindowEvent e)
+//            {
+//                System.out.println("asf");
+//            }
+//        });
+
     }
 
     private void init_Canvas(){
         canvas.draw(this, Color.red, new Ellipse2D.Double(250, 250, 50, 50));
     }
-
-
 
 }
