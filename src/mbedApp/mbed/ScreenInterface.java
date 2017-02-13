@@ -27,7 +27,7 @@ public class ScreenInterface
     }
 
     private void mainMenu(){
-
+        this.messageClient.send("hello", "world");
         String[] itemNames = {"lights", "temprature", "Settings", "Credits", "Quit"};
 
         InterfaceUI[] itemCmds = {
@@ -60,10 +60,10 @@ public class ScreenInterface
     };
 
     private InterfaceUI Lights = () -> {
-        lightsMainMenu = new LightsMainMenu(messageClient.getLights());
-        lightsMainMenu.enableControls();
-        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
-        lightsMainMenu.update();
+//        lightsMainMenu = new LightsMainMenu(messageClient.getLights());
+//        lightsMainMenu.enableControls();
+//        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
+//        lightsMainMenu.update();
 
     };
 

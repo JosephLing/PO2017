@@ -1,6 +1,8 @@
 package mbedApp.mbed;
 
 import mbedApp.ProjectLogger;
+import mbedApp.mqtt.ClientType;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import shed.mbed.ButtonListener;
 import shed.mbed.Potentiometer;
 import shed.mbed.PotentiometerListener;
@@ -43,10 +45,26 @@ public class HomeAutomator {
      * loaded. Starts of with generating an mqtt client to access the data.
      */
     public HomeAutomator() {
-        genMBed();
-        messageClient = new MessageClient();
-        screenInterface = new ScreenInterface(messageClient);
-        dimmer();
+//        genMBed();
+        messageClient = new MessageClient(ClientType.MBED);
+
+        messageClient.advanceSubscribe("cat", (String topic, String name, String[][]args)->{
+
+        });
+        messageClient.send("testing all the things}", "cat");
+        messageClient.send("{testing all the things", "cat");
+        messageClient.send("{name}", "cat");
+        messageClient.send("{name:}", "cat");
+        messageClient.send("{name:arg1}", "cat");
+        messageClient.send("{testname:arg1=va1}", "cat");
+        messageClient.send("{testname:arg1=va1,arg2=va2}", "cat");
+
+//        messageClient = new MessageClient(ClientType.MBED);
+//        messageClient.subscribe("cat", (String topic, MqttMessage message)->{
+//            System.out.println("Response: " + new String(message.getPayload()));
+//        });
+//        messageClient.send("cat", "cat");
+        //        screenInterface = new ScreenInterface(messageClient);
     }
 
     /**
@@ -57,23 +75,7 @@ public class HomeAutomator {
         return messageClient;
     }
 
-    /**
-     * Every time a potentiometer changes send the value using the Messaging
-     * Client
-     */
-    private PotentiometerListener pot  = (value) -> {
-        messageClient.send(Double.toString(value));
-    };
-    
-    /**
-     * Act as a dimmer switch for the lights - constantly check the status of
-     * the potentiometers and change the brightness of the lights based on this
-     */
-    private void dimmer() {
-        mbed.getPotentiometer1().addListener(pot);
-    }
 
-    
     public static void sleep(long millis){
         try {
             Thread.sleep(millis);
