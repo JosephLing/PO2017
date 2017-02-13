@@ -23,19 +23,16 @@ public class MessageClient {
 
     private MqttConfigReader config;
     private MqttClient client;
-    private String clientTopic;
     /**
      * Initialise a new MessageClient by connecting to the broker and setting up required variables.
      * Note: This will exit the whole program if a connection cannot be made to the broker.
      */
-    public MessageClient(ClientType clientType)  {
+    public MessageClient() {
         // Get our configuration options
         config = new MqttConfigReader();
-        clientTopic = config.getTopic() + "/" + clientType + "/";
         MemoryPersistence memoryPersistence = new MemoryPersistence();
         try {
-            ProjectLogger.Log("["+clientType+"] Qos var: " + config.getQos());
-
+            ProjectLogger.Log("Connecting to " + config.getBroker() + " with ID " + config.getClientId());
             // Set up our MQTT client
             client = new MqttClient(config.getBroker(), config.getClientId(), memoryPersistence);
             MqttConnectOptions clientConnectionOptions = new MqttConnectOptions();
@@ -45,11 +42,11 @@ public class MessageClient {
             client.connect(clientConnectionOptions);
 
         } catch(MqttException exception) {
-            ProjectLogger.Log("["+clientTopic+"] Exception encountered when trying to connect to broker");
+            ProjectLogger.Log("MQTT Client: Exception encountered when trying to connect to broker");
             exception.printStackTrace();
             System.exit(0);
         }
-        ProjectLogger.Log("["+clientTopic+"] connected to MQTT successfully");
+        ProjectLogger.Log("MQTT Client: connected to broker successfully");
     }
 
     /**
@@ -59,7 +56,7 @@ public class MessageClient {
      */
     public void subscribe(String topic, IMqttMessageListener listener){
         try {
-            client.subscribe(clientTopic+topic, config.getQos(), listener);
+            client.subscribe(config.getTopic() + "/" + topic, config.getQos(), listener);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -72,7 +69,7 @@ public class MessageClient {
      */
     public void advanceSubscribe(String topic, InterfaceAdvMsg listener){
         try {
-            client.subscribe(clientTopic+topic, config.getQos(),
+            client.subscribe(config.getTopic() + "/" + topic, config.getQos(),
                     (String msgTopic, MqttMessage message)->{
                         // {name:state=true,other=1}
                         final String topic_final = msgTopic;
@@ -93,7 +90,7 @@ public class MessageClient {
                                        }
                                     }
                                     listener.getMsg(topic_final, name, test);
-//                                    System.out.println("parsed successfully: " + msgTopic + " " + test.length);
+                                    //System.out.println("parsed successfully: " + msgTopic + " " + test.length);
                                 }
 
 
@@ -112,25 +109,15 @@ public class MessageClient {
 
     /**
      * Send a message to the MQTT broker (and therefore all connected clients on the same topic)
+     * @param topic The topic to send the message to (added to the base topic)
+     * @param content The content of the message you want to send
      */
-    public void send(String content) {
+    public void send(String topic, String content) {
+        ProjectLogger.Log("sending message: " + content + " to " + config.getTopic() + "/" + topic);
         try {
-            client.publish(clientTopic, content.getBytes(), 0, false);
+            client.publish(config.getTopic() + "/" + topic, content.getBytes(), config.getQos(), false);
         } catch(MqttException exception) {
-            ProjectLogger.Log("["+clientTopic+"] Exception encountered when trying to send message");
-            exception.printStackTrace();
-        }
-    }
-
-    /**
-     * Send a message to the MQTT broker (and therefore all connected clients on the same topic)
-     */
-    public void send(String content, String topic) {
-        ProjectLogger.Log("sending: " + clientTopic+topic + " msg: " + content);
-        try {
-            client.publish(clientTopic+topic, content.getBytes(), 0, false);
-        } catch(MqttException exception) {
-            ProjectLogger.Log("["+clientTopic+"] Exception encountered when trying to send message");
+            ProjectLogger.Log("MQTT Client: Exception encountered when trying to send message");
             exception.printStackTrace();
         }
     }
@@ -139,11 +126,11 @@ public class MessageClient {
      * Disconnect from the broker.
      */
     public void disconnect() {
-        ProjectLogger.Log("["+clientTopic+"] disconnecting Mqtt connection");
+        ProjectLogger.Log("MQTT Client: disconnecting from broker");
         try {
             client.disconnect();
         } catch(MqttException exception) {
-            ProjectLogger.Log("["+clientTopic+"] Exception encountered when trying to disconnect");
+            ProjectLogger.Log("MQTT Client: Exception encountered when trying to disconnect");
             exception.printStackTrace();
         }
     }

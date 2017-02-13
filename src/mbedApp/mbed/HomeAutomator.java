@@ -42,28 +42,29 @@ public class HomeAutomator {
     private MessageClient messageClient;
     /**
      * Creates the Mbed controller and creates the main menu when
-     * loaded. Starts of with generating an mqtt client to access the data.
+     * loaded. Starts of with generating a messaging client to access the data.
      */
     public HomeAutomator() {
-//        genMBed();
-        messageClient = new MessageClient(ClientType.MBED);
+        //        genMBed();
+        messageClient = new MessageClient();
 
         messageClient.advanceSubscribe("cat", (String topic, String name, String[][]args)->{
 
         });
-        messageClient.send("testing all the things}", "cat");
-        messageClient.send("{testing all the things", "cat");
-        messageClient.send("{name}", "cat");
-        messageClient.send("{name:}", "cat");
-        messageClient.send("{name:arg1}", "cat");
-        messageClient.send("{testname:arg1=va1}", "cat");
-        messageClient.send("{testname:arg1=va1,arg2=va2}", "cat");
+        
+        messageClient.send("cat", "testing all the things}");
+        messageClient.send("cat", "{testing all the things");
+        messageClient.send("cat", "{name}");
+        messageClient.send("cat", "{name:}");
+        messageClient.send("cat", "{name:arg1}");
+        messageClient.send("cat", "{testname:arg1=va1}");
+        messageClient.send("cat", "{testname:arg1=va1,arg2=va2}");
 
-//        messageClient = new MessageClient(ClientType.MBED);
-//        messageClient.subscribe("cat", (String topic, MqttMessage message)->{
-//            System.out.println("Response: " + new String(message.getPayload()));
-//        });
-//        messageClient.send("cat", "cat");
+        //        messageClient = new MessageClient(ClientType.MBED);
+        //        messageClient.subscribe("cat", (String topic, MqttMessage message)->{
+        //            System.out.println("Response: " + new String(message.getPayload()));
+        //        });
+        //        messageClient.send("cat", "cat");
         //        screenInterface = new ScreenInterface(messageClient);
     }
 
