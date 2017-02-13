@@ -2,12 +2,12 @@ package mbedApp.mqtt;
 
 import mbedApp.devices.Light;
 import mbedApp.ProjectLogger;
+
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Random;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -20,19 +20,17 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
  */
 public class MessageClient {
 
-    private Light[] lights;
     private MqttConfigReader config;
-    private boolean connected;
     private MqttClient client;
-    private ClientType clientType;
-    
+    private String clientTopic;
     /**
      * Initialise a new MessageClient by connecting to the broker and setting up required variables.
      * Note: This will exit the whole program if a connection cannot be made to the broker.
      */
-    public MessageClient(ClientType clientType) {
+    public MessageClient(ClientType clientType)  {
         // Get our configuration options
         config = new MqttConfigReader();
+        clientTopic = config.getTopic() + "/" + clientType + "/";
         MemoryPersistence memoryPersistence = new MemoryPersistence();
         try {
             ProjectLogger.Log("["+clientType+"] Qos var: " + config.getQos());
@@ -46,39 +44,69 @@ public class MessageClient {
             client.connect(clientConnectionOptions);
 
         } catch(MqttException exception) {
-            ProjectLogger.Log("["+clientType+"] Exception encountered when trying to connect to broker");
+            ProjectLogger.Log("["+clientTopic+"] Exception encountered when trying to connect to broker");
             exception.printStackTrace();
             System.exit(0);
         }
-        ProjectLogger.Log("["+clientType+"] connected to MQTT successfully");
-        connected = true;
+        ProjectLogger.Log("["+clientTopic+"] connected to MQTT successfully");
     }
-    
+
+    /**
+     * Subscribes to a topic and then applies to listener to the topic.
+     * @param topic string added to config.getTopic();
+     * @param listener IMqqtMessageListener
+     */
+    public void subscribe(String topic, IMqttMessageListener listener){
+        try {
+            client.subscribe(clientTopic+topic, config.getQos(), listener);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Subscribes to a topic and then applies to listener to the topic.
+     * @param topic string added to config.getTopic();
+     * @param listener IMqqtMessageListener
+     */
+    public void advanceSubscribe(String topic, InterfaceAdvMsg listener){
+        try {
+            client.subscribe(clientTopic+topic,
+                    config.getQos(),
+                    (String msgTopic, MqttMessage message)->{
+                        // do fancy stuff
+                        // put msg into the string[] array
+                        listener.getMsg(msgTopic, new String[1]);
+                    }
+                    );
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Send a message to the MQTT broker (and therefore all connected clients on the same topic)
      */
-    public void send(String topic, String content) {
+    public void send(String content) {
         try {
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(config.getQos());
-            client.publish(config.getTopic() + topic, message);
+            client.publish(clientTopic, message);
         } catch(MqttException exception) {
-            ProjectLogger.Log("["+clientType+"] Exception encountered when trying to send message");
+            ProjectLogger.Log("["+clientTopic+"] Exception encountered when trying to send message");
             exception.printStackTrace();
         }
     }
-    
-    
-    
+
     /**
      * Disconnect from the broker.
      */
     public void disconnect() {
-        ProjectLogger.Log("["+clientType+"] disconnecting Mqtt connection");
+        ProjectLogger.Log("["+clientTopic+"] disconnecting Mqtt connection");
         try {
             client.disconnect();
         } catch(MqttException exception) {
-            ProjectLogger.Log("["+clientType+"] Exception encountered when trying to disconnect");
+            ProjectLogger.Log("["+clientTopic+"] Exception encountered when trying to disconnect");
             exception.printStackTrace();
         }
     }

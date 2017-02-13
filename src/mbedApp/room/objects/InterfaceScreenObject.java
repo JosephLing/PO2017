@@ -1,6 +1,8 @@
 package mbedApp.room.objects;
 
-import java.awt.*;
+import mbedApp.room.Canvas;
+
+import java.awt.Graphics;
 
 /**
  * Created by josephling on 12/02/2017.
