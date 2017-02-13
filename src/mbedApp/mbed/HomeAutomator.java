@@ -2,6 +2,7 @@ package mbedApp.mbed;
 
 import mbedApp.ProjectLogger;
 import mbedApp.mqtt.ClientType;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import shed.mbed.ButtonListener;
 import shed.mbed.Potentiometer;
 import shed.mbed.PotentiometerListener;
@@ -46,8 +47,11 @@ public class HomeAutomator {
     public HomeAutomator() {
         genMBed();
         messageClient = new MessageClient(ClientType.MBED);
-        screenInterface = new ScreenInterface(messageClient);
-        dimmer();
+        messageClient.subscribe("cat", (String topic, MqttMessage message)->{
+            System.out.println("Response: " + new String(message.getPayload()));
+        });
+        messageClient.send("{testing all the things}", "cat");
+//        screenInterface = new ScreenInterface(messageClient);
     }
 
     /**
@@ -58,23 +62,7 @@ public class HomeAutomator {
         return messageClient;
     }
 
-    /**
-     * Every time a potentiometer changes send the value using the Messaging
-     * Client
-     */
-    private PotentiometerListener pot  = (value) -> {
-        messageClient.send(Double.toString(value));
-    };
-    
-    /**
-     * Act as a dimmer switch for the lights - constantly check the status of
-     * the potentiometers and change the brightness of the lights based on this
-     */
-    private void dimmer() {
-        mbed.getPotentiometer1().addListener(pot);
-    }
 
-    
     public static void sleep(long millis){
         try {
             Thread.sleep(millis);
