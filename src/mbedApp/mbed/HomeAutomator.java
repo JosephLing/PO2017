@@ -50,8 +50,8 @@ public class HomeAutomator {
         messageClient.subscribe("cat", (String topic, MqttMessage message)->{
             System.out.println("Response: " + new String(message.getPayload()));
         });
-        messageClient.send("{testing all the things}", "cat");
-//        screenInterface = new ScreenInterface(messageClient);
+        messageClient.send("cat", "cat");
+        //        screenInterface = new ScreenInterface(messageClient);
     }
 
     /**

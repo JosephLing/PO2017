@@ -27,7 +27,7 @@ public class ScreenInterface
     }
 
     private void mainMenu(){
-        this.messageClient.send("hello world");
+        this.messageClient.send("hello", "world");
         String[] itemNames = {"lights", "temprature", "Settings", "Credits", "Quit"};
 
         InterfaceUI[] itemCmds = {
