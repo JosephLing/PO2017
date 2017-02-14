@@ -1,5 +1,6 @@
 package mbedApp.mbed;
 
+import mbedApp.mqtt.MQTT_TOPIC;
 import shed.mbed.ButtonListener;
 import mbedApp.mqtt.MessageClient;
 import mbedApp.ProjectLogger;
@@ -27,7 +28,7 @@ public class ScreenInterface
     }
 
     private void mainMenu(){
-        this.messageClient.send("hello", "world");
+        this.messageClient.send(MQTT_TOPIC.CAT, "world");
         String[] itemNames = {"lights", "temprature", "Settings", "Credits", "Quit"};
 
         InterfaceUI[] itemCmds = {

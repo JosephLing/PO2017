@@ -68,9 +68,9 @@ public class MessageClient {
      * @param topic string added to config.getTopic();
      * @param listener IMqqtMessageListener
      */
-    public void advanceSubscribe(String topic, InterfaceAdvMsg listener){
+    public void advanceSubscribe(MQTT_TOPIC topic, InterfaceAdvMsg listener){
         try {
-            client.subscribe(config.getTopic() + "/" + topic, config.getQos(),
+            client.subscribe(config.getTopic() + "/" + topic.toString(), config.getQos(),
                     (String msgTopic, MqttMessage message)->{
                         // {name:state=true,other=1}
                         final String topic_final = msgTopic;
@@ -110,7 +110,7 @@ public class MessageClient {
      * @param topic The topic to send the message to (added to the base topic)
      * @param content The content of the message you want to send
      */
-    public void send(String topic, String content) {
+    public void send(MQTT_TOPIC topic, String content) {
         ProjectLogger.Log("sending message: " + content + " to " + config.getTopic() + "/" + topic);
         try {
             client.publish(config.getTopic()+"/"+topic, content.getBytes(), 0, false);

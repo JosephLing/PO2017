@@ -1,7 +1,7 @@
 package mbedApp.room;
 
 import mbedApp.ProjectLogger;
-import mbedApp.mqtt.ClientType;
+import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
 import mbedApp.room.objects.InterfaceScreenObject;
 import mbedApp.room.objects.LightObj;
@@ -90,45 +90,58 @@ public class RoomFrame extends JFrame {
 
         // receives: topic=devices_register  {start:devices=true}
         // sends: topic=devices_set {light1:state=false}
-        messageClient.advanceSubscribe("devices_register", (String topic, String name, String[][]args)->{
+        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER, (String topic, String name, String[][]args)->{
             if (name.contains("start")){
                 if (args.length == 1){
                     if (args[0][0].equals("devices")){
                         if (Boolean.parseBoolean(args[0][1])){
                             System.out.println("starting devices registration");
 
-                            lights.keySet().forEach(s ->
-                            {
-                                System.out.println(s);
-                                messageClient.send("devices_set", "{"+s+":state="+Boolean.toString(lights.get(s).isOn())+"}");
+                            final Object[] keys = lights.keySet().toArray();
+                            for (int i = 0; i < lights.keySet().size(); i++) {
+                                System.out.println("a");
+                                messageClient.send(MQTT_TOPIC.DEVICE_SET, "{"+keys[i].toString()+":state="+Boolean.toString(lights.get(keys[i].toString()).isOn())+"}");
+                                System.out.println("b");
                                 try {
-                                    this.wait(1000);
+                                    wait(1000);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                            });
-                            try {
-                                wait(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+
+//                                System.out.println(lights.get(keys[i].toString()).getName());
                             }
-                            messageClient.send("devices_register", "{finish:devices=true}");
+
+                            messageClient.send(MQTT_TOPIC.DEVICE_REGISTER, "{finish:devices=true}");
+                        }else{
+                            System.out.println("device=false");
                         }
+                    }else{
+                        System.err.println("invalid para");
                     }
+                }else{
+                    System.err.println("args size incorrect");
                 }
+            }else{
+                System.out.println("could not find start");
             }
         });
 
         // receives: topic=devices_change {light1:state=false}
         // response: alters lights hash map to the new change
-        messageClient.advanceSubscribe("devices_change", (String topic, String name, String[][]args)->{
+        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE, (String topic, String name, String[][]args)->{
             if (name.contains("Light")){
                 if (args.length == 1){
                     if (args[0][0].equals("state")){
                         lights.get(name).setState(Boolean.parseBoolean(args[0][1]));
                         lights.get(name).update(canvas);
+                    }else{
+                        System.err.println("Could not find state");
                     }
+                }else{
+                    System.err.println("args wrong length");
                 }
+            }else{
+                System.err.println("wrong name");
             }
         });
 

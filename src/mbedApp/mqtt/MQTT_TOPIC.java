@@ -6,9 +6,11 @@ package mbedApp.mqtt;
  *
  * Created by josephling on 13/02/2017.
  */
-public enum ClientType {
-    MBED,
-    ROOM;
+public enum MQTT_TOPIC {
+    DEVICE_REGISTER,
+    DEVICE_SET,
+    DEVICE_CHANGE,
+    CAT;
 
 
     @Override

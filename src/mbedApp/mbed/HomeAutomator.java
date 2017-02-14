@@ -2,7 +2,7 @@ package mbedApp.mbed;
 
 import mbedApp.ProjectLogger;
 import mbedApp.devices.Light;
-import mbedApp.mqtt.ClientType;
+import mbedApp.mqtt.MQTT_TOPIC;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import shed.mbed.ButtonListener;
 import shed.mbed.Potentiometer;
@@ -53,22 +53,26 @@ public class HomeAutomator {
         messageClient = new MessageClient();
 
         ArrayList<Light> lights = new ArrayList<Light>();
-        messageClient.advanceSubscribe("devices_set", (String topic, String name, String[][]args) -> {
+        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET, (String topic, String name, String[][]args) -> {
             if (name.contains("Light")){
                 if (args[0][0].equals("state")){
                     lights.add(new Light(Boolean.parseBoolean(args[0][1]), name));
                     System.out.println(name);
                     System.out.println(lights.size());
+                }else{
+                    System.out.println("invalid args");
                 }
+            }else{
+                System.out.println("Looking for Lights none found");
             }
         });
-        messageClient.send("devices_register", "{start:devices=true}");
+        messageClient.send(MQTT_TOPIC.DEVICE_REGISTER, "{start:devices=true}");
 
-        messageClient.advanceSubscribe("device_register", (String topic, String name, String[][]args) -> {
+        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER, (String topic, String name, String[][]args) -> {
             if (name.contains("start")){
                 if (args[0][0].equals("devices")){
                     if (Boolean.parseBoolean(args[0][1])){
-                        messageClient.send("devices_change", "{Light1:state=false}");
+                        messageClient.send(MQTT_TOPIC.DEVICE_CHANGE, "{Light1:state=false}");
                     }
                 }
             }
@@ -102,15 +106,15 @@ public class HomeAutomator {
     }
 
     public void test(){
-        messageClient.advanceSubscribe("cat", (String topic, String name, String[][]args)->{
-
-        });
-        messageClient.send("testing all the things}", "cat");
-        messageClient.send("{testing all the things", "cat");
-        messageClient.send("{name}", "cat");
-        messageClient.send("{name:}", "cat");
-        messageClient.send("{name:arg1}", "cat");
-        messageClient.send("{testname:arg1=va1}", "cat");
-        messageClient.send("{testname:arg1=va1,arg2=va2}", "cat");
+//        messageClient.advanceSubscribe(MQTT_TOPIC.CAT, (String topic, String name, String[][]args)->{
+//
+//        });
+//        messageClient.send("testing all the things}", "cat");
+//        messageClient.send("{testing all the things", "cat");
+//        messageClient.send("{name}", "cat");
+//        messageClient.send("{name:}", "cat");
+//        messageClient.send("{name:arg1}", "cat");
+//        messageClient.send("{testname:arg1=va1}", "cat");
+//        messageClient.send("{testname:arg1=va1,arg2=va2}", "cat");
     }
 }
