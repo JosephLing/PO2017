@@ -2,7 +2,7 @@ package mbedApp.devices;
 
 
 /**
- * Light does.............
+ * Device base class
  *
  * @author josephling
  * @version 1.0 10/02/2017
@@ -28,6 +28,14 @@ public class Device {
 
     public void toggle(){
         state = !state;
+    }
+    
+    /**
+     * gets the name
+     * @return name
+     */
+    public String getName() {
+        return name;
     }
 }
 

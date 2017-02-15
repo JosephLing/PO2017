@@ -2,6 +2,7 @@ package mbedApp.mbed;
 
 import mbedApp.ProjectLogger;
 import mbedApp.devices.Light;
+import mbedApp.devices.Device;
 import mbedApp.mqtt.MQTT_TOPIC;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import shed.mbed.ButtonListener;
@@ -43,22 +44,25 @@ public class HomeAutomator {
 
     private ScreenInterface screenInterface;
     private MessageClient messageClient;
+    private ArrayList<Device> devices;
+    
     /**
      * Creates the Mbed controller and creates the main menu when
      * loaded. Starts of with generating a messaging client to access the data.
      */
     public HomeAutomator() {
-        //        genMBed();
+        genMBed();
 
         messageClient = new MessageClient();
 
-        ArrayList<Light> lights = new ArrayList<Light>();
+        devices = new ArrayList<>();
+        
         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET, (String topic, String name, String[][]args) -> {
             if (name.contains("Light")){
                 if (args[0][0].equals("state")){
-                    lights.add(new Light(Boolean.parseBoolean(args[0][1]), name));
+                    devices.add(new Light(Boolean.parseBoolean(args[0][1]), name));
                     System.out.println(name);
-                    System.out.println(lights.size());
+                    System.out.println(devices.size());
                 }else{
                     System.out.println("invalid args");
                 }
@@ -78,12 +82,12 @@ public class HomeAutomator {
             }
         });
 
-//        while (true){
-//            System.out.println(lights.size());
-//            sleep(1000);
-//        }
+        //        while (true){
+        //            System.out.println(lights.size());
+        //            sleep(1000);
+        //        }
 
-//        screenInterface = new ScreenInterface(messageClient);
+        screenInterface = new ScreenInterface(messageClient);
     }
 
     /**
@@ -93,8 +97,18 @@ public class HomeAutomator {
     public MessageClient getMessageClient() {
         return messageClient;
     }
+    
+    /**
+     * Get the ArrayList of devices
+     */
+    public ArrayList getDevices() {
+        return devices;
+    }
 
-
+    /**
+     * Pause the program for a specified amount of miliseconds
+     * @param milis the number of miliseconds to pause for
+     */
     public static void sleep(long millis){
         try {
             Thread.sleep(millis);
