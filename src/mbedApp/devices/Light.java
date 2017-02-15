@@ -1,46 +1,41 @@
 package mbedApp.devices;
 
 
+import mbedApp.mqtt.MQTT_TOPIC;
+import mbedApp.mqtt.MessageClient;
+
 /**
  * Light does.............
  *
  * @author josephling
  * @version 1.0 10/02/2017
  */
-public class Light {
+public class Light extends Device implements InterfaceDevice{
 
     private boolean state;
-    private String name;
 
-    public Light(boolean state, String name) {
-        this.state = state;
-        this.name = name;
+    public Light(boolean state, int id) {
+        super("Light", id);
     }
 
-    @Override
-    public String toString(){
-        return this.name;
-    }
-
-    public boolean isOn(){
+    public boolean isState() {
         return state;
     }
 
-    public void toggle(){
-        state = !state;
-    }
-
-    public void setState(boolean state){
+    public void setState(boolean state) {
         this.state = state;
     }
 
+    @Override
+    public void parseChange(String[][] args) {
+        if (args[0][0].equals("state")){
+            state = Boolean.parseBoolean(args[0][1]);
+        }
+    }
 
-    /**
-     * gets the name
-     * @return name
-     */
-    public String getName() {
-        return name;
+    @Override
+    public void register(MessageClient client) {
+        client.send(MQTT_TOPIC.DEVICE_REGISTER, "{"+getName()+":id="+getId()+",state="+state+"}");
     }
 }
 

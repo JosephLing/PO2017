@@ -18,16 +18,16 @@ public class LightObj extends Light implements InterfaceScreenObject {
     private Graphics graphic;
 
     public LightObj(String name) {
-        super(false, name);
+        super(false, 0);
     }
 
     @Override
     public Graphics update(Canvas canvas) {
-        if (isOn()){
-
-        }else{
-
-        }
+//        if (isOn()){
+//
+//        }else{
+//
+//        }
         return null;
     }
 

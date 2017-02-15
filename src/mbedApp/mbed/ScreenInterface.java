@@ -15,7 +15,6 @@ import mbedApp.ProjectLogger;
 public class ScreenInterface
 {
     private Menu mainMenu;
-    private LightsMainMenu lightsMainMenu;
     private Menu settings;
     private MessageClient messageClient;
 
@@ -25,18 +24,92 @@ public class ScreenInterface
     public ScreenInterface(MessageClient messageClient)
     {
         this.messageClient = messageClient;
-        mainMenu();
+        mainStart();
     }
 
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * disables all the controls
+     * Package private
+     */
+    static void disableAllControls(){
+        ProjectLogger.Log("----disabling all controls----");
+        HomeAutomator.getMBed().getJoystickDown().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickUp().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickFire().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickLeft().removeAllListeners();
+        HomeAutomator.getMBed().getJoystickRight().removeAllListeners();
+    }
+
+    /**
+     * sleeps the current thread for
+     * @param ms number of milliseconds
+     */
+    public static void sleep(long ms){
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+
+    private InterfaceUI Quit = ()->{
+        ProjectLogger.Log("closing down messageClient and mbed");
+        TextBox msg = new TextBox("\nQuitting");
+        msg.clear();
+        msg.render();
+        sleep(2000);
+        this.messageClient.disconnect();
+        HomeAutomator.getMBed().close();
+        System.exit(0);
+    };
+
+    //----------------------------------------------------------------------------------------------
+
+    public void mainStart(){
+
+        HomeAutomator.getMBed().getJoystickFire().addListener((ispressed)->{
+            if (ispressed) {
+                this.mainMenu();
+            }
+        });
+        TextBox textBox = new TextBox("[menu] status:on dev:00\nc. temp:00\nd.temp:00");
+        textBox.clear();
+        textBox.render();
+    }
+
+    /*
+
+    menu  status:on no. dev: 10
+
+    current temp: 20
+    desired temp: 25
+
+
+
+     */
+
+
+
+
+
+
+
+
+
+    //----------------------------------------------------------------------------------------------
     private void mainMenu(){
-//        this.messageClient.send(MQTT_TOPIC.CAT, "world");
-        String[] itemNames = {"lights", "temprature", "Settings", "Credits", "Quit"};
+        String[] itemNames = {"lights", "temprature", "Settings", "Credits","Back", "Quit"};
 
         InterfaceUI[] itemCmds = {
                 Lights, // lights
                 Temprature, // temprature
                 Settings,// , // settings
                 Credits, // credits
+                BackToStart, // back to the start page
                 Quit // quit
         };
 
@@ -62,10 +135,16 @@ public class ScreenInterface
     };
 
     private InterfaceUI Lights = () -> {
-        lightsMainMenu = new LightsMainMenu(new Light[1]);
-        lightsMainMenu.enableControls();
+        //TODO: enable this to work with the new light setup
+        TextBox textBox = new TextBox("lights");
+        textBox.clear();
+        textBox.render();
+//        lightsMainMenu = new LightsMainMenu(new Light[1]);
+//        lightsMainMenu.enableControls();
+//        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
+//        lightsMainMenu.update();
         HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
-        lightsMainMenu.update();
+
 
     };
 
@@ -99,32 +178,9 @@ public class ScreenInterface
         HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
     };
 
-    private InterfaceUI Quit = ()->{
-        ProjectLogger.Log("closing down messageClient and mbed");
-        this.messageClient.disconnect();
-        HomeAutomator.getMBed().close();
-        System.exit(0);
+    private InterfaceUI BackToStart = ()->{
+        disableAllControls();
+        mainStart();
     };
-    
-    /**
-     * disables all the controls
-     * Package private
-     */
-    static void disableAllControls(){
-        ProjectLogger.Log("----disabling all controls----");
-        HomeAutomator.getMBed().getJoystickDown().removeAllListeners();
-        HomeAutomator.getMBed().getJoystickUp().removeAllListeners();
-        HomeAutomator.getMBed().getJoystickFire().removeAllListeners();
-        HomeAutomator.getMBed().getJoystickLeft().removeAllListeners();
-        HomeAutomator.getMBed().getJoystickRight().removeAllListeners();
-    }
 
-    public static void sleep(long ms){
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-    
 }

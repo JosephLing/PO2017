@@ -2,32 +2,41 @@ package mbedApp.devices;
 
 
 /**
- * Light does.............
+ * Device base class
  *
  * @author josephling
  * @version 1.0 10/02/2017
  */
 public class Device {
 
-    private boolean state;
     private String name;
+    private int id;
 
-    public Device(boolean state, String name) {
-        this.state = state;
+    public Device(String name, int id) {
         this.name = name;
+        this.id = id;
     }
 
     @Override
     public String toString(){
-        return this.name;
+        return this.name+id;
     }
 
-    public boolean isOn(){
-        return state;
+
+    /**
+     * gets the name
+     * @return name
+     */
+    public String getName() {
+        return name;
     }
 
-    public void toggle(){
-        state = !state;
+    /**
+     * gets the id of the device
+     * @return id
+     */
+    public int getId() {
+        return id;
     }
 }
 

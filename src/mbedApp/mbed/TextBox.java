@@ -20,11 +20,13 @@ public class TextBox {
 
     public void render(){
         for (int i = 0; i < text.length; i++) {
+            ScreenInterface.sleep(50);
             lcd.print(0, i*10, text[i]);
         }
     }
 
     public void clear(){
+        ScreenInterface.sleep(50);
         lcd.clear();
     }
 

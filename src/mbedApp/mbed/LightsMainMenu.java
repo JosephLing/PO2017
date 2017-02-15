@@ -51,7 +51,7 @@ public class LightsMainMenu implements InterfaceMenu {
 
         switchLight = (isPressed) -> {
             if(isPressed){
-                lights[selected].toggle();
+//                lights[selected].toggle();
                 this.update();
             }
         };
@@ -74,7 +74,7 @@ public class LightsMainMenu implements InterfaceMenu {
         int count = 0;
         while (y < screenHeight && count < maxDisplay && index < lights.length){
             y = menuSpacing * count;
-            if (lights[index].isOn()){
+            if (lights[index].isState()){
                 lcd.print(65,y+2,"[x]");
                 lcd.print(90,y+2,"[ ]");
             }else{

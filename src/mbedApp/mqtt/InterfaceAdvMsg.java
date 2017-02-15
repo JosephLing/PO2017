@@ -9,7 +9,7 @@ package mbedApp.mqtt;
 public interface InterfaceAdvMsg {
     /**
      *
-     * @param topic
+     * @param topic of msg
      * @param name name of the cmd
      * @param args name to go with the arg
 //     * @param values value of the name

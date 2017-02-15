@@ -2,11 +2,13 @@ package mbedApp.mbed;
 
 import mbedApp.ProjectLogger;
 import mbedApp.devices.Light;
+import mbedApp.devices.Device;
 import mbedApp.mqtt.MQTT_TOPIC;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import shed.mbed.ButtonListener;
 import shed.mbed.Potentiometer;
 import shed.mbed.PotentiometerListener;
+import shed.mbed.Thermometer;
 import shed.mbed.MBed;
 import shed.mbed.MBedUtils;
 import mbedApp.mqtt.MessageClient;
@@ -43,47 +45,48 @@ public class HomeAutomator {
 
     private ScreenInterface screenInterface;
     private MessageClient messageClient;
+    private ArrayList<Device> devices;
+
+    // temprature settings
+    private int MIN_ROOM_TEMP = 18;
+    private int MAX_ROOM_TEMP = 25;
+    private boolean alterTemprature = true;
+
     /**
      * Creates the Mbed controller and creates the main menu when
      * loaded. Starts of with generating a messaging client to access the data.
      */
     public HomeAutomator() {
-                genMBed();
-//                mbed.getLCD().print(0, 0,"hello world");
-//        messageClient = new MessageClient();
-//
-//        ArrayList<Light> lights = new ArrayList<Light>();
-//        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET, (String topic, String name, String[][]args) -> {
-//            if (name.contains("Light")){
-//                if (args[0][0].equals("state")){
-//                    lights.add(new Light(Boolean.parseBoolean(args[0][1]), name));
-//                    System.out.println(name);
-//                    System.out.println(lights.size());
-//                }else{
-//                    System.out.println("invalid args");
-//                }
-//            }else{
-//                System.out.println("Looking for Lights none found");
-//            }
-//        });
-//        messageClient.send(MQTT_TOPIC.DEVICE_REGISTER, "{start:devices=true}");
-//
-//        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER, (String topic, String name, String[][]args) -> {
-//            if (name.contains("start")){
-//                if (args[0][0].equals("devices")){
-//                    if (Boolean.parseBoolean(args[0][1])){
-//                        messageClient.send(MQTT_TOPIC.DEVICE_CHANGE, "{Light1:state=false}");
-//                    }
-//                }
-//            }
-//        });
-
-//        while (true){
-//            System.out.println(lights.size());
-//            sleep(1000);
-//        }
-
+        genMBed();
+        messageClient = new MessageClient();
         screenInterface = new ScreenInterface(messageClient);
+
+
+    }
+    
+    /**
+    * Every time a potentiometer changes send the value using the Messaging
+    * Client
+    */
+    private PotentiometerListener tempPot  = (value) -> {
+        messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(value) + "}");
+        //TODO: should probably sleep this if it always calls or calls a lot
+    };
+    
+    /**
+     * Every time the temperature changes check it, if it's below the minimum, send the temperature to the room and the new temp
+     * that should be set by the thermostat.
+     */
+    private void checkTempChange() {
+        //TODO: not have this as in infinite loop and a way to alter it [x]
+        while(mbed.isOpen() && alterTemprature) {
+            Thermometer thermometer = mbed.getThermometer();
+            Double temp = thermometer.getTemperature();
+            if(temp < MIN_ROOM_TEMP) {
+                messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=21}");
+            }
+            sleep(1000);
+        }
     }
 
     /**
@@ -94,7 +97,10 @@ public class HomeAutomator {
         return messageClient;
     }
 
-
+    /**
+     * Pause the program for a specified amount of miliseconds
+     * @param millis the number of miliseconds to pause for
+     */
     public static void sleep(long millis){
         try {
             Thread.sleep(millis);
@@ -103,18 +109,5 @@ public class HomeAutomator {
             // Nothing we can do.
         }
 
-    }
-
-    public void test(){
-//        messageClient.advanceSubscribe(MQTT_TOPIC.CAT, (String topic, String name, String[][]args)->{
-//
-//        });
-//        messageClient.send("testing all the things}", "cat");
-//        messageClient.send("{testing all the things", "cat");
-//        messageClient.send("{name}", "cat");
-//        messageClient.send("{name:}", "cat");
-//        messageClient.send("{name:arg1}", "cat");
-//        messageClient.send("{testname:arg1=va1}", "cat");
-//        messageClient.send("{testname:arg1=va1,arg2=va2}", "cat");
     }
 }
