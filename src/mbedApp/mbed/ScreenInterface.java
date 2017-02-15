@@ -1,5 +1,6 @@
 package mbedApp.mbed;
 
+import mbedApp.devices.Light;
 import mbedApp.mqtt.MQTT_TOPIC;
 import shed.mbed.ButtonListener;
 import mbedApp.mqtt.MessageClient;
@@ -28,7 +29,7 @@ public class ScreenInterface
     }
 
     private void mainMenu(){
-        this.messageClient.send(MQTT_TOPIC.CAT, "world");
+//        this.messageClient.send(MQTT_TOPIC.CAT, "world");
         String[] itemNames = {"lights", "temprature", "Settings", "Credits", "Quit"};
 
         InterfaceUI[] itemCmds = {
@@ -61,10 +62,10 @@ public class ScreenInterface
     };
 
     private InterfaceUI Lights = () -> {
-//        lightsMainMenu = new LightsMainMenu(messageClient.getLights());
-//        lightsMainMenu.enableControls();
-//        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
-//        lightsMainMenu.update();
+        lightsMainMenu = new LightsMainMenu(new Light[1]);
+        lightsMainMenu.enableControls();
+        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
+        lightsMainMenu.update();
 
     };
 
@@ -116,6 +117,14 @@ public class ScreenInterface
         HomeAutomator.getMBed().getJoystickFire().removeAllListeners();
         HomeAutomator.getMBed().getJoystickLeft().removeAllListeners();
         HomeAutomator.getMBed().getJoystickRight().removeAllListeners();
+    }
+
+    public static void sleep(long ms){
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     
 }

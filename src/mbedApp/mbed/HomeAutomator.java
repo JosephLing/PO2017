@@ -48,42 +48,42 @@ public class HomeAutomator {
      * loaded. Starts of with generating a messaging client to access the data.
      */
     public HomeAutomator() {
-        //        genMBed();
-
-        messageClient = new MessageClient();
-
-        ArrayList<Light> lights = new ArrayList<Light>();
-        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET, (String topic, String name, String[][]args) -> {
-            if (name.contains("Light")){
-                if (args[0][0].equals("state")){
-                    lights.add(new Light(Boolean.parseBoolean(args[0][1]), name));
-                    System.out.println(name);
-                    System.out.println(lights.size());
-                }else{
-                    System.out.println("invalid args");
-                }
-            }else{
-                System.out.println("Looking for Lights none found");
-            }
-        });
-        messageClient.send(MQTT_TOPIC.DEVICE_REGISTER, "{start:devices=true}");
-
-        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER, (String topic, String name, String[][]args) -> {
-            if (name.contains("start")){
-                if (args[0][0].equals("devices")){
-                    if (Boolean.parseBoolean(args[0][1])){
-                        messageClient.send(MQTT_TOPIC.DEVICE_CHANGE, "{Light1:state=false}");
-                    }
-                }
-            }
-        });
+                genMBed();
+//                mbed.getLCD().print(0, 0,"hello world");
+//        messageClient = new MessageClient();
+//
+//        ArrayList<Light> lights = new ArrayList<Light>();
+//        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET, (String topic, String name, String[][]args) -> {
+//            if (name.contains("Light")){
+//                if (args[0][0].equals("state")){
+//                    lights.add(new Light(Boolean.parseBoolean(args[0][1]), name));
+//                    System.out.println(name);
+//                    System.out.println(lights.size());
+//                }else{
+//                    System.out.println("invalid args");
+//                }
+//            }else{
+//                System.out.println("Looking for Lights none found");
+//            }
+//        });
+//        messageClient.send(MQTT_TOPIC.DEVICE_REGISTER, "{start:devices=true}");
+//
+//        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER, (String topic, String name, String[][]args) -> {
+//            if (name.contains("start")){
+//                if (args[0][0].equals("devices")){
+//                    if (Boolean.parseBoolean(args[0][1])){
+//                        messageClient.send(MQTT_TOPIC.DEVICE_CHANGE, "{Light1:state=false}");
+//                    }
+//                }
+//            }
+//        });
 
 //        while (true){
 //            System.out.println(lights.size());
 //            sleep(1000);
 //        }
 
-//        screenInterface = new ScreenInterface(messageClient);
+        screenInterface = new ScreenInterface(messageClient);
     }
 
     /**

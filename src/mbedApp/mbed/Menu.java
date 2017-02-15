@@ -37,7 +37,7 @@ public class Menu implements InterfaceMenu {
      * @param menuCmd
      */
     public Menu(String[] menuName, InterfaceUI[] menuCmd) {
-
+        ProjectLogger.Log("loading menu");
         lcd = HomeAutomator.getMBed().getLCD();
         screenWidth = lcd.getWidth();
         screenHeight = lcd.getHeight();
@@ -101,6 +101,7 @@ public class Menu implements InterfaceMenu {
      */
     public void update(){
         // drawLine(int startX, int startY, int endX, int endY, PixelColor pixel)
+        ProjectLogger.Log("update loop for menu");
         lcd.clear();
         int maxDisplay = screenHeight / menuSpacing;
 
@@ -110,19 +111,31 @@ public class Menu implements InterfaceMenu {
                 index = selected - maxDisplay + 1;
             }
         }
+        ProjectLogger.Log("screen height: " + screenHeight);
         int y = 0;
         int count = 0;
+        ScreenInterface.sleep(50);
+
         while (y < screenHeight && count < maxDisplay && index < menuName.length){
             y = menuSpacing * count;
             lcd.drawLine(0,y,screenWidth,y, PixelColor.BLACK);
-            lcd.print(35, y+2, menuName[index]);
+            //  HomeAutomator.getMBed().getLCD().print(35, y+2, "a");
+            ScreenInterface.sleep(50);
+              lcd.print(35, y+2, menuName[index]);
+            ProjectLogger.Log("update loop count:" + count + " y:"+y);
+
             if (index == selected){
+                ProjectLogger.Log("selected == index");
+                ScreenInterface.sleep(50);
                 lcd.drawCircle(20, y+menuSpacing/2, 4, PixelColor.BLACK);
             }
             count ++;
             index ++;
+            ScreenInterface.sleep(50);
+
         }
         y = menuSpacing * count;
+        ScreenInterface.sleep(50);
         lcd.drawLine(0,y,screenWidth,y, PixelColor.BLACK);
 
     }
