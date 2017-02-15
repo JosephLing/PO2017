@@ -8,6 +8,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import shed.mbed.ButtonListener;
 import shed.mbed.Potentiometer;
 import shed.mbed.PotentiometerListener;
+import shed.mbed.Thermometer;
 import shed.mbed.MBed;
 import shed.mbed.MBedUtils;
 import mbedApp.mqtt.MessageClient;
@@ -45,6 +46,7 @@ public class HomeAutomator {
     private ScreenInterface screenInterface;
     private MessageClient messageClient;
     private ArrayList<Device> devices;
+    private static final int MINIMUM_ROOM_TEMPERATURE = 18;
     
     /**
      * Creates the Mbed controller and creates the main menu when
@@ -88,6 +90,29 @@ public class HomeAutomator {
         //        }
 
         screenInterface = new ScreenInterface(messageClient);
+    }
+    
+    /**
+    * Every time a potentiometer changes send the value using the Messaging
+    * Client
+    */
+    private PotentiometerListener tempPot  = (value) -> {
+        messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(value) + "}");
+    };
+    
+    /**
+     * Every time the temperature changes check it, if it's below the minimum, send the temperature to the room and the new temp
+     * that should be set by the thermostat.
+     */
+    private void checkTempChange() {
+        while(true) {
+            Thermometer thermometer = mbed.getThermometer();
+            Double temp = thermometer.getTemperature();
+            if(temp < MINIMUM_ROOM_TEMPERATURE) {
+                messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=21}");
+            }
+            sleep(1000);
+        }
     }
 
     /**
