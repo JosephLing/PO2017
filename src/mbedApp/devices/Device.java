@@ -1,25 +1,27 @@
 package mbedApp.devices;
 
 
+import mbedApp.ProjectLogger;
+import mbedApp.mqtt.MessageClient;
+
 /**
  * Device base class
  *
  * @author josephling
  * @version 1.0 10/02/2017
  */
-public class Device {
+public class Device implements InterfaceDevice{
 
-    private String name;
+    public static final String name = "";
     private int id;
 
-    public Device(String name, int id) {
-        this.name = name;
+    public Device(int id) {
         this.id = id;
     }
 
     @Override
     public String toString(){
-        return this.name+id;
+        return Device.name+id;
     }
 
 
@@ -27,8 +29,8 @@ public class Device {
      * gets the name
      * @return name
      */
-    public String getName() {
-        return name;
+    public static String getName() {
+        return Device.name;
     }
 
     /**
@@ -37,6 +39,33 @@ public class Device {
      */
     public int getId() {
         return id;
+    }
+
+    @Override
+    public void parseChange(String[][] args) {
+
+    }
+
+    @Override
+    public void register(MessageClient client) {
+
+    }
+
+
+    public static Device parseNewDevice(String[][] args){
+        return null;
+    }
+
+    public static String parseNewDeviceId(String name, String[][] args){
+        String newId = null;
+        if (args.length == 1){ // id and state
+            if (args[0][0].equals("id")){
+                newId = name + args[0][1];
+            }else{
+                ProjectLogger.Warning("No Id found! for new light: " + name);
+            }
+        }
+        return newId;
     }
 }
 

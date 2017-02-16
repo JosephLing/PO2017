@@ -14,6 +14,7 @@ import shed.mbed.MBedUtils;
 import mbedApp.mqtt.MessageClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * HomeAutomator does.............
@@ -45,12 +46,9 @@ public class HomeAutomator {
 
     private ScreenInterface screenInterface;
     private MessageClient messageClient;
-    private ArrayList<Device> devices;
+    private HashMap<String, Device> devices;
 
-    // temprature settings
-    private int MIN_ROOM_TEMP = 18;
-    private int MAX_ROOM_TEMP = 25;
-    private boolean alterTemprature = true;
+
 
     /**
      * Creates the Mbed controller and creates the main menu when
@@ -59,35 +57,46 @@ public class HomeAutomator {
     public HomeAutomator() {
         genMBed();
         messageClient = new MessageClient();
+        devices = new HashMap<String, Device>();
         screenInterface = new ScreenInterface(messageClient);
+    }
+
+    private void setUpSubscriptions(){
+//        MQTT_TOPIC.DEVICE_REGISTER
+        // so we register by name+id so then we can .parse() it later
+        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER,
+                (String topic, String name, String[][]args)->{
+                    switch (name){
+                        case Light.name:
+                            if (Device.parseNewDeviceId(name, args) != null){
+                                devices.put(Device.parseNewDeviceId(name, args), Light.parseNewDevice(args));
+                            }
+                            break;
+
+                        default:
+                            ProjectLogger.Warning("No device found for: " + name);
+                    }
+                });
 
 
+
+//        MQTT_TOPIC.DEVICE_CHANGE
+        // parse the name and id then run the .parse(String[][])
+
+
+        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE,
+                (String topic, String name, String[][]args)->{
+                    if (devices.get(name) != null){
+                        devices.get(name).parseChange(args);
+                    }
+        });
+
+//        MQTT_TOPIC.TEMPERATURE
+        //  we need to register the temprature device first
     }
+
     
-    /**
-    * Every time a potentiometer changes send the value using the Messaging
-    * Client
-    */
-    private PotentiometerListener tempPot  = (value) -> {
-        messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(value) + "}");
-        //TODO: should probably sleep this if it always calls or calls a lot
-    };
-    
-    /**
-     * Every time the temperature changes check it, if it's below the minimum, send the temperature to the room and the new temp
-     * that should be set by the thermostat.
-     */
-    private void checkTempChange() {
-        //TODO: not have this as in infinite loop and a way to alter it [x]
-        while(mbed.isOpen() && alterTemprature) {
-            Thermometer thermometer = mbed.getThermometer();
-            Double temp = thermometer.getTemperature();
-            if(temp < MIN_ROOM_TEMP) {
-                messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=21}");
-            }
-            sleep(1000);
-        }
-    }
+
 
     /**
      * gets the message client used by the HomeAutomator.
