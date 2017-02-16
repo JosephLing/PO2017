@@ -13,7 +13,6 @@ import mbedApp.mqtt.MessageClient;
  */
 public class Light extends Device implements InterfaceDevice{
 
-    public static final String name = "Light";
 
     private boolean state;
 
@@ -41,6 +40,9 @@ public class Light extends Device implements InterfaceDevice{
         client.send(MQTT_TOPIC.DEVICE_REGISTER, "{"+getName()+":id="+getId()+",state="+state+"}");
     }
 
+    public String getName() {
+        return LIGHT;
+    }
 
     public static Light parseNewDevice(String[][] args){
         Light newLight = null;
@@ -52,7 +54,7 @@ public class Light extends Device implements InterfaceDevice{
                     ProjectLogger.Warning("No state found for new light");
                 }
             }else{
-                ProjectLogger.Warning("No Id found! for new light: " + name);
+                ProjectLogger.Warning("No Id found! for new light: " + LIGHT);
             }
         }
         return newLight;

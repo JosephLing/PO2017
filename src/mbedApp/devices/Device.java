@@ -12,16 +12,20 @@ import mbedApp.mqtt.MessageClient;
  */
 public class Device implements InterfaceDevice{
 
-    public static final String name = "";
-    private int id;
+    public static final String LIGHT = "Light";
+    public static final String TEMP = "Temp";
+    public static final String DEVICE = "DEV";
 
+
+    private int id;
     public Device(int id) {
         this.id = id;
+
     }
 
     @Override
     public String toString(){
-        return Device.name+id;
+        return getName()+id;
     }
 
 
@@ -29,8 +33,8 @@ public class Device implements InterfaceDevice{
      * gets the name
      * @return name
      */
-    public static String getName() {
-        return Device.name;
+    public String getName() {
+        return DEVICE;
     }
 
     /**

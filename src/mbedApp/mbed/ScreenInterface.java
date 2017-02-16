@@ -1,7 +1,6 @@
 package mbedApp.mbed;
 
-import mbedApp.devices.Light;
-import mbedApp.mqtt.MQTT_TOPIC;
+import mbedApp.devices.Temperature;
 import shed.mbed.ButtonListener;
 import mbedApp.mqtt.MessageClient;
 import mbedApp.ProjectLogger;

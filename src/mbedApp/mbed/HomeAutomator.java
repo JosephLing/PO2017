@@ -3,17 +3,12 @@ package mbedApp.mbed;
 import mbedApp.ProjectLogger;
 import mbedApp.devices.Light;
 import mbedApp.devices.Device;
+import mbedApp.devices.Temperature;
 import mbedApp.mqtt.MQTT_TOPIC;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import shed.mbed.ButtonListener;
-import shed.mbed.Potentiometer;
-import shed.mbed.PotentiometerListener;
-import shed.mbed.Thermometer;
 import shed.mbed.MBed;
 import shed.mbed.MBedUtils;
 import mbedApp.mqtt.MessageClient;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -69,7 +64,7 @@ public class HomeAutomator {
         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER,
                 (String topic, String name, String[][]args)->{
                     switch (name){
-                        case Light.name:
+                        case Device.LIGHT:
                             if (Device.parseNewDeviceId(name, args) != null){
                                 devices.put(Device.parseNewDeviceId(name, args), Light.parseNewDevice(args));
                             }
