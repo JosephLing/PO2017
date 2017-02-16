@@ -47,6 +47,7 @@ public class HomeAutomator {
     private ScreenInterface screenInterface;
     private MessageClient messageClient;
     private HashMap<String, Device> devices;
+    private Temperature temperature;
 
 
 
@@ -59,6 +60,7 @@ public class HomeAutomator {
         messageClient = new MessageClient();
         devices = new HashMap<String, Device>();
         screenInterface = new ScreenInterface(messageClient);
+        temperature = new Temperature(messageClient);
     }
 
     private void setUpSubscriptions(){

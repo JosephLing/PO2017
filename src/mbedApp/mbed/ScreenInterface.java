@@ -5,8 +5,6 @@ import mbedApp.mqtt.MQTT_TOPIC;
 import shed.mbed.ButtonListener;
 import mbedApp.mqtt.MessageClient;
 import mbedApp.ProjectLogger;
-import shed.mbed.PotentiometerListener;
-import shed.mbed.Thermometer;
 
 /**
  * Write a description of class ScreenInterface here.
@@ -19,12 +17,8 @@ public class ScreenInterface
     private Menu mainMenu;
     private Menu settings;
     private MessageClient messageClient;
+    private Temperature temperature;
 
-
-    // temprature settings
-    private int MIN_ROOM_TEMP = 18;
-    private int MAX_ROOM_TEMP = 25;
-    private boolean alterTemprature = true;
     /**
      * Constructor for objects of class ScreenInterface
      */
@@ -83,7 +77,6 @@ public class ScreenInterface
             current temp: 20
             desired temp: 25
         */
-        alterTemprature = true;
         HomeAutomator.getMBed().getJoystickFire().addListener((ispressed)->{
             if (ispressed) {
                 this.mainMenu();
@@ -94,42 +87,11 @@ public class ScreenInterface
         textBox.render();
     }
 
-    /**
-     * Every time a potentiometer changes send the value using the Messaging
-     * Client
-     */
-    private PotentiometerListener tempPot  = (value) -> {
-        System.out.println("asdf" + value);
-//        messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(value) + "}");
-        //TODO: should probably sleep this if it always calls or calls a lot
-    };
-
-    /**
-     * Every time the temperature changes check it, if it's below the minimum, send the temperature to the room and the new temp
-     * that should be set by the thermostat.
-     */
-    private void checkTempChange() {
-        //TODO: not have this as in infinite loop and a way to alter it [x]
-        while(HomeAutomator.getMBed().isOpen() && alterTemprature) {
-            Thermometer thermometer = HomeAutomator.getMBed().getThermometer();
-            Double temp = thermometer.getTemperature();
-            if(temp > MIN_ROOM_TEMP && temp < MAX_ROOM_TEMP) {
-                messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=21}");
-                sleep(750);
-            }else{
-                // so we sleep longer when the temprature
-                sleep(2000);
-            }
-
-        }
-    }
-
 
     //----------------------------------------------------------------------------------------------
     private void mainMenu(){
 
-        // temprature settings
-        alterTemprature = false;
+
         String[] itemNames = {"lights", "temprature", "Settings", "Credits","Back", "Quit"};
 
         InterfaceUI[] itemCmds = {
