@@ -82,6 +82,10 @@ public class RoomFrame extends JFrame {
 
     public void registerLights(){
 
+
+
+
+
 //        lights = new HashMap<String, LightObj>();
 //        for (int i = 0; i < 10; i++) {
 //            lights.put("Light"+i, new LightObj("Light"+i));

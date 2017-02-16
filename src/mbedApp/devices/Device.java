@@ -2,6 +2,7 @@ package mbedApp.devices;
 
 
 import mbedApp.ProjectLogger;
+import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
 
 /**
@@ -18,9 +19,19 @@ public class Device implements InterfaceDevice{
 
 
     private int id;
+    private boolean device_registered;
     public Device(int id) {
         this.id = id;
+        device_registered = false;
 
+    }
+
+    public boolean isDevice_registered() {
+        return device_registered;
+    }
+
+    public void setDevice_registered(boolean device_registered) {
+        this.device_registered = device_registered;
     }
 
     @Override
@@ -52,7 +63,15 @@ public class Device implements InterfaceDevice{
 
     @Override
     public void register(MessageClient client) {
-
+        client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,  (String topic, String name, String[][]args)->{
+            if (name.equals(getName()+getId())){
+                if (args.length == 1){
+                    if (args[0][0].equals("registered")){
+                        setDevice_registered(Boolean.parseBoolean(args[0][1]));
+                    }
+                }
+            }
+        });
     }
 
 

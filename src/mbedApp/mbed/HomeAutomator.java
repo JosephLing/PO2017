@@ -67,6 +67,7 @@ public class HomeAutomator {
                         case Device.LIGHT:
                             if (Device.parseNewDeviceId(name, args) != null){
                                 devices.put(Device.parseNewDeviceId(name, args), Light.parseNewDevice(args));
+                                messageClient.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered:true}");
                             }
                             break;
 

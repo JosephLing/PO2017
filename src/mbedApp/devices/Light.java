@@ -15,7 +15,6 @@ public class Light extends Device implements InterfaceDevice{
 
 
     private boolean state;
-
     public Light(boolean state, int id) {
         super(id);
     }
@@ -30,13 +29,21 @@ public class Light extends Device implements InterfaceDevice{
 
     @Override
     public void parseChange(String[][] args) {
-        if (args[0][0].equals("state")){
-            state = Boolean.parseBoolean(args[0][1]);
+
+        if (isDevice_registered()){
+            if (args.length == 1){
+                if (args[0][0].equals("state")){
+                    state = Boolean.parseBoolean(args[0][1]);
+                }
+            }
         }
+
     }
 
     @Override
     public void register(MessageClient client) {
+        super.register(client); // so if we call it here will it use getName() from Device or Light?
+        // as that could break the code if it grabs the "Device"
         client.send(MQTT_TOPIC.DEVICE_REGISTER, "{"+getName()+":id="+getId()+",state="+state+"}");
     }
 
