@@ -1,9 +1,12 @@
 package mbedApp.mbed;
 
-import mbedApp.devices.Temperature;
-import shed.mbed.ButtonListener;
-import mbedApp.mqtt.MessageClient;
+import mbedApp.mbed.display.InterfaceUI;
+import mbedApp.mbed.display.Menu;
+import mbedApp.mbed.display.TextBox;
 import mbedApp.ProjectLogger;
+import mbedApp.devices.Temperature;
+import mbedApp.mqtt.MessageClient;
+import shed.mbed.ButtonListener;
 
 /**
  * Write a description of class ScreenInterface here.
@@ -58,9 +61,8 @@ public class ScreenInterface
 
     private InterfaceUI Quit = ()->{
         ProjectLogger.Log("closing down messageClient and mbed");
-        TextBox msg = new TextBox("\nQuitting");
-        msg.clear();
-        msg.render();
+        TextBox msg = new TextBox("\nQuitting", null);
+        msg.update();
         sleep(2000);
         this.messageClient.disconnect();
         HomeAutomator.getMBed().close();
@@ -76,14 +78,13 @@ public class ScreenInterface
             current temp: 20
             desired temp: 25
         */
-        HomeAutomator.getMBed().getJoystickFire().addListener((ispressed)->{
+        TextBox textBox = new TextBox("[menu] status:on dev:00\nc. temp:00\nd.temp:00",(ispressed)->{
             if (ispressed) {
                 this.mainMenu();
             }
-        });
-        TextBox textBox = new TextBox("[menu] status:on dev:00\nc. temp:00\nd.temp:00");
-        textBox.clear();
-        textBox.render();
+        } );
+        textBox.enableControls();
+        textBox.update();
     }
 
 
@@ -114,7 +115,7 @@ public class ScreenInterface
     }
 
     /**
-     * ButtonListener for the back button to main menu.
+     * ButtonListener for the back button to update_main menu.
      * TODO: maybe make it dynamic?
      */
     private ButtonListener backButtonToMainMenu  = (isPressed) -> {
@@ -125,23 +126,15 @@ public class ScreenInterface
 
     private InterfaceUI Lights = () -> {
         //TODO: enable this to work with the new light setup
-        TextBox textBox = new TextBox("lights");
-        textBox.clear();
-        textBox.render();
-//        lightsMainMenu = new LightsMainMenu(new Light[1]);
-//        lightsMainMenu.enableControls();
-//        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
-//        lightsMainMenu.update();
-        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
-
-
+        TextBox textBox = new TextBox("lights", backButtonToMainMenu);
+        textBox.enableControls();
+        textBox.update();
     };
 
     private InterfaceUI Temprature = () -> {
-        TextBox textBox = new TextBox("temprature");
-        textBox.clear();
-        textBox.render();
-        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
+        TextBox textBox = new TextBox("temprature", backButtonToMainMenu);
+        textBox.enableControls();
+        textBox.update();
     };
 
     private InterfaceUI Settings = () -> {
@@ -161,10 +154,10 @@ public class ScreenInterface
     };
 
     private InterfaceUI Credits = () -> {
-        TextBox textBox = new TextBox("Joe\nWill\nPierre\nKhem");
-        textBox.clear();
-        textBox.render();
-        HomeAutomator.getMBed().getJoystickFire().addListener(backButtonToMainMenu);
+        TextBox textBox = new TextBox("Joe\nWill\nPierre\nKhem", backButtonToMainMenu);
+        textBox.enableControls();
+        textBox.update();
+
     };
 
     private InterfaceUI BackToStart = ()->{

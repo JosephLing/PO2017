@@ -47,7 +47,7 @@ public class HomeAutomator {
 
 
     /**
-     * Creates the Mbed controller and creates the main menu when
+     * Creates the Mbed controller and creates the update_main menu when
      * loaded. Starts of with generating a messaging client to access the data.
      */
     public HomeAutomator() {

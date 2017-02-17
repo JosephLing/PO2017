@@ -1,4 +1,4 @@
-package mbedApp.mbed;
+package mbedApp.mbed.display;
 
 
 /**
