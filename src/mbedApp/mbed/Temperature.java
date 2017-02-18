@@ -1,4 +1,4 @@
-package mbedApp.devices;
+package mbedApp.mbed;
 
 import mbedApp.mbed.HomeAutomator;
 import mbedApp.mbed.ScreenInterface;
@@ -10,7 +10,7 @@ import mbedApp.mqtt.MQTT_TOPIC;
 /**
  * Controls temperature functionality of the MBed
  */
-public class Temperature extends Device
+public class Temperature
 {
     // temprature settings
     private static int MIN_ROOM_TEMP = 18;
@@ -25,7 +25,6 @@ public class Temperature extends Device
      */
     public Temperature(MessageClient messageClient)
     {
-        super(0);
         mbedTemprature = true;
         alterTemprature = true;
         this.messageClient = messageClient;
@@ -61,11 +60,7 @@ public class Temperature extends Device
             return 0.0;
         }
     }
-
-    @Override
-    public String getName() {
-        return TEMP;
-    }
+    
     
     /**
     * Every time a potentiometer changes send the value using the Messaging

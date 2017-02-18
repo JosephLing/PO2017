@@ -15,6 +15,7 @@ public class Device implements InterfaceDevice{
 
     public static final String LIGHT = "Light";
     public static final String TEMP = "Temp";
+    public static final String THERMOSTAT = "Thermostat";
     public static final String DEVICE = "DEV";
 
 

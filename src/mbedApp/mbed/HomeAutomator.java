@@ -3,7 +3,6 @@ package mbedApp.mbed;
 import mbedApp.ProjectLogger;
 import mbedApp.devices.Light;
 import mbedApp.devices.Device;
-import mbedApp.devices.Temperature;
 import mbedApp.mqtt.MQTT_TOPIC;
 import shed.mbed.MBed;
 import shed.mbed.MBedUtils;

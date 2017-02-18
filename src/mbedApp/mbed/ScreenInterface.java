@@ -4,7 +4,6 @@ import mbedApp.mbed.display.InterfaceUI;
 import mbedApp.mbed.display.Menu;
 import mbedApp.mbed.display.TextBox;
 import mbedApp.ProjectLogger;
-import mbedApp.devices.Temperature;
 import mbedApp.mqtt.MessageClient;
 import shed.mbed.ButtonListener;
 
