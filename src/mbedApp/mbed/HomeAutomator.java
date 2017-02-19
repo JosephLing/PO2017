@@ -55,10 +55,11 @@ public class HomeAutomator {
         devices = new HashMap<String, Device>();
         screenInterface = new ScreenInterface(messageClient);
         temperature = new Temperature(messageClient);
+        run();
     }
 
     private void setUpSubscriptions(){
-//        MQTT_TOPIC.DEVICE_REGISTER
+        //MQTT_TOPIC.DEVICE_REGISTER
         // so we register by name+id so then we can .parse() it later
         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER,
                 (String topic, String name, String[][]args)->{
@@ -77,7 +78,7 @@ public class HomeAutomator {
 
 
 
-//        MQTT_TOPIC.DEVICE_CHANGE
+        //MQTT_TOPIC.DEVICE_CHANGE
         // parse the name and id then run the .parse(String[][])
 
 
@@ -88,12 +89,18 @@ public class HomeAutomator {
                     }
         });
 
-//        MQTT_TOPIC.TEMPERATURE
+        //MQTT_TOPIC.TEMPERATURE
         //  we need to register the temprature device first
     }
 
+    private void run() {
+        System.out.println(temperature.getCurrentTemp());
+        // Might need to put this in a seperate thread as it blocks any more execution here
+        // Screen etc. still works as normal
+        temperature.checkTempChange();
+        temperature.checkTempPot();
+    }
     
-
 
     /**
      * gets the message client used by the HomeAutomator.
