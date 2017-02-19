@@ -94,9 +94,6 @@ public class HomeAutomator {
     }
 
     private void run() {
-        System.out.println(temperature.getCurrentTemp());
-        // Might need to put this in a seperate thread as it blocks any more execution here
-        // Screen etc. still works as normal
         temperature.checkTempChange();
         temperature.checkTempPot();
     }
