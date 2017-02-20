@@ -40,7 +40,7 @@ public class HomeAutomator {
 
     private ScreenInterface screenInterface;
     private MessageClient messageClient;
-    private HashMap<String, Device> devices;
+    private static HashMap<String, Device> devices;
     private Temperature temperature;
 
 
@@ -61,17 +61,18 @@ public class HomeAutomator {
     }
 
     private void setUpSubscriptions(){
+        System.out.println("settting up sub");
+
         //MQTT_TOPIC.DEVICE_REGISTER
         // so we register by name+id so then we can .parse() it later
+        MessageClient deviceSet = new MessageClient();
         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER,
                 (String topic, String name, HashMap<String, String> args)->{
                     switch (name){
                         case Device.LIGHT:
-                            System.out.println(name);
-                            System.out.println(Device.parseNewDeviceId(name, args));
                             if (Device.parseNewDeviceId(name, args) != null){
                                 devices.put(Device.parseNewDeviceId(name, args), Light.parseNewDevice(args));
-                                messageClient.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered=true}");
+                                deviceSet.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered=true}");
                             }
                             break;
 
@@ -79,6 +80,7 @@ public class HomeAutomator {
                             ProjectLogger.Warning("No device found for: " + name);
                     }
                 });
+
 
 
 
@@ -97,10 +99,15 @@ public class HomeAutomator {
         //  we need to register the temprature device first
     }
 
+    public static HashMap<String, Device> getDevices() {
+        return devices;
+    }
+
     private void run() {
         System.out.println("This is being called");
-        temperature.checkTempChange();
-        temperature.checkTempPot();
+//        temperature.checkTempChange();
+//        temperature.checkTempPot();
+        System.out.println("running");
         setUpSubscriptions();
     }
     

@@ -29,6 +29,10 @@ public class TextBox extends ScrollableText {
 
     }
 
+    public void setText(String msg){
+        this.setMsgArray(msg.split("\n"));
+    }
+
     private void setBackButton(ButtonListener backButtonNew) {
         this.backButton = (isPressed) -> {
             this.disableControls();

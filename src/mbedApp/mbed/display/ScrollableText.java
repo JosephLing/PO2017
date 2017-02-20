@@ -151,6 +151,10 @@ public abstract class ScrollableText {
      */
     abstract void update_footer(int index, int count, int y);
 
+    public void setMsgArray(String[] msgArray) {
+        this.msgArray = msgArray;
+    }
+
     private void sleep(long milliseconds) {
         try {
             // normally 50 milliseconds

@@ -1,5 +1,6 @@
 package mbedApp.mbed.pages;
 
+import mbedApp.mbed.HomeAutomator;
 import mbedApp.mbed.ScreenInterface;
 import mbedApp.mbed.display.TextBox;
 import shed.mbed.ButtonListener;
@@ -28,10 +29,12 @@ public class PageStart implements InterfaceUI {
             }
         };
         textBox = new TextBox("[menu] status:on dev:00\nc. temp:00\nd.temp:00", mainMenu);
+
     }
 
     @Override
     public void update() {
+        textBox.setText("[menu] dev:"+ HomeAutomator.getDevices().size()+"\nc. temp:00\nd.temp:00");
         textBox.update();
     }
 
