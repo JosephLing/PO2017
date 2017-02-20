@@ -11,7 +11,7 @@ import shed.mbed.LCD;
  * @author josephling
  * @version 1.0 16/02/2017
  */
-public class ScrollableText {
+public abstract class ScrollableText {
 
 
 
@@ -40,6 +40,7 @@ public class ScrollableText {
         screenWidth = lcd.getWidth();
         screenHeight = lcd.getHeight();
         menuSpacing = 10;
+
         down = (isPressed) -> {
             if(isPressed) {
                 if (selected+1 < msg.length){
@@ -62,8 +63,8 @@ public class ScrollableText {
      * update_footer. Currently will only display only 3 values.
      */
     public void update(){
-        ProjectLogger.Log("update loop for menu");
-        lcd.clear();
+        ProjectLogger.Log("update loop");
+        getLcd().clear();
         int maxDisplay = screenHeight / menuSpacing;
         int index = 0;
         if (maxDisplay < msgArray.length){
@@ -134,9 +135,7 @@ public class ScrollableText {
      * @param count int
      * @param y int
      */
-    protected void update_header(int index, int count, int y){
-
-    }
+    abstract void update_header(int index, int count, int y);
 
     /**
      * update method: update_main of out to lcd
@@ -144,9 +143,7 @@ public class ScrollableText {
      * @param count int
      * @param y int
      */
-    protected void update_main(int index, int count, int y){
-
-    }
+    abstract void update_main(int index, int count, int y);
 
     /**
      * update method: update_footer of out to lcd
@@ -154,9 +151,7 @@ public class ScrollableText {
      * @param count int
      * @param y int
      */
-    protected void update_footer(int index, int count, int y){
-
-    }
+    abstract void update_footer(int index, int count, int y);
 
     private void sleep(long milliseconds) {
         try {

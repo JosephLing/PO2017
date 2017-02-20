@@ -7,6 +7,7 @@ import mbedApp.room.objects.InterfaceScreenObject;
 import mbedApp.room.objects.LightObj;
 import mbedApp.devices.Light;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
+import mbedApp.devices.Device;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,6 +59,7 @@ public class RoomFrame extends JFrame {
         setContentPane(canvas.getCanvas());
         pack();
         canvas.setVisible(true);
+        init_Canvas();
 
 
 //        addWindowListener(new WindowAdapter()
@@ -81,12 +83,25 @@ public class RoomFrame extends JFrame {
     }
 
     public void registerLights(){
+        LightObj[] lights = new LightObj[10];
+        for (int i = 0; i < lights.length; i++) {
+            lights[i].addClient(new MessageClient());
+            lights[i].getClient().send(MQTT_TOPIC.DEVICE_REGISTER, "{"+Device.LIGHT+":state="+lights[i].isState()+",id="+i+"}");
+            //                                messageClient.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered:true}");
+            lights[i].register_client();
+        }
+    }
+
+
+    private void registerDevice(InterfaceScreenObject object){
+        renderList.add(object);
+        object.addClient(new MessageClient());
+    }
+}
 
 
 
-
-
-//        lights = new HashMap<String, LightObj>();
+//   lights = new HashMap<String, LightObj>();
 //        for (int i = 0; i < 10; i++) {
 //            lights.put("Light"+i, new LightObj("Light"+i));
 //            registerDevice(lights.get("Light"+i));
@@ -148,12 +163,3 @@ public class RoomFrame extends JFrame {
 //                System.err.println("wrong name");
 //            }
 //        });
-
-
-    }
-
-
-    private void registerDevice(InterfaceScreenObject object){
-        renderList.add(object);
-    }
-}

@@ -18,10 +18,11 @@ public class ProjectLogger {
 
     public static void Log(String msg){
         //        LOGGER.info(msg);
-        System.out.println("Logging stuff: " + msg);
+        System.out.println("Logging: " + msg);
     }
 
     public static void Warning(String msg){
+        System.err.println("Logging: " + msg);
         //        LOGGER.warning(msg);
     }
 }

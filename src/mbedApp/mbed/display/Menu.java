@@ -1,5 +1,6 @@
 package mbedApp.mbed.display;
 
+import mbedApp.ProjectLogger;
 import mbedApp.mbed.HomeAutomator;
 import shed.mbed.ButtonListener;
 import shed.mbed.PixelColor;
@@ -45,6 +46,7 @@ public class Menu extends ScrollableText{
 
     @Override
     protected void update_main(int index, int count, int y) {
+        ProjectLogger.Log("Menu update");
         getLcd().drawLine(0,y,getScreenWidth(),y, PixelColor.BLACK);
         getLcd().print(35, y+2, getMsgArray()[index]);
 
@@ -56,5 +58,10 @@ public class Menu extends ScrollableText{
     @Override
     protected void update_footer(int index, int count, int y) {
         getLcd().drawLine(0,y,getScreenWidth(),y, PixelColor.BLACK);
+    }
+
+    @Override
+    void update_header(int index, int count, int y) {
+
     }
 }

@@ -1,5 +1,6 @@
 package mbedApp.room.objects;
 
+import mbedApp.mqtt.MessageClient;
 import mbedApp.room.Canvas;
 
 import java.awt.Graphics;
@@ -30,6 +31,33 @@ public interface InterfaceScreenObject {
      * @param newY
      */
     void setY(int newY);
+
+    /**
+     *
+     * @param client MessageClient
+     */
+    void addClient(MessageClient client);
+
+    /**
+     *
+     * @return MessageClient
+     */
+    MessageClient getClient();
+
+
+    void register_client();
+
+    /**
+     *
+     * @return
+     */
+    boolean isRegistered();
+
+    /**
+     *
+     * @param state
+     */
+    void setRegistered(boolean state);
 
     /**
      * updates the obj and renders it to the frame
