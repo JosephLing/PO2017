@@ -43,7 +43,7 @@ public class TextBox extends ScrollableText {
 
     @Override
     void update_header(int index, int count, int y) {
-        ProjectLogger.Log("TextBox update");
+        //ProjectLogger.Log("TextBox update");
 
     }
 

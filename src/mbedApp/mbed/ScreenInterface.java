@@ -53,7 +53,7 @@ public class ScreenInterface
         });
         ProjectLogger.Log("running main loop");
         while (currentPage >= 0 && running && HomeAutomator.getMBed().isOpen()){
-            ProjectLogger.Log("udapte");
+            //ProjectLogger.Log("udapte");
             if (changed){
                 ProjectLogger.Log("----change----" + currentPage);
                 page[currentPage].open();

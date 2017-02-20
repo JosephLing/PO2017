@@ -2,6 +2,7 @@ package mbedApp;
 
 import mbedApp.mbed.HomeAutomator;
 import mbedApp.room.RoomMain;
+import shed.mbed.MBedStateException;
 
 public class Main {
     private static Main main;
@@ -28,15 +29,37 @@ public class Main {
     }
 
     public static void currentlyTesting(){
-        createRoomApp();
         createMbedApp();
+        sleep(5000);
+        createRoomApp();
     }
 
     public static void createRoomApp(){
-        RoomMain.main();
+        RoomThread r = new RoomThread();
+        r.start();
     }
 
     public static void createMbedApp(){
-        HomeAutomator test = new HomeAutomator();
+        try {
+            HomeAutomatorThread h = new HomeAutomatorThread();
+            h.start();
+        } catch (MBedStateException e) {
+            System.out.println("MBed closed");
+        }
+        
+    }
+    
+    /**
+     * Pause the program for a specified amount of miliseconds
+     * @param millis the number of miliseconds to pause for
+     */
+    public static void sleep(long millis){
+        try {
+            Thread.sleep(millis);
+        }
+        catch (InterruptedException ex) {
+            // Nothing we can do.
+        }
+
     }
 }

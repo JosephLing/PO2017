@@ -61,7 +61,7 @@ public abstract class ScrollableText {
      * update_footer. Currently will only display only 3 values.
      */
     public void update(){
-        ProjectLogger.Log("update loop");
+        //ProjectLogger.Log("update loop");
         getLcd().clear();
         int maxDisplay = screenHeight / menuSpacing;
         int index = 0;

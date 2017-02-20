@@ -90,6 +90,7 @@ public class RoomFrame extends JFrame {
             lights[i].getClient().send(MQTT_TOPIC.DEVICE_REGISTER, "{"+Device.LIGHT+":state="+lights[i].isState()+",id="+i+"}");
             //                                messageClient.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered:true}");
             lights[i].register_client();
+            sleep(1000);
         }
     }
 
@@ -97,6 +98,21 @@ public class RoomFrame extends JFrame {
     private void registerDevice(InterfaceScreenObject object){
         renderList.add(object);
         object.addClient(new MessageClient());
+    }
+    
+    
+    /**
+     * Pause the program for a specified amount of miliseconds
+     * @param millis the number of miliseconds to pause for
+     */
+    public static void sleep(long millis){
+        try {
+            Thread.sleep(millis);
+        }
+        catch (InterruptedException ex) {
+            // Nothing we can do.
+        }
+
     }
 }
 

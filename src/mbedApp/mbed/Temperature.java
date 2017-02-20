@@ -1,7 +1,6 @@
 package mbedApp.mbed;
 
 import mbedApp.mbed.HomeAutomator;
-import mbedApp.mbed.ScreenInterface;
 import mbedApp.mqtt.MessageClient;
 import shed.mbed.PotentiometerListener;
 import shed.mbed.Potentiometer;
@@ -49,7 +48,6 @@ public class Temperature
         pot.addListener((double value) -> {
             value = value * 10;
             messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(value) + "}");
-            HomeAutomator.sleep(100);
         });
     }
 }

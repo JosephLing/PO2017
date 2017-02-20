@@ -53,9 +53,11 @@ public class HomeAutomator {
         genMBed();
         messageClient = new MessageClient();
         devices = new HashMap<String, Device>();
-        ScreenInterface.main();
         temperature = new Temperature(messageClient);
         run();
+        
+        // This has to be last as it's blocking execution of other things!
+        ScreenInterface.main();
     }
 
     private void setUpSubscriptions(){
@@ -65,9 +67,11 @@ public class HomeAutomator {
                 (String topic, String name, HashMap<String, String> args)->{
                     switch (name){
                         case Device.LIGHT:
+                            System.out.println(name);
+                            System.out.println(Device.parseNewDeviceId(name, args));
                             if (Device.parseNewDeviceId(name, args) != null){
                                 devices.put(Device.parseNewDeviceId(name, args), Light.parseNewDevice(args));
-                                messageClient.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered:true}");
+                                messageClient.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered=true}");
                             }
                             break;
 
@@ -94,8 +98,10 @@ public class HomeAutomator {
     }
 
     private void run() {
-//        temperature.checkTempChange();
-//        temperature.checkTempPot();
+        System.out.println("This is being called");
+        temperature.checkTempChange();
+        temperature.checkTempPot();
+        setUpSubscriptions();
     }
     
 
