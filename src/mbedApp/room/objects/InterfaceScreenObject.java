@@ -22,13 +22,13 @@ public interface InterfaceScreenObject {
 
     /**
      * sets the x var
-     * @param newX
+     * @param newX int
      */
     void setX(int newX);
 
     /**
      * sets the y var
-     * @param newY
+     * @param newY int
      */
     void setY(int newY);
 
@@ -49,18 +49,20 @@ public interface InterfaceScreenObject {
 
     /**
      *
-     * @return
+     * @return boolean value if it has been registered
      */
     boolean isRegistered();
 
     /**
      *
-     * @param state
+     * @param state boolean
      */
     void setRegistered(boolean state);
 
     /**
      * updates the obj and renders it to the frame
+     * @param canvas custom Canvas object used to write to
+     * @return Graphics object
      */
     Graphics update(Canvas canvas);
 

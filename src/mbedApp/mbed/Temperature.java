@@ -14,8 +14,10 @@ public class Temperature
 {
     
     private MessageClient messageClient;
+
     /**
      * Constructor for objects of class Temperature
+     * @param messageClient MessageClient
      */
     public Temperature(MessageClient messageClient)
     {
@@ -33,6 +35,7 @@ public class Temperature
     
     /**
      * Get the current temperature from the MBed
+     * @return Double type value of temp
      */
     public static Double getCurrentTemp() {
         return HomeAutomator.getMBed().getThermometer().getTemperature();

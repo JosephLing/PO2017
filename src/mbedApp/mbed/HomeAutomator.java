@@ -31,6 +31,7 @@ public class HomeAutomator {
     /**
      * Get our MBed object - you don't need to initialise a HomeAutomator class
      * to use this method.
+     * @return mbed
      */
     public static MBed getMBed() {
         return mbed;

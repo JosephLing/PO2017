@@ -10,10 +10,12 @@ import java.util.HashMap;
  */
 public interface InterfaceAdvMsg {
     /**
+     /**
      *
      * @param topic of msg
      * @param name name of the cmd
      * @param args name to go with the arg
+     * @throws MqttExceptionParsingData if parsed incorrectly
      */
     void getMsg (String topic, String name, HashMap<String, String> args) throws MqttExceptionParsingData;
 }
