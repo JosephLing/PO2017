@@ -45,6 +45,7 @@ public class Temperature
     */
     public void checkTempPot() {
         Potentiometer pot = HomeAutomator.getMBed().getPotentiometer1();
+        pot.setEpsilon(0.1); // The value that the potentiometer has to change by to be registered by the listener
         pot.addListener((double value) -> {
             value = value * 10;
             messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(value) + "}");
