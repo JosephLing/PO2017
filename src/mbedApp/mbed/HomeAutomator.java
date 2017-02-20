@@ -53,7 +53,7 @@ public class HomeAutomator {
         genMBed();
         messageClient = new MessageClient();
         devices = new HashMap<String, Device>();
-        screenInterface = new ScreenInterface(messageClient);
+        ScreenInterface.main();
         temperature = new Temperature(messageClient);
         run();
     }
@@ -62,7 +62,7 @@ public class HomeAutomator {
         //MQTT_TOPIC.DEVICE_REGISTER
         // so we register by name+id so then we can .parse() it later
         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER,
-                (String topic, String name, String[][]args)->{
+                (String topic, String name, HashMap<String, String> args)->{
                     switch (name){
                         case Device.LIGHT:
                             if (Device.parseNewDeviceId(name, args) != null){
@@ -83,7 +83,7 @@ public class HomeAutomator {
 
 
         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE,
-                (String topic, String name, String[][]args)->{
+                (String topic, String name, HashMap<String, String> args)->{
                     if (devices.get(name) != null){
                         devices.get(name).parseChange(args);
                     }
@@ -94,8 +94,8 @@ public class HomeAutomator {
     }
 
     private void run() {
-        temperature.checkTempChange();
-        temperature.checkTempPot();
+//        temperature.checkTempChange();
+//        temperature.checkTempPot();
     }
     
 

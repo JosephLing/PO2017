@@ -85,6 +85,7 @@ public class RoomFrame extends JFrame {
     public void registerLights(){
         LightObj[] lights = new LightObj[10];
         for (int i = 0; i < lights.length; i++) {
+            lights[i] = new LightObj(Device.LIGHT);
             lights[i].addClient(new MessageClient());
             lights[i].getClient().send(MQTT_TOPIC.DEVICE_REGISTER, "{"+Device.LIGHT+":state="+lights[i].isState()+",id="+i+"}");
             //                                messageClient.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered:true}");

@@ -2,6 +2,8 @@ package mbedApp.devices;
 
 import mbedApp.mqtt.MessageClient;
 
+import java.util.HashMap;
+
 /**
  * InterfaceDevice does.............
  *
@@ -10,7 +12,7 @@ import mbedApp.mqtt.MessageClient;
  */
 public interface InterfaceDevice {
 
-    void parseChange(String[][] args);
+    void parseChange(HashMap<String, String> args);
 
     void register(MessageClient client);
 }

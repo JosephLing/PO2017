@@ -14,19 +14,26 @@ public class TextBox extends ScrollableText {
 
     private ButtonListener backButton;
 
-    public TextBox(String msg, ButtonListener backButton) {
+    public TextBox(String msg, ButtonListener backButton1) {
         super(msg.split("\n"));
-        this.backButton = backButton;
+        setBackButton(backButton1);
     }
 
-    public TextBox(String msg, ButtonListener backButton, boolean render){
+    public TextBox(String msg, ButtonListener backButton1, boolean render){
         super(msg.split("\n"));
-        this.backButton = backButton;
+        setBackButton(backButton1);
         if (render){
             this.enableControls();
             this.update();
         }
 
+    }
+
+    private void setBackButton(ButtonListener backButtonNew) {
+        this.backButton = (isPressed) -> {
+            this.disableControls();
+            backButtonNew.changed(isPressed);
+        };
     }
 
     @Override

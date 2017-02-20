@@ -7,6 +7,7 @@ import mbedApp.mqtt.MessageClient;
 import mbedApp.room.Canvas;
 
 import java.awt.Graphics;
+import java.util.HashMap;
 
 /**
  * Light does.............
@@ -74,12 +75,11 @@ public class LightObj extends Light implements InterfaceScreenObject {
     @Override
     public void register_client() {
         client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
-                (String topic, String name, String[][]args)->{
+                (String topic, String name, HashMap<String, String> args)->{
                     if (name.contains(Device.LIGHT) && name.split(Device.LIGHT)[1].equals(Integer.toString(getId()))){
-                        if (args.length == 1){
-                            if (args[0][0].equals("registered")){
-                                setRegistered(!isRegistered());
-                            }
+                        String reg = args.get("registered");
+                        if (reg != null){
+                            setRegistered(!isRegistered());
                         }
                     }
                 });

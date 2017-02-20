@@ -1,11 +1,12 @@
 package mbedApp.mbed;
 
-import mbedApp.mbed.display.InterfaceUI;
+import mbedApp.mbed.pages.*;
 import mbedApp.mbed.display.Menu;
 import mbedApp.mbed.display.TextBox;
 import mbedApp.ProjectLogger;
 import mbedApp.mqtt.MessageClient;
 import shed.mbed.ButtonListener;
+import java.util.ArrayList;
 
 /**
  * Write a description of class ScreenInterface here.
@@ -18,30 +19,84 @@ public class ScreenInterface
     private Menu mainMenu;
     private Menu settings;
     private MessageClient messageClient;
-    private Temperature temperature;
 
-    /**
-     * Constructor for objects of class ScreenInterface
-     */
-    public ScreenInterface(MessageClient messageClient)
-    {
-        this.messageClient = messageClient;
-        mainStart();
+
+    private static boolean running;
+    private static boolean changed;
+
+    private static int currentPage;
+    private static InterfaceUI[] page;
+
+
+    public static void main(){
+        page = new InterfaceUI[]{
+                new PageStart(),
+                new PageMainMenu(),
+                new PageLights(),
+                new PageTemprature(),
+                new PageCredits(),
+                new PageSettings(),
+
+
+                new PageQuit()
+
+        };
+        ScreenInterface.currentPage = 0;
+        running = true;
+        changed = true;
+
+        HomeAutomator.getMBed().getSwitch2().addListener((isPressed)->{
+            if (isPressed){
+                ProjectLogger.Log("going back");
+                goBack();
+            }
+        });
+        ProjectLogger.Log("running main loop");
+        while (currentPage >= 0 && running && HomeAutomator.getMBed().isOpen()){
+            ProjectLogger.Log("udapte");
+            if (changed){
+                ProjectLogger.Log("----change----" + currentPage);
+                page[currentPage].open();
+                changed = false;
+            }
+            page[currentPage].update();
+            sleep(1000);
+
+        }
     }
 
-    //----------------------------------------------------------------------------------------------
+
+    private static void change(){
+        changed = true;
+        page[currentPage].close();
+    }
+
+    public static void goBack(){
+        if (currentPage != 0){
+            change();
+            currentPage --;
+        }
+    }
+
+    public static void goUp(){
+        if (currentPage+1 < page.length){
+            change();
+            currentPage ++;
+        }
+    }
 
     /**
      * disables all the controls
      * Package private
      */
-    static void disableAllControls(){
+    protected void disableAllControls(){
         ProjectLogger.Log("----disabling all controls----");
         HomeAutomator.getMBed().getJoystickDown().removeAllListeners();
         HomeAutomator.getMBed().getJoystickUp().removeAllListeners();
         HomeAutomator.getMBed().getJoystickFire().removeAllListeners();
         HomeAutomator.getMBed().getJoystickLeft().removeAllListeners();
         HomeAutomator.getMBed().getJoystickRight().removeAllListeners();
+        HomeAutomator.getMBed().getSwitch2().removeAllListeners();
     }
 
     /**
@@ -58,7 +113,7 @@ public class ScreenInterface
 
     //----------------------------------------------------------------------------------------------
 
-    private InterfaceUI Quit = ()->{
+    private void Quit() {
         ProjectLogger.Log("closing down messageClient and mbed");
         TextBox msg = new TextBox("\nQuitting", null);
         msg.update();
@@ -66,102 +121,5 @@ public class ScreenInterface
         this.messageClient.disconnect();
         HomeAutomator.getMBed().close();
         System.exit(0);
-    };
-
-    //----------------------------------------------------------------------------------------------
-
-    public void mainStart(){
-        /*
-            menu  status:on no. dev: 10
-
-            current temp: 20
-            desired temp: 25
-        */
-        TextBox textBox = new TextBox("[menu] status:on dev:00\nc. temp:00\nd.temp:00",(ispressed)->{
-            if (ispressed) {
-                this.mainMenu();
-            }
-        } );
-        textBox.enableControls();
-        textBox.update();
     }
-
-
-    //----------------------------------------------------------------------------------------------
-    private void mainMenu(){
-
-
-        String[] itemNames = {"lights", "temprature", "Settings", "Credits","Back", "Quit"};
-
-        InterfaceUI[] itemCmds = {
-                Lights, // lights
-                Temprature, // temprature
-                Settings,// , // settings
-                Credits, // credits
-                BackToStart, // back to the start page
-                Quit // quit
-        };
-
-        mainMenu = new Menu(itemNames, itemCmds);
-        mainMenu.enableControls();
-        mainMenu.update();
-    }
-
-    private void backToMainMenu(){
-        disableAllControls();
-        mainMenu.enableControls();
-        mainMenu.update();
-    }
-
-    /**
-     * ButtonListener for the back button to update_main menu.
-     * TODO: maybe make it dynamic?
-     */
-    private ButtonListener backButtonToMainMenu  = (isPressed) -> {
-        if(isPressed) {
-            backToMainMenu();
-        }
-    };
-
-    private InterfaceUI Lights = () -> {
-        //TODO: enable this to work with the new light setup
-        TextBox textBox = new TextBox("lights", backButtonToMainMenu);
-        textBox.enableControls();
-        textBox.update();
-    };
-
-    private InterfaceUI Temprature = () -> {
-        TextBox textBox = new TextBox("temprature", backButtonToMainMenu);
-        textBox.enableControls();
-        textBox.update();
-    };
-
-    private InterfaceUI Settings = () -> {
-        String[] settingsTitles = {
-                "MQTT",
-                "Temprature",
-                "back"
-        };
-        InterfaceUI[] settingsCmds = {
-                ()->{System.out.println("mqtt stuff");},
-                ()->{System.out.println("temprature settings");},
-                ()->{backToMainMenu();}
-        };
-        settings = new Menu(settingsTitles, settingsCmds);
-        settings.enableControls();
-        settings.update();
-    };
-
-    private InterfaceUI Credits = () -> {
-        TextBox textBox = new TextBox("Joe\nWill\nPierre\nKhem", backButtonToMainMenu);
-        textBox.enableControls();
-        textBox.update();
-
-    };
-
-    private InterfaceUI BackToStart = ()->{
-        disableAllControls();
-        mainStart();
-    };
-
 }

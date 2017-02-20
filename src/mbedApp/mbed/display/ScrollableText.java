@@ -46,7 +46,6 @@ public abstract class ScrollableText {
                 if (selected+1 < msg.length){
                     selected ++;
                 }
-                this.update();
             }};
 
         up = (isPressed) -> {
@@ -54,7 +53,6 @@ public abstract class ScrollableText {
                 if (selected-1 >= 0){
                     selected --;
                 }
-                this.update();
             }};
     }
 

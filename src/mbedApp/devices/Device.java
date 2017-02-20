@@ -5,6 +5,8 @@ import mbedApp.ProjectLogger;
 import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
 
+import java.util.HashMap;
+
 /**
  * Device base class
  *
@@ -58,36 +60,34 @@ public class Device implements InterfaceDevice{
     }
 
     @Override
-    public void parseChange(String[][] args) {
+    public void parseChange(HashMap<String, String> args) {
 
     }
 
     @Override
     public void register(MessageClient client) {
-        client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,  (String topic, String name, String[][]args)->{
+        client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
+                (String topic, String name, HashMap<String, String> args)->{
             if (name.equals(getName()+getId())){
-                if (args.length == 1){
-                    if (args[0][0].equals("registered")){
-                        setDevice_registered(Boolean.parseBoolean(args[0][1]));
-                    }
+                String state = args.get("registered");
+                if (state != null){
+                    setDevice_registered(Boolean.parseBoolean(state));
                 }
             }
         });
     }
 
 
-    public static Device parseNewDevice(String[][] args){
+    public static Device parseNewDevice(HashMap<String, String> args){
         return null;
     }
 
-    public static String parseNewDeviceId(String name, String[][] args){
+    public static String parseNewDeviceId(String name, HashMap<String, String> args){
         String newId = null;
-        if (args.length == 1){ // id and state
-            if (args[0][0].equals("id")){
-                newId = name + args[0][1];
-            }else{
-                ProjectLogger.Warning("No Id found! for new light: " + name);
-            }
+        if (args.get("id") != null){
+            newId = name + args.get("id");
+        }else{
+            ProjectLogger.Warning("No Id found! for new light: " + name);
         }
         return newId;
     }

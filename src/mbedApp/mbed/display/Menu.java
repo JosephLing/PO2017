@@ -2,6 +2,7 @@ package mbedApp.mbed.display;
 
 import mbedApp.ProjectLogger;
 import mbedApp.mbed.HomeAutomator;
+import mbedApp.mbed.pages.InterfaceUI;
 import shed.mbed.ButtonListener;
 import shed.mbed.PixelColor;
 

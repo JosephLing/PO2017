@@ -5,6 +5,8 @@ import mbedApp.ProjectLogger;
 import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
 
+import java.util.HashMap;
+
 /**
  * Light does.............
  *
@@ -25,13 +27,12 @@ public class Thermostat extends Device implements InterfaceDevice{
     }
 
     @Override
-    public void parseChange(String[][] args) {
+    public void parseChange(HashMap<String, String> args) {
 
-        if (isDevice_registered()){
-            if (args.length == 1){
-                if (args[0][0].equals("temperature")){
-                    temperature = Float.parseFloat(args[0][1]);
-                }
+        String tempratureString = args.get("temperature");
+        if (isDevice_registered()) {
+            if (tempratureString != null) {
+                temperature = Float.parseFloat(tempratureString);
             }
         }
 
@@ -48,18 +49,19 @@ public class Thermostat extends Device implements InterfaceDevice{
         return THERMOSTAT;
     }
 
-    public static Thermostat parseNewDevice(String[][] args){
+    public static Thermostat parseNewDevice(HashMap<String, String> args){
         Thermostat newThermostat = null;
-        if (args.length == 1){ // id and state
-            if (args[0][0].equals("id")){
-                if (args[1][0].equals("temperature")){
-                    newThermostat =  new Thermostat(Float.parseFloat(args[1][1]), Integer.parseInt(args[0][1]));
-                }else{
-                    ProjectLogger.Warning("No temperature found for new thermostat");
-                }
+        String id = args.get("id");
+        String temperature = args.get("temperature");
+        if (id != null){
+            if (temperature != null){
+                newThermostat =  new Thermostat(Float.parseFloat(temperature), Integer.parseInt(id));
             }else{
-                ProjectLogger.Warning("No Id found! for new thermostat");
+                ProjectLogger.Warning("No state found for new thermostat");
             }
+
+        }else{
+            ProjectLogger.Warning("No Id found! for new thermostat: " + THERMOSTAT);
         }
         return newThermostat;
     }

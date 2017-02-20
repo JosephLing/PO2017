@@ -1,4 +1,4 @@
-package mbedApp.mbed.display;
+package mbedApp.mbed.pages;
 
 
 /**
@@ -9,4 +9,6 @@ public interface InterfaceUI {
     void update();
 
     void close();
+
+    void open();
 }
