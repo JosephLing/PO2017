@@ -1,5 +1,7 @@
 package mbedApp.mqtt;
 
+import java.util.HashMap;
+
 /**
  * InterfaceAdvMsg does.............
  *
@@ -12,7 +14,6 @@ public interface InterfaceAdvMsg {
      * @param topic of msg
      * @param name name of the cmd
      * @param args name to go with the arg
-//     * @param values value of the name
      */
-    void getMsg (String topic, String name, String[][]args) throws MqttExceptionParsingData;
+    void getMsg (String topic, String name, HashMap<String, String> args) throws MqttExceptionParsingData;
 }
