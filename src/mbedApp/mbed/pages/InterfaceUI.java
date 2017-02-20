@@ -7,4 +7,6 @@ package mbedApp.mbed.display;
 public interface InterfaceUI {
 
     void update();
+
+    void close();
 }
