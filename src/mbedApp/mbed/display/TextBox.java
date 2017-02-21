@@ -1,6 +1,5 @@
 package mbedApp.mbed.display;
 
-import mbedApp.ProjectLogger;
 import mbedApp.mbed.HomeAutomator;
 import shed.mbed.ButtonListener;
 

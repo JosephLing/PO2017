@@ -1,11 +1,8 @@
 package mbedApp.mbed;
 
-import mbedApp.mbed.HomeAutomator;
-import mbedApp.mqtt.MessageClient;
-import shed.mbed.PotentiometerListener;
-import shed.mbed.Potentiometer;
-import shed.mbed.Thermometer;
 import mbedApp.mqtt.MQTT_TOPIC;
+import mbedApp.mqtt.MessageClient;
+import shed.mbed.Potentiometer;
 
 /**
  * Controls temperature functionality of the MBed

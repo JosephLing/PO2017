@@ -72,6 +72,7 @@ public class Device implements InterfaceDevice{
                 String state = args.get("registered");
                 if (state != null){
                     setDevice_registered(Boolean.parseBoolean(state));
+                    System.out.println(name);
                 }
             }
         });

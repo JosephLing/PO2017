@@ -1,12 +1,12 @@
 package mbedApp.mbed;
 
 import mbedApp.ProjectLogger;
-import mbedApp.devices.Light;
 import mbedApp.devices.Device;
+import mbedApp.devices.Light;
 import mbedApp.mqtt.MQTT_TOPIC;
+import mbedApp.mqtt.MessageClient;
 import shed.mbed.MBed;
 import shed.mbed.MBedUtils;
-import mbedApp.mqtt.MessageClient;
 
 import java.util.HashMap;
 

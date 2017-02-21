@@ -1,7 +1,5 @@
 package mbedApp;
 
-import mbedApp.mbed.HomeAutomator;
-import mbedApp.room.RoomMain;
 import shed.mbed.MBedStateException;
 
 public class Main {
@@ -30,7 +28,7 @@ public class Main {
 
     public static void currentlyTesting(){
         createMbedApp();
-        sleep(5000);
+        sleep(9000);
         createRoomApp();
     }
 

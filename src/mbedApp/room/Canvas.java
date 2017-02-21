@@ -2,8 +2,9 @@ package mbedApp.room;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
 
 /**
  * Canvas is a class to allow for simple graphical drawing on a canvas.

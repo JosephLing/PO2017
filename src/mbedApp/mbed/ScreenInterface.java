@@ -1,12 +1,10 @@
 package mbedApp.mbed;
 
-import mbedApp.mbed.pages.*;
+import mbedApp.ProjectLogger;
 import mbedApp.mbed.display.Menu;
 import mbedApp.mbed.display.TextBox;
-import mbedApp.ProjectLogger;
+import mbedApp.mbed.pages.*;
 import mbedApp.mqtt.MessageClient;
-import shed.mbed.ButtonListener;
-import java.util.ArrayList;
 
 /**
  * Write a description of class ScreenInterface here.

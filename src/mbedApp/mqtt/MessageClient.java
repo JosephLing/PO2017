@@ -1,19 +1,12 @@
 package mbedApp.mqtt;
 
-import mbedApp.devices.Light;
 import mbedApp.ProjectLogger;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * MessageClient

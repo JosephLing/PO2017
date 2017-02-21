@@ -3,7 +3,7 @@ package mbedApp.room.objects;
 import mbedApp.mqtt.MessageClient;
 import mbedApp.room.Canvas;
 
-import java.awt.Graphics;
+import java.awt.*;
 
 /**
  * Created by josephling on 12/02/2017.
@@ -65,5 +65,9 @@ public interface InterfaceScreenObject {
      * @return Graphics object
      */
     Graphics update(Canvas canvas);
+
+    String getName();
+
+    int getId();
 
 }

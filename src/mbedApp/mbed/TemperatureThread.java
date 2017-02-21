@@ -1,9 +1,7 @@
 package mbedApp.mbed;
 
-import mbedApp.mbed.HomeAutomator;
-import mbedApp.mqtt.MessageClient;
-import shed.mbed.Thermometer;
 import mbedApp.mqtt.MQTT_TOPIC;
+import mbedApp.mqtt.MessageClient;
 
 /**
  * TemperatureThread is used for running our inifite temperature checking loop
