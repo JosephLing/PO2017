@@ -105,10 +105,8 @@ public class HomeAutomator {
     }
 
     private void run() {
-        System.out.println("This is being called");
 //        temperature.checkTempChange();
 //        temperature.checkTempPot();
-        System.out.println("running");
         setUpSubscriptions();
     }
     

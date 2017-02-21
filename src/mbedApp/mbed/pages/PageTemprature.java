@@ -1,6 +1,7 @@
 package mbedApp.mbed.pages;
 
 import mbedApp.mbed.display.TextBox;
+import mbedApp.mbed.Temperature;
 
 /**
  * TempraturePage does.............
@@ -14,7 +15,7 @@ public class PageTemprature implements InterfaceUI {
 
     public PageTemprature() {
 
-        textBox = new TextBox("temprature", null);
+        textBox = new TextBox("Current Temperature\n" + Temperature.getCurrentTemp() + "C", null);
     }
 
     @Override

@@ -12,7 +12,8 @@ public class PageLights implements InterfaceUI {
     private TextBox textBox;
 
     public PageLights() {
-        textBox = new TextBox("lights", null);
+        textBox = new TextBox("Lighting Control", null);
+        
     }
 
     @Override

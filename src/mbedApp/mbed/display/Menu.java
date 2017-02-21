@@ -12,7 +12,7 @@ import shed.mbed.PixelColor;
  * @author josephling
  * @version 1.0 16/02/2017
  */
-public class Menu extends ScrollableText{
+public class Menu extends ScrollableText {
 
     private ButtonListener fire;
 
@@ -47,7 +47,7 @@ public class Menu extends ScrollableText{
 
     @Override
     protected void update_main(int index, int count, int y) {
-        ProjectLogger.Log("Menu update");
+        //ProjectLogger.Log("Menu update");
         getLcd().drawLine(0,y,getScreenWidth(),y, PixelColor.BLACK);
         getLcd().print(35, y+2, getMsgArray()[index]);
 
