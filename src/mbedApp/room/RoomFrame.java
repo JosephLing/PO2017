@@ -7,6 +7,7 @@ import mbedApp.mqtt.MessageClient;
 import mbedApp.room.objects.CanvasObj;
 import mbedApp.room.objects.InterfaceScreenObject;
 import mbedApp.room.objects.RenderObjs;
+import mbedApp.room.objects.LightObj;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,20 +23,21 @@ import java.util.Random;
  */
 public class RoomFrame extends JFrame {
 
-    private ArrayList<CanvasObj> renderList;
+    //private ArrayList<LightObj> renderListLight;
 
     private Canvas canvas;
     private MessageClient messageClient;
 
-//    private HashMap<String, LightObj> lights;
+    private HashMap<String, LightObj> lights;
 
     public RoomFrame() {
         messageClient = new MessageClient();
-        renderList = new ArrayList<CanvasObj>();
+        lights = new HashMap<String, LightObj>();
 
         init_Jframe();
         registerLights();
         setVisible(true);
+        checkForStateChange();
         main();
     }
 
@@ -59,110 +61,71 @@ public class RoomFrame extends JFrame {
         pack();
         canvas.setVisible(true);
         init_Canvas();
-
-
-//        addWindowListener(new WindowAdapter()
-//        {
-//            public void windowClosing(WindowEvent e)
-//            {
-//                System.out.println("asf");
-//            }
-//        });
-
     }
 
     private void drawEverything(){
-        for (int i = 0; i < renderList.size(); i++) {
-            if (renderList.get(i).isRegistered()){
-                System.out.println("asdf");
-                renderList.get(i).update(canvas);
+        // Draw lights
+        for (LightObj light : lights.values()) {
+            if (light.isRegistered()){
+                System.out.println(light.getX());
+                System.out.println(light.getY());
+                light.update(canvas);
             }
         }
     }
 
     private void init_Canvas(){
-//        canvas.draw(this, Color.red, new Ellipse2D.Double(250, 250, 50, 50));
+        //canvas.draw(this, Color.red, new Ellipse2D.Double(250, 250, 50, 50));
     }
 
     public void registerLights(){
         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
                 (String topic, String name, HashMap<String, String> args)->{
                     System.out.println(name);
-//                    renderList.stream()
-//                            .filter(a -> !a.isRegistered())
-//                            .filter(b -> b.getName().equals(name))
-//                            .forEach(c -> c.setRegistered(true));
-                    for (int i = 0; i < renderList.size(); i++) {
-                        if (!renderList.get(i).isRegistered()){
-                            if ((renderList.get(i).getDevice().getName()+renderList.get(i).getDevice().getId()).equals(name)){
+                    for (LightObj light : lights.values()) {
+                        if (!light.isRegistered()){
+                            if ((light.getName()+light.getId()).equals(name)){
                                 System.out.println("ah "+ name);
-                                renderList.get(i).setRegistered(true);
+                                light.setRegistered(true);
                             }else{
-                                System.out.println(renderList.get(i).toString());
+                                System.out.println(light.toString());
                             }
                         }
                     }
-//                    boolean found = false;
-//                    int count = 0;
-//                    while (!found && count < renderList.size()){
-//                        if (!renderList.get(count).isRegistered()){
-//                            Device foo = ((Device) renderList.get(count));
-////                            System.out.println(foo.getName() + foo.getId() + " " + name);
-//                            if ((foo.getName()+foo.getId()).equals(name)){
-//                                renderList.get(count).setRegistered(true);
-//                            }
-//                        }else{
-//                            count ++;
-//                        }
-//                    }
         });
 
-        Light light = null;
+        LightObj light = null;
         Random rnd = new Random();
         for (int i = 0; i < 10; i++) {
-            boolean t = rnd.nextBoolean();
-            System.out.println(t);
-            light = new Light(t, i);
-
-            renderList.add(new CanvasObj( light, RenderObjs.LIGHT.getInterfaceRender()));
+            String lightId = null;
+            light = new LightObj(i, 100 + i * 10, 10 + i * 10);
+            // light.getName()+light.getId() makes something like Light1 - unique address for a device
+            lightId = light.getName()+light.getId();
+            lights.put(lightId, light);
 
             // the current issue is that casting to a method that isn't defined in the parent gives a default value...
             // we can negate this by having multiple renderLists of different types... but we don't want that
-            renderList.get(i)
-                    .getMessageClient()
-                    .send(MQTT_TOPIC.DEVICE_REGISTER, "{"+Device.LIGHT+":state="+((Light)renderList.get(i).getDevice()).isState()+",id="+((Light)renderList.get(i).getDevice()).getId()+"}");
-
-//            lights[i].addClient(new MessageClient());
-//            lights[i].getClient().send(MQTT_TOPIC.DEVICE_REGISTER, "{"+Device.LIGHT+":state="+lights[i].isState()+",id="+i+"}");
-            //                                messageClient.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered:true}");
-//            lights[i].register_client();
-//            renderList.add(lights[i]);
+            // we're gonna do that, for now :)
+            lights.get(lightId).getMessageClient()
+                    .send(MQTT_TOPIC.DEVICE_REGISTER, "{"+Device.LIGHT+":state="+ lights.get(lightId).isState()+",id="+ lights.get(lightId).getId()+"}");
             sleep(1000);
         }
-
-
-
-//
-//                    if (name.contains(Device.LIGHT)){
-//                        String reg = args.get("registered");
-//                        if (reg != null){
-//                            setRegistered(!isRegistered());
-//                        }
-//                    }
-
-
-//        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
-//                (String topic, String name, HashMap<String, String> args)->{
-//
-//                });
-    }
-
-
-    private void registerDevice(InterfaceScreenObject object){
-//        renderList.add(object);
-        object.addClient(new MessageClient());
     }
     
+    private void checkForStateChange() {
+    
+       //receives: topic=devices_change {light1:state=false}
+       // response: alters lights hash map to the new change
+       messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE, (String topic, String name, HashMap<String, String> args)->{
+           if (name.contains("Light")) {
+                lights.get(name).setState(Boolean.parseBoolean(args.get("state")));
+                lights.get(name).update(canvas);
+           } else{
+               System.err.println("wrong name");
+           }
+       });
+    
+    }
     
     /**
      * Pause the program for a specified amount of miliseconds

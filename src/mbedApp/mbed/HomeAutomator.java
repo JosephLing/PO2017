@@ -87,14 +87,14 @@ public class HomeAutomator {
 
         //MQTT_TOPIC.DEVICE_CHANGE
         // parse the name and id then run the .parse(String[][])
-
-
-        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE,
-                (String topic, String name, HashMap<String, String> args)->{
-                    if (devices.get(name) != null){
-                        devices.get(name).parseChange(args);
-                    }
-        });
+// 
+// 
+//         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE,
+//                 (String topic, String name, HashMap<String, String> args)->{
+//                     if (devices.get(name) != null){
+//                         devices.get(name).parseChange(args);
+//                     }
+//         });
 
         //MQTT_TOPIC.TEMPERATURE
         //  we need to register the temprature device first
