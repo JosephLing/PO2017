@@ -1,17 +1,13 @@
 package mbedApp.room;
 
+import mbedApp.ProjectLogger;
 import mbedApp.devices.Device;
-import mbedApp.devices.Light;
 import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
-import mbedApp.room.objects.CanvasObj;
-import mbedApp.room.objects.InterfaceScreenObject;
-import mbedApp.room.objects.RenderObjs;
 import mbedApp.room.objects.LightObj;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -23,21 +19,26 @@ import java.util.Random;
  */
 public class RoomFrame extends JFrame {
 
-    //private ArrayList<LightObj> renderListLight;
 
     private Canvas canvas;
     private MessageClient messageClient;
 
     private HashMap<String, LightObj> lights;
+    private int lights_registeredCount;
 
     public RoomFrame() {
         messageClient = new MessageClient();
-        lights = new HashMap<String, LightObj>();
 
         init_Jframe();
-        registerLights();
         setVisible(true);
-        checkForStateChange();
+
+        // set up lights
+        lights = new HashMap<String, LightObj>();
+        lights_registeredCount = 0;
+        init_lights();
+        init_deviceChange();
+
+
         main();
     }
 
@@ -45,6 +46,9 @@ public class RoomFrame extends JFrame {
         while (true){
             drawEverything();
             canvas.wait(1000);
+            if (lights_registeredCount != lights.size()){
+                register_lights();
+            }
         }
     }
 
@@ -60,66 +64,67 @@ public class RoomFrame extends JFrame {
         setContentPane(canvas.getCanvas());
         pack();
         canvas.setVisible(true);
-        init_Canvas();
     }
 
     private void drawEverything(){
         // Draw lights
         for (LightObj light : lights.values()) {
             if (light.isRegistered()){
-                System.out.println(light.getX());
-                System.out.println(light.getY());
                 light.update(canvas);
             }
         }
     }
 
-    private void init_Canvas(){
-        //canvas.draw(this, Color.red, new Ellipse2D.Double(250, 250, 50, 50));
-    }
-
-    public void registerLights(){
+    public void init_lights(){
         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
                 (String topic, String name, HashMap<String, String> args)->{
                     System.out.println(name);
                     for (LightObj light : lights.values()) {
                         if (!light.isRegistered()){
                             if ((light.getName()+light.getId()).equals(name)){
-                                System.out.println("ah "+ name);
                                 light.setRegistered(true);
-                            }else{
-                                System.out.println(light.toString());
+                                lights_registeredCount ++;
                             }
                         }
                     }
         });
 
         LightObj light = null;
-        Random rnd = new Random();
-        for (int i = 0; i < 10; i++) {
-            String lightId = null;
-            light = new LightObj(i, 100 + i * 10, 10 + i * 10);
-            // light.getName()+light.getId() makes something like Light1 - unique address for a device
-            lightId = light.getName()+light.getId();
-            lights.put(lightId, light);
-
-            // the current issue is that casting to a method that isn't defined in the parent gives a default value...
-            // we can negate this by having multiple renderLists of different types... but we don't want that
-            // we're gonna do that, for now :)
-            lights.get(lightId).getMessageClient()
-                    .send(MQTT_TOPIC.DEVICE_REGISTER, "{"+Device.LIGHT+":state="+ lights.get(lightId).isState()+",id="+ lights.get(lightId).getId()+"}");
-            sleep(1000);
+        for (int i = 0; i < 200; i++) {
+            light = new LightObj(i, 10 + i * 10, 10 + i * 10);
+            lights.put(light.getName()+light.getId(), light);
         }
+
+        register_lights();
     }
-    
-    private void checkForStateChange() {
-    
-       //receives: topic=devices_change {light1:state=false}
-       // response: alters lights hash map to the new change
+
+    /**
+     * registers all the lights that haven't yet been registered
+     * this is important for example if their isn't a controller for the devices yet.
+     */
+    private void register_lights(){
+        ProjectLogger.Log("register lights");
+        String lightId;
+        for (LightObj lightObj : lights.values()) {
+            lightId = lightObj.getName()+lightObj.getId();
+            if (!lightObj.isRegistered()){
+                lights.get(lightId).getMessageClient()
+                        .send(MQTT_TOPIC.DEVICE_REGISTER,
+                                "{"+Device.LIGHT+":state="+ lightObj.isState()+",id="+ lightObj.getId()+"}");
+            }
+        }
+        sleep(1000);
+
+    }
+
+    /**
+     * receives: topic=devices_change {light1:state=false}
+     * response: alters lights hash map to the new change
+     */
+    private void init_deviceChange() {
        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE, (String topic, String name, HashMap<String, String> args)->{
            if (name.contains("Light")) {
                 lights.get(name).setState(Boolean.parseBoolean(args.get("state")));
-                lights.get(name).update(canvas);
            } else{
                System.err.println("wrong name");
            }
@@ -141,68 +146,3 @@ public class RoomFrame extends JFrame {
 
     }
 }
-
-
-
-//   lights = new HashMap<String, LightObj>();
-//        for (int i = 0; i < 10; i++) {
-//            lights.put("Light"+i, new LightObj("Light"+i));
-//            registerDevice(lights.get("Light"+i));
-//        }
-//
-//        // receives: topic=devices_register  {start:devices=true}
-//        // sends: topic=devices_set {light1:state=false}
-//        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER, (String topic, String name, String[][]args)->{
-//            if (name.contains("start")){
-//                if (args.length == 1){
-//                    if (args[0][0].equals("devices")){
-//                        if (Boolean.parseBoolean(args[0][1])){
-//                            System.out.println("starting devices registration");
-//
-//                            final Object[] keys = lights.keySet().toArray();
-//                            for (int i = 0; i < lights.keySet().size(); i++) {
-//                                System.out.println("a");
-//                                messageClient.send(MQTT_TOPIC.DEVICE_SET, "{"+keys[i].toString()+":state="+Boolean.toString(lights.get(keys[i].toString()).isOn())+"}");
-//                                System.out.println("b");
-//                                try {
-//                                    wait(1000);
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                }
-//
-////                                System.out.println(lights.get(keys[i].toString()).getName());
-//                            }
-//
-//                            messageClient.send(MQTT_TOPIC.DEVICE_REGISTER, "{finish:devices=true}");
-//                        }else{
-//                            System.out.println("device=false");
-//                        }
-//                    }else{
-//                        System.err.println("invalid para");
-//                    }
-//                }else{
-//                    System.err.println("args size incorrect");
-//                }
-//            }else{
-//                System.out.println("could not find start");
-//            }
-//        });
-//
-//        // receives: topic=devices_change {light1:state=false}
-//        // response: alters lights hash map to the new change
-//        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE, (String topic, String name, String[][]args)->{
-//            if (name.contains("Light")){
-//                if (args.length == 1){
-//                    if (args[0][0].equals("state")){
-//                        lights.get(name).setState(Boolean.parseBoolean(args[0][1]));
-//                        lights.get(name).update(canvas);
-//                    }else{
-//                        System.err.println("Could not find state");
-//                    }
-//                }else{
-//                    System.err.println("args wrong length");
-//                }
-//            }else{
-//                System.err.println("wrong name");
-//            }
-//        });

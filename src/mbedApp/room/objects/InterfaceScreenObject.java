@@ -38,12 +38,6 @@ public interface InterfaceScreenObject {
      */
     void addClient(MessageClient client);
 
-    /**
-     *
-     * @return MessageClient
-     */
-    MessageClient getClient();
-
 
     void register_client();
 
@@ -62,12 +56,6 @@ public interface InterfaceScreenObject {
     /**
      * updates the obj and renders it to the frame
      * @param canvas custom Canvas object used to write to
-     * @return Graphics object
      */
-    Graphics update(Canvas canvas);
-
-    String getName();
-
-    int getId();
-
+    void update(Canvas canvas);
 }

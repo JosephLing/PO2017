@@ -1,5 +1,6 @@
 package mbedApp.room.objects;
 
+import mbedApp.ProjectLogger;
 import mbedApp.devices.Device;
 import mbedApp.devices.Light;
 import mbedApp.mqtt.MQTT_TOPIC;
@@ -20,7 +21,7 @@ import java.awt.geom.*;
  * @author josephling
  * @version 1.0 12/02/2017
  */
-public class LightObj extends Light {
+public class LightObj extends Light implements InterfaceScreenObject {
 
     private int x;
     private int y;
@@ -35,13 +36,16 @@ public class LightObj extends Light {
         this.y = y;
     }
 
-    public Graphics update(Canvas canvas) {
-        if (isState()) {
-            canvas.draw(this, Color.red, new Ellipse2D.Double(x, y, 20, 20));
-        } else {
-            canvas.draw(this, Color.green, new Ellipse2D.Double(x, y, 20, 20));
+    public void update(Canvas canvas) {
+        if (registered){
+            if (isState()) {
+                canvas.draw(this, Color.red, new Ellipse2D.Double(x, y, 20, 20));
+            } else {
+                canvas.draw(this, Color.green, new Ellipse2D.Double(x, y, 20, 20));
+            }
+        }else{
+            ProjectLogger.Warning("light not yet registered");
         }
-        return null;
     }
 
     public int getX() {

@@ -28,7 +28,7 @@ public class Main {
 
     public static void currentlyTesting(){
         createMbedApp();
-        sleep(9000);
+//        sleep(1000);
         createRoomApp();
     }
 
