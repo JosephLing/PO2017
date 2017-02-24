@@ -2,10 +2,11 @@ package mbedApp.mbed;
 
 import mbedApp.ProjectLogger;
 import mbedApp.mbed.display.Menu;
-import mbedApp.mbed.display.TextBox;
 import mbedApp.mbed.pages.*;
 import mbedApp.mqtt.MessageClient;
-import java.util.Arrays;
+
+import static mbedApp.mbed.pages.Page.*;
+
 /**
  * Write a description of class ScreenInterface here.
  * 
@@ -23,19 +24,27 @@ public class ScreenInterface
     private static boolean changed;
 
     private static int currentPage;
-    private static InterfaceUI[] page;
+    private static InterfaceUI[] pages;
 
 
     public static void main(){
-        page = new InterfaceUI[]{
+        pages = new InterfaceUI[]{
                 new PageStart(1),        // 0
-                new PageMainMenu(new int[]{2, 3, 4, 5, 6, 7}),                   // 1
+                new PageMainMenu(new int[]{
+                        LIGHTS.getIndex(),
+                        TEMP.getIndex(),
+                        SETTINGS.getIndex(),
+                        CREDITS.getIndex(),
+                        BACK.getIndex(),
+                        QUIT.getIndex()
+                }),                   // 1
                 new PageLights(),       // 2
                 new PageTemprature(),   // 3
                 new PageCredits(),      // 4
-                new PageSettings(new int[]{5, 5, 6}),     // 5
+                new PageSettings(new int[]{TEST.getIndex(),TEST.getIndex(),  BACK.getIndex()}),     // 5
                 new PageBack(),         // 6
-                new PageQuit()          // 7
+                new PageQuit(),          // 7
+                new PageTest()          // 8
 
         };
         ScreenInterface.currentPage = 0;
@@ -45,19 +54,23 @@ public class ScreenInterface
         HomeAutomator.getMBed().getSwitch2().addListener((isPressed)->{
             if (isPressed){
                 ProjectLogger.Log("going back");
-                ScreenInterface.setCurrentPage(-1);
+                System.err.println("Current location: " + pages[currentPage].getPage().name());
+                ScreenInterface.goToPage(pages[currentPage].getPage().getBackIndex());
             }
         });
         ProjectLogger.Log("running main loop");
+
+
+
         while (currentPage >= 0 && running && HomeAutomator.getMBed().isOpen()){
             //ProjectLogger.Log("udapte");
             
             if (changed){
                 ProjectLogger.Log("----change----" + currentPage);
-                page[currentPage].open();
+                pages[currentPage].open();
                 changed = false;
             }
-            page[currentPage].update();
+            pages[currentPage].update();
             sleep(1000);
 
         }
@@ -66,18 +79,18 @@ public class ScreenInterface
 
     private static void change(){
         changed = true;
-        page[currentPage].close();
+        pages[currentPage].close();
     }
 
     public static void setCurrentPage(int value){
-        if (currentPage+value >= 0 && currentPage+value < page.length){
+        if (currentPage+value >= 0 && currentPage+value < pages.length){
             currentPage += value;
             change();
         }
     }
 
     public static void goToPage(int value){
-        if (value >= 0 && value < page.length){
+        if (value >= 0 && value < pages.length){
             currentPage = value;
             change();
         }

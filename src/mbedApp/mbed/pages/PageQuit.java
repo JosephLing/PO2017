@@ -22,16 +22,6 @@ public class PageQuit implements InterfaceUI{
 
     @Override
     public void update() {
-        ProjectLogger.Log("closing down messageClient and mbed");
-        textBox.update();
-        ScreenInterface.sleep(2000);
-        //TODO: implement messageClient closing
-//        this.messageClient.disconnect();
-
-        HomeAutomator.getMBed().close();
-        System.exit(0);
-
-
     }
 
     @Override
@@ -41,5 +31,18 @@ public class PageQuit implements InterfaceUI{
 
     @Override
     public void open() {
+        ProjectLogger.Log("closing down messageClient and mbed");
+        textBox.update();
+        ScreenInterface.sleep(2000);
+        //TODO: implement messageClient closing
+//        this.messageClient.disconnect();
+
+        HomeAutomator.getMBed().close();
+        System.exit(0);
+    }
+
+    @Override
+    public Page getPage(){
+        return Page.QUIT;
     }
 }

@@ -30,4 +30,9 @@ public class PageCredits implements InterfaceUI {
     public void open() {
         textBox.enableControls();
     }
+
+    @Override
+    public Page getPage(){
+        return Page.CREDITS;
+    }
 }

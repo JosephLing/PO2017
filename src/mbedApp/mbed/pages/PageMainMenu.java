@@ -34,4 +34,9 @@ public class PageMainMenu implements InterfaceUI{
         ProjectLogger.Log("CONTROLS ENABLED!!!");
         mainMenu.enableControls();
     }
+
+    @Override
+    public Page getPage(){
+        return Page.MAINMENU;
+    }
 }

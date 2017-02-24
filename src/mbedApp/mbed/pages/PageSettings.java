@@ -42,4 +42,9 @@ public class PageSettings implements InterfaceUI {
         settings.enableControls();
 
     }
+
+    @Override
+    public Page getPage(){
+        return Page.SETTINGS;
+    }
 }

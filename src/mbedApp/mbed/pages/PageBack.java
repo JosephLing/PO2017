@@ -34,4 +34,9 @@ public class PageBack implements InterfaceUI {
     public void open() {
         ScreenInterface.setCurrentPage(-1);
     }
+
+    @Override
+    public Page getPage(){
+        return Page.BACK;
+    }
 }
