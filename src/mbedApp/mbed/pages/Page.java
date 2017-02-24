@@ -11,8 +11,8 @@ public enum Page {
     MAINMENU    (1, 0),
     LIGHTS      (2, 1),
     TEMP        (3, 1),
-    CREDITS     (4, 1),
-    SETTINGS    (5, 1),
+    SETTINGS    (4, 1),
+    CREDITS     (5, 1),
     BACK        (6, -1),
     QUIT        (7, -1),
     TEST        (8, 0);

@@ -1,5 +1,6 @@
 package mbedApp.mbed.pages;
 
+import mbedApp.ProjectLogger;
 import mbedApp.mbed.ScreenInterface;
 import java.util.function.Predicate;
 /**
@@ -9,16 +10,6 @@ import java.util.function.Predicate;
  * @version 1.0 20/02/2017
  */
 public class PageBack implements InterfaceUI {
-    private int goBackCount;
-
-    public PageBack(int goBackCount) {
-        this.goBackCount = goBackCount;
-    }
-
-    public PageBack(){
-        this.goBackCount = 1;
-    }
-
 
     @Override
     public void update() {
@@ -32,7 +23,7 @@ public class PageBack implements InterfaceUI {
 
     @Override
     public void open() {
-        ScreenInterface.setCurrentPage(-1);
+        ProjectLogger.Warning("Warning never should reach here!");
     }
 
     @Override
