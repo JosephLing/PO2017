@@ -17,16 +17,18 @@ import static mbedApp.mbed.pages.Page.*;
  * in the Enum Page.
  *
  * To create a new page simply:
- * - create a PageYourNameForIt class
- * - implement InterfaceUI to the page
- *  -> if your using a TextBox or Menu create them in the constructor
- *      (Examples should be avaible in the current code)
- *  -> or create an edge case like PageBack or PageQuit
- *  -> make sure to add closing down all the listeners of whatever display
- *         object you create.
- * - then add the index to ScreenInferface.
- *  -> if it is part of a menu make sure in the enum to set the
- *      correct back button
+ * <ul>
+ *     <li>create a PageYourNameForIt class</li>
+ *     <li>implement InterfaceUI to the page</li>
+ *     <li>if your using a TextBox or Menu create them in the constructor
+ *      (Examples should be avaible in the current code)</li>
+ *      <li>or create an edge case like PageBack or PageQuit</li>
+ *      <li>make sure to add closing down all the listeners of whatever display object you create.</li>
+ *      <li>then add the index to ScreenInferface.</li>
+ *      <li>if it is part of a menu make sure in the enum to set the
+ *      correct back button</li>
+ * </ul>
+ * -
  * 
  * @author (Joe Ling)
  * @version (23 02 2017)
