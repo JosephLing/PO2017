@@ -11,16 +11,16 @@ import shed.mbed.ButtonListener;
  */
 public class TextBox extends ScrollableText {
 
-    private ButtonListener backButton;
+    private ButtonListener fireButton;
 
     public TextBox(String msg, ButtonListener backButton1) {
         super(msg.split("\n"));
-        setBackButton(backButton1);
+        setFireButton(backButton1);
     }
 
     public TextBox(String msg, ButtonListener backButton1, boolean render){
         super(msg.split("\n"));
-        setBackButton(backButton1);
+        setFireButton(backButton1);
         if (render){
             this.enableControls();
             this.update();
@@ -32,11 +32,17 @@ public class TextBox extends ScrollableText {
         this.setMsgArray(msg.split("\n"));
     }
 
-    private void setBackButton(ButtonListener backButtonNew) {
-        this.backButton = (isPressed) -> {
-            this.disableControls();
-            backButtonNew.changed(isPressed);
-        };
+    private void setFireButton(ButtonListener backButtonNew) {
+        if (backButtonNew != null){
+            this.fireButton = (isPressed) -> {
+                this.disableControls();
+                backButtonNew.changed(isPressed);
+            };
+        }else{
+            System.out.println("dummy button created");
+            this.fireButton = (isPressed) -> {};
+        }
+
     }
 
     @Override
@@ -58,12 +64,12 @@ public class TextBox extends ScrollableText {
     @Override
     public void enableControls() {
         super.enableControls();
-        HomeAutomator.getMBed().getJoystickFire().addListener(backButton);
+        HomeAutomator.getMBed().getJoystickFire().addListener(fireButton);
     }
 
     @Override
     public void disableControls() {
         super.disableControls();
-        HomeAutomator.getMBed().getJoystickFire().removeListener(backButton);
+        HomeAutomator.getMBed().getJoystickFire().removeListener(fireButton);
     }
 }

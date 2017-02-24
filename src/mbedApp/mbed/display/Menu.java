@@ -2,6 +2,7 @@ package mbedApp.mbed.display;
 
 import mbedApp.ProjectLogger;
 import mbedApp.mbed.HomeAutomator;
+import mbedApp.mbed.ScreenInterface;
 import mbedApp.mbed.pages.InterfaceUI;
 import shed.mbed.ButtonListener;
 import shed.mbed.PixelColor;
@@ -16,11 +17,11 @@ public class Menu extends ScrollableText {
 
     private ButtonListener fire;
 
-    private InterfaceUI[] menuCmd;
+    private int[] menuIndex;
 
-    public Menu(String[] msg, InterfaceUI[] menuCmd) {
+    public Menu(String[] msg, int[] menuIndex) {
         super(msg);
-        this.menuCmd = menuCmd;
+        this.menuIndex = menuIndex;
         fire = (isPressed) -> {
             if(isPressed) {
                 this.runSelected();
@@ -29,7 +30,8 @@ public class Menu extends ScrollableText {
 
     public void runSelected(){
         this.disableControls();
-        this.menuCmd[getSelected()].update();
+        ScreenInterface.goToPage(menuIndex[getSelected()]);
+//        this.menuCmd[getSelected()].update();
     }
 
     @Override

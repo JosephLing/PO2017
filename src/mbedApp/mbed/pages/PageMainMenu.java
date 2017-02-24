@@ -12,11 +12,11 @@ import mbedApp.mbed.display.Menu;
 public class PageMainMenu implements InterfaceUI{
 
     private Menu mainMenu;
+    private String[] itemNames;
 
-
-    public PageMainMenu() {
-        String[] itemNames = {"lights", "temprature", "Settings", "Credits","Back", "Quit"};
-        mainMenu = new Menu(itemNames, null);
+    public PageMainMenu(int[] optionsIndex) {
+        itemNames = new String[]{"lights", "temprature", "Settings", "Credits","Back", "Quit"};
+        mainMenu = new Menu(itemNames, optionsIndex);
     }
 
     @Override

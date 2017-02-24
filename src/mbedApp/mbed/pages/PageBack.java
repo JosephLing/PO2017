@@ -1,7 +1,7 @@
 package mbedApp.mbed.pages;
 
 import mbedApp.mbed.ScreenInterface;
-
+import java.util.function.Predicate;
 /**
  * PageBack does.............
  *
@@ -19,6 +19,7 @@ public class PageBack implements InterfaceUI {
         this.goBackCount = 1;
     }
 
+
     @Override
     public void update() {
 
@@ -31,10 +32,6 @@ public class PageBack implements InterfaceUI {
 
     @Override
     public void open() {
-        for (int i = 0; i < goBackCount; i++) {
-            ScreenInterface.goBack();
-            // could backfire doing it this way but.... whats the worst that could happen
-            // sets changed multiple times to true;
-        }
+        ScreenInterface.setCurrentPage(-1);
     }
 }

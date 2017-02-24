@@ -16,7 +16,7 @@ public class PageStart implements InterfaceUI {
 
     private TextBox textBox;
 
-    public PageStart() {
+    public PageStart(int nextPage) {
         /*
             menu  status:on no. dev: 10
 
@@ -25,7 +25,7 @@ public class PageStart implements InterfaceUI {
         */
         ButtonListener mainMenu = (isPressed) -> {
             if (isPressed){
-                ScreenInterface.goUp();
+                ScreenInterface.setCurrentPage(nextPage);
             }
         };
         textBox = new TextBox("Home Automation System\n0\nDevices Registered", mainMenu);

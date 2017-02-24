@@ -5,7 +5,7 @@ import mbedApp.mbed.display.Menu;
 import mbedApp.mbed.display.TextBox;
 import mbedApp.mbed.pages.*;
 import mbedApp.mqtt.MessageClient;
-
+import java.util.Arrays;
 /**
  * Write a description of class ScreenInterface here.
  * 
@@ -28,15 +28,14 @@ public class ScreenInterface
 
     public static void main(){
         page = new InterfaceUI[]{
-                new PageStart(),
-                new PageMainMenu(),
-                new PageLights(),
-                new PageTemprature(),
-                new PageCredits(),
-                new PageSettings(),
-
-
-                new PageQuit()
+                new PageStart(1),        // 0
+                new PageMainMenu(new int[]{2, 3, 4, 5, 6, 7}),                   // 1
+                new PageLights(),       // 2
+                new PageTemprature(),   // 3
+                new PageCredits(),      // 4
+                new PageSettings(new int[]{5, 5, 6}),     // 5
+                new PageBack(),         // 6
+                new PageQuit()          // 7
 
         };
         ScreenInterface.currentPage = 0;
@@ -46,7 +45,7 @@ public class ScreenInterface
         HomeAutomator.getMBed().getSwitch2().addListener((isPressed)->{
             if (isPressed){
                 ProjectLogger.Log("going back");
-                goBack();
+                ScreenInterface.setCurrentPage(-1);
             }
         });
         ProjectLogger.Log("running main loop");
@@ -70,17 +69,17 @@ public class ScreenInterface
         page[currentPage].close();
     }
 
-    public static void goBack(){
-        if (currentPage != 0){
+    public static void setCurrentPage(int value){
+        if (currentPage+value >= 0 && currentPage+value < page.length){
+            currentPage += value;
             change();
-            currentPage --;
         }
     }
 
-    public static void goUp(){
-        if (currentPage+1 < page.length){
+    public static void goToPage(int value){
+        if (value >= 0 && value < page.length){
+            currentPage = value;
             change();
-            currentPage ++;
         }
     }
 
@@ -111,14 +110,4 @@ public class ScreenInterface
     }
 
     //----------------------------------------------------------------------------------------------
-
-    private void Quit() {
-        ProjectLogger.Log("closing down messageClient and mbed");
-        TextBox msg = new TextBox("\nQuitting", null);
-        msg.update();
-        sleep(2000);
-        this.messageClient.disconnect();
-        HomeAutomator.getMBed().close();
-        System.exit(0);
-    }
 }

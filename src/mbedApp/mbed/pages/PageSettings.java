@@ -12,7 +12,7 @@ public class PageSettings implements InterfaceUI {
 
     private Menu settings;
 
-    public PageSettings() {
+    public PageSettings(int[] indexPage) {
         String[] settingsTitles = {
                 "MQTT",
                 "Temprature",
@@ -23,7 +23,7 @@ public class PageSettings implements InterfaceUI {
 //                ()->{System.out.println("temprature settings");};
 ////                ()->{backToMainMenu();}
 //        };
-        settings = new Menu(settingsTitles, null);
+        settings = new Menu(settingsTitles, indexPage);
     }
 
     @Override
