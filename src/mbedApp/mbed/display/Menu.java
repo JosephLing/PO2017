@@ -26,12 +26,19 @@ public class Menu extends ScrollableText {
             if(isPressed) {
                 this.runSelected();
             }};
+        assert msg.length == menuIndex.length: "msg array not the same size as menuIndex";
     }
 
     public void runSelected(){
-        this.disableControls();
-        ScreenInterface.goToPage(menuIndex[getSelected()]);
-//        this.menuCmd[getSelected()].update();
+        int selected = menuIndex[getSelected()];
+        if (selected != -1){
+            this.disableControls();
+            ScreenInterface.goToPage(selected);
+        }
+    }
+
+    public int[] getMenuIndex() {
+        return menuIndex;
     }
 
     @Override

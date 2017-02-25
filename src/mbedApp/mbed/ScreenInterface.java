@@ -35,9 +35,7 @@ import static mbedApp.mbed.pages.Page.*;
  */
 public class ScreenInterface
 {
-    private Menu mainMenu;
-    private Menu settings;
-    private MessageClient messageClient;
+    private static MessageClient messageClient;
 
 
     private static boolean running;
@@ -48,7 +46,7 @@ public class ScreenInterface
 
 
     public static void main(){
-
+        messageClient = new MessageClient();
         pages = new InterfaceUI[9];
 
         // 0 Start
@@ -65,7 +63,7 @@ public class ScreenInterface
         });
 
         // 2 lights menu
-        pages[LIGHTS.getIndex()] = new PageLights(new int[]{TEST.getIndex()});
+        pages[LIGHTS.getIndex()] = new PageLights();
 
         // 3 temprature stuff
         pages[TEMP.getIndex()] = new PageTemprature();
@@ -121,6 +119,7 @@ public class ScreenInterface
 
     private static void change(){
         changed = true;
+        System.out.println(pages[currentPage]);
         pages[currentPage].close();
     }
 
@@ -161,6 +160,10 @@ public class ScreenInterface
         HomeAutomator.getMBed().getJoystickLeft().removeAllListeners();
         HomeAutomator.getMBed().getJoystickRight().removeAllListeners();
         HomeAutomator.getMBed().getSwitch2().removeAllListeners();
+    }
+
+    public static MessageClient getMessageClient() {
+        return messageClient;
     }
 
     /**

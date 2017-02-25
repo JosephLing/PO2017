@@ -23,6 +23,8 @@ public class Device implements InterfaceDevice{
 
     private int id;
     private boolean device_registered;
+    private MessageClient client;
+
     public Device(int id) {
         this.id = id;
         device_registered = false;
@@ -66,6 +68,7 @@ public class Device implements InterfaceDevice{
 
     @Override
     public void register(MessageClient client) {
+        this.client = client;
         client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
                 (String topic, String name, HashMap<String, String> args)->{
             if (name.equals(getName()+getId())){
@@ -78,6 +81,9 @@ public class Device implements InterfaceDevice{
         });
     }
 
+    public MessageClient getClient() {
+        return client;
+    }
 
     public static Device parseNewDevice(HashMap<String, String> args){
         return null;
