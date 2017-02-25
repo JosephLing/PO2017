@@ -65,7 +65,7 @@ public class ScreenInterface
         });
 
         // 2 lights menu
-        pages[LIGHTS.getIndex()] = new PageLights();
+        pages[LIGHTS.getIndex()] = new PageLights(new int[]{TEST.getIndex()});
 
         // 3 temprature stuff
         pages[TEMP.getIndex()] = new PageTemprature();

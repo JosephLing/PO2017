@@ -39,9 +39,13 @@ public class LightObj extends Light implements InterfaceScreenObject {
     public void update(Canvas canvas) {
         if (registered){
             if (isState()) {
-                canvas.draw(this, Color.red, new Ellipse2D.Double(x, y, 20, 20));
-            } else {
                 canvas.draw(this, Color.green, new Ellipse2D.Double(x, y, 20, 20));
+                canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y, 10, 5));
+                canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y + 10, 5, 5));
+            } else {
+                canvas.draw(this, Color.red, new Ellipse2D.Double(x, y, 20, 20));
+                //canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y, 10, 5));
+                //canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y + 10, 5, 5));
             }
         }else{
             ProjectLogger.Warning("light not yet registered");

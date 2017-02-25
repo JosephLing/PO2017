@@ -1,6 +1,10 @@
 package mbedApp.mbed.pages;
 
+import mbedApp.mbed.HomeAutomator;
+import mbedApp.mbed.display.Menu;
 import mbedApp.mbed.display.TextBox;
+import java.util.HashMap;
+import mbedApp.devices.Device;
 
 /**
  * LightsPage does.............
@@ -10,25 +14,41 @@ import mbedApp.mbed.display.TextBox;
  */
 public class PageLights implements InterfaceUI {
     private TextBox textBox;
-
-    public PageLights() {
-        textBox = new TextBox("Lighting Control", null);
+    private Menu lighting;
+    private HashMap<String, Device> devices;
+    private String[] lightControls;
+    
+    public PageLights(int[] indexPage) {
+        String[] lightControls = {
+            "Back"
+        };
         
+        lighting = new Menu(lightControls, indexPage);
+        //textBox = new TextBox("Lighting Control", null);
     }
 
     @Override
     public void update() {
-        textBox.update();
+        devices = HomeAutomator.getDevices();
+        int i = 1;
+        for(String deviceName : devices.keySet()) {
+            if(deviceName.contains("Light")) {
+                lightControls[i] = deviceName;
+                i++;
+            }
+        }
+        
+        lighting.update();
     }
 
     @Override
     public void close() {
-        textBox.disableControls();
+        lighting.disableControls();
     }
 
     @Override
     public void open() {
-        textBox.enableControls();
+        lighting.enableControls();
     }
 
     @Override

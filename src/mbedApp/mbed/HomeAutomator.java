@@ -105,8 +105,8 @@ public class HomeAutomator {
     }
 
     private void run() {
-//        temperature.checkTempChange();
-//        temperature.checkTempPot();
+        temperature.checkTempChange();
+        temperature.checkTempPot();
         setUpSubscriptions();
     }
     

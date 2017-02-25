@@ -15,7 +15,7 @@ public class PageMainMenu implements InterfaceUI{
     private String[] itemNames;
 
     public PageMainMenu(int[] optionsIndex) {
-        itemNames = new String[]{"lights", "temprature", "Settings", "Credits","Back", "Quit"};
+        itemNames = new String[]{"Lights", "Temprature", "Settings", "Credits","Back", "Quit"};
         mainMenu = new Menu(itemNames, optionsIndex);
     }
 

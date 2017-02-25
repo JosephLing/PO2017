@@ -23,16 +23,15 @@ public class TemperatureThread extends Thread
     }
 
     public void run() {
-        //TODO: not have this as in infinite loop and a way to alter it [x]
         while(HomeAutomator.getMBed().isOpen()) {
             Double temp = Temperature.getCurrentTemp();
             System.out.println(temp);
             if(temp < MIN_ROOM_TEMP || temp > MAX_ROOM_TEMP) {
                 messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=21}");
-                HomeAutomator.sleep(10000);
+                HomeAutomator.sleep(20000);
             }else{
                 // so we sleep longer when the temprature
-                HomeAutomator.sleep(10000);
+                HomeAutomator.sleep(20000);
             }
 
         }

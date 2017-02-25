@@ -90,8 +90,8 @@ public class RoomFrame extends JFrame {
         });
 
         LightObj light = null;
-        for (int i = 0; i < 200; i++) {
-            light = new LightObj(i, 10 + i * 10, 10 + i * 10);
+        for (int i = 0; i < 10; i++) {
+            light = new LightObj(i, 10 + i * 50, 10);
             lights.put(light.getName()+light.getId(), light);
         }
 
