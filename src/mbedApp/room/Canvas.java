@@ -5,6 +5,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.awt.Graphics2D;
 
 /**
  * Canvas is a class to allow for simple graphical drawing on a canvas.
@@ -26,7 +27,7 @@ public class Canvas
     private Color backgroundColor;
     private Image canvasImage;
     private List<Object> objects;
-    private HashMap<Object, ShapeDescription> shapes;
+    private HashMap<Object, Object> items;
     
     /**
      * Create a Canvas.
@@ -40,7 +41,7 @@ public class Canvas
         canvas.setPreferredSize(new Dimension(width, height));
         backgroundColor = bgColor;
         objects = new ArrayList<Object>();
-        shapes = new HashMap<Object, ShapeDescription>();
+        items = new HashMap<Object, Object>();
     }
 
     public CanvasPane getCanvas() {
@@ -81,12 +82,20 @@ public class Canvas
     {
         objects.remove(referenceObject);   // just in case it was already there
         objects.add(referenceObject);      // add at the end
-        shapes.put(referenceObject, new ShapeDescription(shape, color));
+        items.put(referenceObject, new ShapeDescription(shape, color));
+        redraw();
+    }
+    
+    public void drawText(Object referenceObject, String text, int x, int y) 
+    {
+        objects.remove(referenceObject);
+        objects.add(referenceObject);
+        items.put(referenceObject, new TextDescription(text, x, y));
         redraw();
     }
     
     public HashMap getShapes(){
-        return shapes;
+        return items;
     }
     
     /**
@@ -96,7 +105,7 @@ public class Canvas
     public void erase(Object referenceObject)
     {
         objects.remove(referenceObject);   // just in case it was already there
-        shapes.remove(referenceObject);
+        items.remove(referenceObject);
         redraw();
     }
 
@@ -133,8 +142,8 @@ public class Canvas
     private void redraw()
     {
         erase();
-        for(Object shape : objects) {
-            shapes.get(shape).draw(graphic);
+        for(Object o : objects) {
+            items.get(o).draw(graphic);
         }
         canvas.repaint();
     }
@@ -187,5 +196,24 @@ public class Canvas
             graphic.fill(shape);
         }
     }
-
+    
+    private class TextDescription
+    {
+        private String text;
+        private int x;
+        private int y;
+        
+        public TextDescription(String text, int x, int y) 
+        {
+            this.text = text;
+            this.x = x;
+            this.y = y;
+        }
+        
+        public void draw(Graphics2D graphic)
+        {
+            graphic.setFont(new Font("Monospace", Font.BOLD, 18));
+            graphic.drawString(text, x, y);
+        }
+    }
 }

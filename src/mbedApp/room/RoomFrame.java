@@ -60,7 +60,7 @@ public class RoomFrame extends JFrame {
         setSize(600, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        canvas = new Canvas(500, 500, Color.black);
+        canvas = new Canvas(500, 500, Color.white);
         setContentPane(canvas.getCanvas());
         pack();
         canvas.setVisible(true);
