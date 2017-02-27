@@ -73,6 +73,7 @@ public class RoomFrame extends JFrame {
                 light.update(canvas);
             }
         }
+        canvas.drawText(this, "hello world", 100,100);
     }
 
     public void init_lights(){

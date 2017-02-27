@@ -27,7 +27,7 @@ public class Canvas
     private Color backgroundColor;
     private Image canvasImage;
     private List<Object> objects;
-    private HashMap<Object, Object> items;
+    private HashMap<Object, Drawable> items;
     
     /**
      * Create a Canvas.
@@ -41,7 +41,7 @@ public class Canvas
         canvas.setPreferredSize(new Dimension(width, height));
         backgroundColor = bgColor;
         objects = new ArrayList<Object>();
-        items = new HashMap<Object, Object>();
+        items = new HashMap<Object, Drawable>();
     }
 
     public CanvasPane getCanvas() {
@@ -179,7 +179,7 @@ public class Canvas
      * Canvas frame. This is essentially a JPanel with added capability to
      * refresh the image drawn on it.
      */
-    private class ShapeDescription
+    private class ShapeDescription implements Drawable
     {
         private Shape shape;
         private Color color;
@@ -190,6 +190,7 @@ public class Canvas
             this.color = color;
         }
 
+        @Override
         public void draw(Graphics2D graphic)
         {
             setForegroundColor(color);
@@ -197,7 +198,7 @@ public class Canvas
         }
     }
     
-    private class TextDescription
+    private class TextDescription implements Drawable
     {
         private String text;
         private int x;
@@ -209,11 +210,17 @@ public class Canvas
             this.x = x;
             this.y = y;
         }
-        
+
+        @Override
         public void draw(Graphics2D graphic)
         {
             graphic.setFont(new Font("Monospace", Font.BOLD, 18));
             graphic.drawString(text, x, y);
         }
+    }
+
+    private interface Drawable{
+
+        void draw(Graphics2D graphic);
     }
 }
