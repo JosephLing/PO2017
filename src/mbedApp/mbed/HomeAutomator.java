@@ -3,6 +3,7 @@ package mbedApp.mbed;
 import mbedApp.ProjectLogger;
 import mbedApp.devices.Device;
 import mbedApp.devices.Light;
+import mbedApp.devices.Thermostat;
 import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
 import shed.mbed.MBed;
@@ -76,7 +77,11 @@ public class HomeAutomator {
                                 deviceSet.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered=true}");
                             }
                             break;
-
+                        case Device.THERMOSTAT:
+                            if (Device.parseNewDeviceId(name, args) != null){
+                                devices.put(Device.parseNewDeviceId(name, args), Thermostat.parseNewDevice(args));
+                                deviceSet.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered=true}");
+                            }
                         default:
                             ProjectLogger.Warning("No device found for: " + name);
                     }

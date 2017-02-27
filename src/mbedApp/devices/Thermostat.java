@@ -20,6 +20,7 @@ public class Thermostat extends Device implements InterfaceDevice{
     
     public Thermostat(float temperature, int id) {
         super(id);
+        setTemperature(temperature);
     }
 
     public void setTemperature(float temperature) {

@@ -5,6 +5,7 @@ import mbedApp.devices.Device;
 import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
 import mbedApp.room.objects.LightObj;
+import mbedApp.room.objects.ThermostatObj;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,12 +20,13 @@ import java.util.Random;
  */
 public class RoomFrame extends JFrame {
 
-
     private Canvas canvas;
     private MessageClient messageClient;
 
     private HashMap<String, LightObj> lights;
     private int lights_registeredCount;
+
+    private ThermostatObj thermostat;
 
     public RoomFrame() {
         messageClient = new MessageClient();
@@ -37,7 +39,8 @@ public class RoomFrame extends JFrame {
         lights_registeredCount = 0;
         init_lights();
         init_deviceChange();
-
+        init_thermostat();
+        checkForTempChange();
 
         main();
     }
@@ -73,22 +76,25 @@ public class RoomFrame extends JFrame {
                 light.update(canvas);
             }
         }
-        canvas.drawText(this, "hello world", 100,100);
+        
+        if(thermostat.isRegistered()) {
+            thermostat.update(canvas);
+        }
     }
 
     public void init_lights(){
         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
-                (String topic, String name, HashMap<String, String> args)->{
-                    System.out.println(name);
-                    for (LightObj light : lights.values()) {
-                        if (!light.isRegistered()){
-                            if ((light.getName()+light.getId()).equals(name)){
-                                light.setRegistered(true);
-                                lights_registeredCount ++;
-                            }
+            (String topic, String name, HashMap<String, String> args)->{
+                System.out.println(name);
+                for (LightObj light : lights.values()) {
+                    if (!light.isRegistered()){
+                        if ((light.getName()+light.getId()).equals(name)){
+                            light.setRegistered(true);
+                            lights_registeredCount ++;
                         }
                     }
-        });
+                }
+            });
 
         LightObj light = null;
         for (int i = 0; i < 10; i++) {
@@ -97,6 +103,19 @@ public class RoomFrame extends JFrame {
         }
 
         register_lights();
+    }
+
+    public void init_thermostat() {
+        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
+            (String topic, String name, HashMap<String, String> args)->{
+                if ((thermostat.getName()+thermostat.getId()).equals(name)){
+                    thermostat.setRegistered(true);
+                }
+            });
+            
+        thermostat = new ThermostatObj(0, 10, 100);
+
+        thermostat.getMessageClient().send(MQTT_TOPIC.DEVICE_REGISTER,"{"+Device.THERMOSTAT+":id="+ thermostat.getId() +",temperature=0}");
     }
 
     /**
@@ -110,8 +129,8 @@ public class RoomFrame extends JFrame {
             lightId = lightObj.getName()+lightObj.getId();
             if (!lightObj.isRegistered()){
                 lights.get(lightId).getMessageClient()
-                        .send(MQTT_TOPIC.DEVICE_REGISTER,
-                                "{"+Device.LIGHT+":state="+ lightObj.isState()+",id="+ lightObj.getId()+"}");
+                .send(MQTT_TOPIC.DEVICE_REGISTER,
+                    "{"+Device.LIGHT+":state="+ lightObj.isState()+",id="+ lightObj.getId()+"}");
             }
         }
         sleep(1000);
@@ -123,16 +142,29 @@ public class RoomFrame extends JFrame {
      * response: alters lights hash map to the new change
      */
     private void init_deviceChange() {
-       messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE, (String topic, String name, HashMap<String, String> args)->{
-           if (name.contains("Light")) {
-                lights.get(name).setState(Boolean.parseBoolean(args.get("state")));
-           } else{
-               System.err.println("wrong name");
-           }
-       });
-    
+        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE, (String topic, String name, HashMap<String, String> args)->{
+                if (name.contains("Light")) {
+                    lights.get(name).setState(Boolean.parseBoolean(args.get("state")));
+                } else{
+                    System.err.println("wrong name");
+                }
+            });
+
     }
     
+    /**
+     * Checks for a new requested temperature
+     */
+    private void checkForTempChange() {
+       messageClient.advanceSubscribe(MQTT_TOPIC.TEMPERATURE, (String topic, String name, HashMap<String, String> args)->{
+                if (name.contains("temp")) {
+                    thermostat.setTemperature(Double.valueOf(args.get("new")));
+                } else{
+                    System.err.println("wrong name");
+                }
+            });
+    }
+
     /**
      * Pause the program for a specified amount of miliseconds
      * @param millis the number of miliseconds to pause for
