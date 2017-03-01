@@ -27,17 +27,21 @@ public class ThermostatObj extends Thermostat implements InterfaceScreenObject {
     private MessageClient client;
     private boolean registered;
     private Double temp;
+    private Double currentTemp;
 
     public ThermostatObj(int id, int x, int y) {
         super(0, id);
         client = new MessageClient();
         this.x = x;
         this.y = y;
+        temp = 0.0;
+        currentTemp = 0.0;
     }
 
     public void update(Canvas canvas) {
         if (registered){
             canvas.drawText(this, "Requested temperature: " + temp + "*C", x, y);
+            //canvas.drawText(this, "Current Temperature: " + currentTemp + "*C", x, y+10);
         }else{
             ProjectLogger.Warning("Thermostat not yet registered");
         }
@@ -74,11 +78,15 @@ public class ThermostatObj extends Thermostat implements InterfaceScreenObject {
     public void setTemperature(Double temp) {
         this.temp = temp;
     }
+    
+    public void setCurrentTemperature(Double currentTemp) {
+        this.currentTemp = currentTemp;
+    }
 
     public void register_client() {
         client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
                 (String topic, String name, HashMap<String, String> args)->{
-                    if (name.contains(Device.LIGHT) && name.split(Device.LIGHT)[1].equals(Integer.toString(getId()))){
+                    if (name.contains(Device.THERMOSTAT) && name.split(Device.THERMOSTAT)[1].equals(Integer.toString(getId()))){
                         String reg = args.get("registered");
                         if (reg != null){
                             setRegistered(!isRegistered());

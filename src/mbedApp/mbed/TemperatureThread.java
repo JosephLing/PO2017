@@ -27,10 +27,10 @@ public class TemperatureThread extends Thread
             Double temp = Temperature.getCurrentTemp();
             System.out.println(temp);
             if(temp < MIN_ROOM_TEMP || temp > MAX_ROOM_TEMP) {
-                messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=21}");
+                messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=21,current=" + temp + "}");
                 HomeAutomator.sleep(20000);
             }else{
-                // so we sleep longer when the temprature
+                messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:current=" + temp + "}");
                 HomeAutomator.sleep(20000);
             }
 

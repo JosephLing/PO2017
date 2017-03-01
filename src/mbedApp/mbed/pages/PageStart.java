@@ -28,13 +28,13 @@ public class PageStart implements InterfaceUI {
                 ScreenInterface.setCurrentPage(nextPage);
             }
         };
-        textBox = new TextBox("Home Automation System\n0\nDevices Registered", mainMenu);
+        textBox = new TextBox("Wake Up: 08:00\n0\nDevices Reg.", mainMenu);
 
     }
 
     @Override
     public void update() {
-        textBox.setText("Home Automation System\n"+ HomeAutomator.getDevices().size()+"\nDevices Registered");
+        textBox.setText("Wake Up: 08:00\n"+ HomeAutomator.getDevices().size()+"\nDevices Reg.");
         textBox.update();
     }
 

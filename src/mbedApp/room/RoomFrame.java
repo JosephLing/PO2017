@@ -27,6 +27,9 @@ public class RoomFrame extends JFrame {
     private int lights_registeredCount;
 
     private ThermostatObj thermostat;
+    private Double currentTemp;
+    
+    private Graphics2D graphic;
 
     public RoomFrame() {
         messageClient = new MessageClient();
@@ -59,7 +62,7 @@ public class RoomFrame extends JFrame {
      * initialises the application window
      */
     private void init_Jframe(){
-        setTitle("Example Room");
+        setTitle("Room");
         setSize(600, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -80,6 +83,8 @@ public class RoomFrame extends JFrame {
         if(thermostat.isRegistered()) {
             thermostat.update(canvas);
         }
+        
+        canvas.drawText(this, "Current Temperature: " + currentTemp + " *C", 10, 200);
     }
 
     public void init_lights(){
@@ -158,7 +163,12 @@ public class RoomFrame extends JFrame {
     private void checkForTempChange() {
        messageClient.advanceSubscribe(MQTT_TOPIC.TEMPERATURE, (String topic, String name, HashMap<String, String> args)->{
                 if (name.contains("temp")) {
-                    thermostat.setTemperature(Double.valueOf(args.get("new")));
+                    if(args.get("new") != null) {
+                        thermostat.setTemperature(Double.valueOf(args.get("new")));
+                    }
+                    if(args.get("current") != null) {
+                        currentTemp = Double.valueOf(args.get("current"));
+                    }
                 } else{
                     System.err.println("wrong name");
                 }
