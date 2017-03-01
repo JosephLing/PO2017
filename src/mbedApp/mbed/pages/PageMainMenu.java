@@ -13,10 +13,11 @@ public class PageMainMenu implements InterfaceUI{
 
     private Menu mainMenu;
     private String[] itemNames;
+    private int[] optionsIndex;
 
     public PageMainMenu(int[] optionsIndex) {
+        this.optionsIndex = optionsIndex;
         itemNames = new String[]{"Lights", "Temprature", "Settings", "Credits","Back", "Quit"};
-        mainMenu = new Menu(itemNames, optionsIndex);
     }
 
     @Override
@@ -31,6 +32,7 @@ public class PageMainMenu implements InterfaceUI{
 
     @Override
     public void open() {
+        mainMenu = new Menu(itemNames, optionsIndex);
         ProjectLogger.Log("CONTROLS ENABLED!!!");
         mainMenu.enableControls();
     }

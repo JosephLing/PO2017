@@ -23,7 +23,7 @@ public class MenuLights extends Menu {
         // right = true
         // left = false
 
-        right = (isPressed) ->{
+        left = (isPressed) ->{
             if (isPressed){
                 Light light =this.lights[getSelected()];
                 if (light != null){
@@ -34,7 +34,7 @@ public class MenuLights extends Menu {
                 }
             }
         };
-        left = (isPressed) ->{
+        right = (isPressed) ->{
             if (isPressed){
                 Light light =this.lights[getSelected()];
                 if (light != null){

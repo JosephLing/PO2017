@@ -70,18 +70,24 @@ public class HomeAutomator {
         MessageClient deviceSet = new MessageClient();
         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER,
                 (String topic, String name, HashMap<String, String> args)->{
+                    String deviceId = Device.parseNewDeviceId(name, args);
                     switch (name){
                         case Device.LIGHT:
-                            if (Device.parseNewDeviceId(name, args) != null){
-                                devices.put(Device.parseNewDeviceId(name, args), Light.parseNewDevice(args));
-                                deviceSet.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered=true}");
+                            if (!devices.containsKey(deviceId)){
+                                System.out.println("asdf");
+                                devices.put(deviceId, Light.parseNewDevice(args));
+//                                devices.get(deviceId).register(deviceSet);
+                                deviceSet.send(MQTT_TOPIC.DEVICE_SET, "{"+deviceId+":registered=true}");
                             }
                             break;
                         case Device.THERMOSTAT:
-                            if (Device.parseNewDeviceId(name, args) != null){
+                            if (!devices.containsKey(deviceId)){
                                 devices.put(Device.parseNewDeviceId(name, args), Thermostat.parseNewDevice(args));
-                                deviceSet.send(MQTT_TOPIC.DEVICE_SET, "{"+Device.parseNewDeviceId(name, args)+":registered=true}");
+//                                devices.get(deviceId).register(deviceSet);
+
+                                deviceSet.send(MQTT_TOPIC.DEVICE_SET, "{"+deviceId+":registered=true}");
                             }
+                            break;
                         default:
                             ProjectLogger.Warning("No device found for: " + name);
                     }

@@ -92,6 +92,7 @@ public class RoomFrame extends JFrame {
             (String topic, String name, HashMap<String, String> args)->{
                 System.out.println(name);
                 for (LightObj light : lights.values()) {
+                    System.out.println(light.isRegistered());
                     if (!light.isRegistered()){
                         if ((light.getName()+light.getId()).equals(name)){
                             light.setRegistered(true);
