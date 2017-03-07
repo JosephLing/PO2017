@@ -33,7 +33,7 @@ public class PageTemprature implements InterfaceUI {
 
     @Override
     public void update() {
-        textBox = new TextBox("Current Temperature\n" + Temperature.getCurrentTemp() + "C", null);
+        textBox.setText(getText());
         textBox.update();
     }
 

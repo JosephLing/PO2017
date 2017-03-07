@@ -93,8 +93,7 @@ public class ScreenInterface
 
         HomeAutomator.getMBed().getSwitch2().addListener((isPressed)->{
             if (isPressed){
-                ProjectLogger.Log("going back");
-                System.err.println("Current location: " + pages[currentPage].getPage().name());
+                ProjectLogger.Log("Closing: " + pages[currentPage].getPage().name());
                 ScreenInterface.goToPage(pages[currentPage].getPage().getBackIndex());
             }
         });
@@ -107,7 +106,7 @@ public class ScreenInterface
             //ProjectLogger.Log("udapte");
             
             if (changed){
-                ProjectLogger.Log("----change----" + currentPage);
+                ProjectLogger.Log("Opening" + pages[currentPage].getPage().name());
                 pages[currentPage].open();
                 changed = false;
             }
