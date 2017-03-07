@@ -1,7 +1,11 @@
 package mbedApp.mbed.pages;
 
+import mbedApp.mbed.HomeAutomator;
+import mbedApp.mbed.ScreenInterface;
 import mbedApp.mbed.display.TextBox;
 import mbedApp.mbed.Temperature;
+import shed.mbed.Potentiometer;
+import shed.mbed.PotentiometerListener;
 
 /**
  * TempraturePage does.............
@@ -12,10 +16,19 @@ import mbedApp.mbed.Temperature;
 public class PageTemprature implements InterfaceUI {
 
     private TextBox textBox;
+    private Potentiometer potentiometer;
+    private PotentiometerListener potentiometerListener;
 
     public PageTemprature() {
+        potentiometer = HomeAutomator.getMBed().getPotentiometer1();
+        potentiometerListener = (double value) -> {
+            System.out.println("asf" + value);
+//            messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(value*10) + "}");
+        };
+    }
 
-        textBox = new TextBox("Current Temperature\n" + Temperature.getCurrentTemp() + "C", null);
+    private String getText(){
+        return "Current Temperature\n" + HomeAutomator.getTemperatureDev().getTemprature() + "C";
     }
 
     @Override
@@ -26,10 +39,15 @@ public class PageTemprature implements InterfaceUI {
     @Override
     public void close() {
         textBox.disableControls();
+        potentiometer.removeListener(potentiometerListener);
     }
 
     @Override
     public void open() {
+        textBox = new TextBox(getText(), null);
+        potentiometer.setEpsilon(0.1); // The value that the potentiometer has to change by to be registered by the listener
+        // Every time a potentiometer changes send the value using the Messaging Client
+        potentiometer.addListener(potentiometerListener);
         textBox.enableControls();
     }
 

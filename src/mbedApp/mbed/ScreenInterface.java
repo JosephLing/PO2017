@@ -100,8 +100,9 @@ public class ScreenInterface
         });
         ProjectLogger.Log("running main loop");
 
-
-
+        int wait = 1000; // wait for a 1000ms
+        int ms = HomeAutomator.getTemperatureDev().sendUpateSignal();
+        int timepassed = 0;
         while (currentPage >= 0 && running && HomeAutomator.getMBed().isOpen()){
             //ProjectLogger.Log("udapte");
             
@@ -110,8 +111,15 @@ public class ScreenInterface
                 pages[currentPage].open();
                 changed = false;
             }
+
+            if (ms < timepassed){
+                timepassed = 0;
+                ms = HomeAutomator.getTemperatureDev().sendUpateSignal();
+            }else{
+                timepassed += wait;
+            }
             pages[currentPage].update();
-            sleep(1000);
+            sleep(wait);
 
         }
     }
@@ -125,8 +133,8 @@ public class ScreenInterface
 
     public static void setCurrentPage(int value){
         if (currentPage+value >= 0 && currentPage+value < pages.length){
-            currentPage += value;
             change();
+            currentPage += value;
         }
     }
 
@@ -139,8 +147,8 @@ public class ScreenInterface
                 assert true: "Error: PageBack went back to itself!";
             }
         } else if (value >= 0 && value < pages.length){
-            currentPage = value;
             change();
+            currentPage = value;
         }
     }
 

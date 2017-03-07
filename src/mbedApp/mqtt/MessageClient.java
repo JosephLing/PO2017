@@ -75,6 +75,7 @@ public class MessageClient {
 
         After that we get the args:
         - its formatted so {name:arg=value,arg2=value2} -> [[arg, value], [arg2, value2]]
+        - it won't work if you do {name:arg=value,value2}
         - you can't have {name:arg={....}} as it won't be able to seperate them
         - you can have as many arguments you like {name:argN=valN.....}
 
@@ -134,6 +135,8 @@ public class MessageClient {
             e.printStackTrace();
         }
     }
+
+
 
     /**
      * Send a message to the MQTT broker (and therefore all connected clients on the same topic)

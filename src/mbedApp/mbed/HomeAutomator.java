@@ -43,7 +43,7 @@ public class HomeAutomator {
     private ScreenInterface screenInterface;
     private MessageClient messageClient;
     private static HashMap<String, Device> devices;
-    private Temperature temperature;
+    private static Temperature temperature;
 
 
 
@@ -56,13 +56,13 @@ public class HomeAutomator {
         messageClient = new MessageClient();
         devices = new HashMap<String, Device>();
         temperature = new Temperature(messageClient);
-        run();
-        
+
+        settingUpDeviceRegisteration();
         // This has to be last as it's blocking execution of other things!
         ScreenInterface.main();
     }
 
-    private void setUpSubscriptions(){
+    private void settingUpDeviceRegisteration(){
         System.out.println("settting up sub");
 
         //MQTT_TOPIC.DEVICE_REGISTER
@@ -74,16 +74,13 @@ public class HomeAutomator {
                     switch (name){
                         case Device.LIGHT:
                             if (!devices.containsKey(deviceId)){
-                                System.out.println("asdf");
                                 devices.put(deviceId, Light.parseNewDevice(args));
-//                                devices.get(deviceId).register(deviceSet);
                                 deviceSet.send(MQTT_TOPIC.DEVICE_SET, "{"+deviceId+":registered=true}");
                             }
                             break;
                         case Device.THERMOSTAT:
                             if (!devices.containsKey(deviceId)){
                                 devices.put(Device.parseNewDeviceId(name, args), Thermostat.parseNewDevice(args));
-//                                devices.get(deviceId).register(deviceSet);
 
                                 deviceSet.send(MQTT_TOPIC.DEVICE_SET, "{"+deviceId+":registered=true}");
                             }
@@ -92,35 +89,16 @@ public class HomeAutomator {
                             ProjectLogger.Warning("No device found for: " + name);
                     }
                 });
-
-
-
-
-        //MQTT_TOPIC.DEVICE_CHANGE
-        // parse the name and id then run the .parse(String[][])
-// 
-// 
-//         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE,
-//                 (String topic, String name, HashMap<String, String> args)->{
-//                     if (devices.get(name) != null){
-//                         devices.get(name).parseChange(args);
-//                     }
-//         });
-
-        //MQTT_TOPIC.TEMPERATURE
-        //  we need to register the temprature device first
     }
 
     public static HashMap<String, Device> getDevices() {
         return devices;
     }
 
-    private void run() {
-        temperature.checkTempChange();
-        temperature.checkTempPot();
-        setUpSubscriptions();
+
+    public static Temperature getTemperatureDev() {
+        return temperature;
     }
-    
 
     /**
      * gets the message client used by the HomeAutomator.

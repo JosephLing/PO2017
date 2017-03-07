@@ -3,14 +3,20 @@ package mbedApp.mbed;
 import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
 import shed.mbed.Potentiometer;
+import sun.misc.DoubleConsts;
+import sun.misc.FloatConsts;
+
 
 /**
  * Controls temperature functionality of the MBed
  */
 public class Temperature
-{
+{   private static int MIN_ROOM_TEMP = 21;
+    private static int MAX_ROOM_TEMP = 25;
     
     private MessageClient messageClient;
+    private double temp;
+
 
     /**
      * Constructor for objects of class Temperature
@@ -19,35 +25,34 @@ public class Temperature
     public Temperature(MessageClient messageClient)
     {
         this.messageClient = messageClient;
+        setCurrentTemp();
     }
 
     /**
-     * Every time the temperature changes check it, if it's below the minimum, send the temperature to the room and the new temp
-     * that should be set by the thermostat.
+     *
+     * @return number of ms to take before checking the temprature again.
      */
-    public void checkTempChange() {
-        TemperatureThread t = new TemperatureThread();
-        t.start();
+    public int sendUpateSignal() {
+        setCurrentTemp();
+        if(temp < MIN_ROOM_TEMP || temp > MAX_ROOM_TEMP) {
+            messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=21,current=" + temp + "}");
+            return 50000;
+        }else{
+            messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:current=" + temp + "}");
+            return 20000;
+        }
     }
-    
+
+
     /**
-     * Get the current temperature from the MBed
-     * @return Double type value of temp
+     * sets the current temperature from the MBed
      */
-    public static Double getCurrentTemp() {
-        return HomeAutomator.getMBed().getThermometer().getTemperature();
+    private void setCurrentTemp() {
+        temp = HomeAutomator.getMBed().getThermometer().getTemperature();
+        ScreenInterface.sleep(50);
     }
-    
-    /**
-    * Every time a potentiometer changes send the value using the Messaging
-    * Client
-    */
-    public void checkTempPot() {
-        Potentiometer pot = HomeAutomator.getMBed().getPotentiometer1();
-        pot.setEpsilon(0.1); // The value that the potentiometer has to change by to be registered by the listener
-        pot.addListener((double value) -> {
-            value = value * 10;
-            messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(value) + "}");
-        });
+
+    public Double getTemprature(){
+        return temp;
     }
 }

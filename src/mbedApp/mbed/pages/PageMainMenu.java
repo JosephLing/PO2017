@@ -22,6 +22,7 @@ public class PageMainMenu implements InterfaceUI{
 
     @Override
     public void update() {
+//        System.out.println("--update--");
         mainMenu.update();
     }
 
@@ -32,8 +33,8 @@ public class PageMainMenu implements InterfaceUI{
 
     @Override
     public void open() {
+//        System.out.println("--open--");
         mainMenu = new Menu(itemNames, optionsIndex);
-        ProjectLogger.Log("CONTROLS ENABLED!!!");
         mainMenu.enableControls();
     }
 
