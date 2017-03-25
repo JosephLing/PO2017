@@ -1,9 +1,7 @@
-package mbedApp.room.objects;
+package mbedApp.gui.room.objects;
 
 import mbedApp.mqtt.MessageClient;
-import mbedApp.room.Canvas;
-
-import java.awt.*;
+import mbedApp.gui.room.Canvas;
 
 /**
  * Created by josephling on 12/02/2017.

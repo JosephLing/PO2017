@@ -1,6 +1,11 @@
 package mbedApp;
+import java.util.HashMap;
 
+import mbedApp.mqtt.MQTT_TESTING;
+import mbedApp.mqtt.MQTT_TOPIC;
+import mbedApp.mqtt.MessageClient;
 import shed.mbed.MBedStateException;
+import mbedApp.gui.events.EventFrame;
 
 public class Main {
     private static Main main;
@@ -20,10 +25,19 @@ public class Main {
                 case "mbed":
                     createMbedApp();
                     break;
+                case "testing":
+                    MQTT_TESTING.testing();
+                    break;
+                case "events":
+                    createEventApp();
                 default:
                     ProjectLogger.Log("no option found in args");
             }
         }
+    }
+
+    public static void createEventApp(){
+        EventFrame eventFrame = new EventFrame();
     }
 
     public static void currentlyTesting(){
@@ -60,4 +74,5 @@ public class Main {
         }
 
     }
+
 }

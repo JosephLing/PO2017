@@ -1,6 +1,6 @@
 package mbedApp;
 
-import mbedApp.room.RoomMain;
+import mbedApp.gui.room.RoomMain;
 /**
  * Launches instance of a room in a seperate thread.
  */

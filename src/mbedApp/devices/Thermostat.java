@@ -39,12 +39,12 @@ public class Thermostat extends Device implements InterfaceDevice{
 
     }
 
-    @Override
-    public void register(MessageClient client) {
-        super.register(client); // so if we call it here will it use getName() from Device or Light?
-        // as that could break the code if it grabs the "Device"
-        client.send(MQTT_TOPIC.DEVICE_REGISTER, "{"+getName()+":id="+getId()+",temperature="+temperature+"}");
-    }
+//    //@Override
+//    public void register(MessageClient client) {
+//        super.register(client); // so if we call it here will it use getName() from Device or Light?
+//        // as that could break the code if it grabs the "Device"
+//        client.send(MQTT_TOPIC.DEVICE_REGISTER, "{"+getName()+":id="+getId()+",temperature="+temperature+"}");
+//    }
 
     public String getName() {
         return THERMOSTAT;

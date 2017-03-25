@@ -137,6 +137,24 @@ public class MessageClient {
     }
 
 
+    /**
+     * formats current topic to be combined with the MQTT topic and a device
+     * @param topic MQTT_TOPIC
+     * @param device string
+     * @return string topic
+     */
+    private String getTopic(MQTT_TOPIC topic, String device){
+        return config.getTopic()+"/"+topic+"/"+device;
+    }
+
+    /**
+     * formats current topic to be combined with the MQTT topic
+     * @param topic MQTT_TOPIC
+     * @return string topic
+     */
+    private String getTopic(MQTT_TOPIC topic){
+        return config.getTopic()+"/"+topic;
+    }
 
     /**
      * Send a message to the MQTT broker (and therefore all connected clients on the same topic)
@@ -146,11 +164,33 @@ public class MessageClient {
     public void send(MQTT_TOPIC topic, String content) {
         ProjectLogger.Log("sending message: " + content + " to " + config.getTopic() + "/" + topic);
         try {
-            client.publish(config.getTopic()+"/"+topic, content.getBytes(), 0, false);
+            client.publish(getTopic(topic), content.getBytes(), 0, false);
         } catch(MqttException exception) {
             ProjectLogger.Log("MQTT Client: Exception encountered when trying to send message");
             exception.printStackTrace();
         }
+    }
+
+
+    /**
+     * Send a message to the MQTT broker (and therefore all connected clients on the same topic)
+     * @param topic The topic to send the message to (added to the base topic)
+     * @param content The content of the message you want to send
+     * @param retained boolean message held on that topic until another message is sent that is
+     *                 retained
+     */
+    public void send(MQTT_TOPIC topic, String content, boolean retained) {
+        ProjectLogger.Log("sending message: " + content + " to " + config.getTopic() + "/" + topic);
+        try {
+            client.publish(getTopic(topic), content.getBytes(), 0, retained);
+        } catch(MqttException exception) {
+            ProjectLogger.Log("MQTT Client: Exception encountered when trying to send message");
+            exception.printStackTrace();
+        }
+    }
+
+    public void clearRetained(MQTT_TOPIC topic){
+        send(topic, "{blank}", true);
     }
 
     /**

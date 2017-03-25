@@ -1,12 +1,11 @@
-package mbedApp.room.objects;
+package mbedApp.gui.room.objects;
 
 import mbedApp.ProjectLogger;
 import mbedApp.devices.Device;
 import mbedApp.devices.Light;
-import mbedApp.devices.Thermostat;
 import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
-import mbedApp.room.Canvas;
+import mbedApp.gui.room.Canvas;
 
 import java.awt.Graphics;
 import java.util.HashMap;
@@ -17,33 +16,39 @@ import java.awt.geom.*;
 
 
 /**
- * Thermostat class, used to demo the temperature (but not actually do anything)
+ * Light does.............
+ *
+ * @author josephling
+ * @version 1.0 12/02/2017
  */
-public class ThermostatObj extends Thermostat implements InterfaceScreenObject {
+public class LightObj extends Light implements InterfaceScreenObject {
 
     private int x;
     private int y;
     private Graphics graphic;
     private MessageClient client;
     private boolean registered;
-    private Double temp;
-    private Double currentTemp;
 
-    public ThermostatObj(int id, int x, int y) {
-        super(0, id);
+    public LightObj(int id, int x, int y) {
+        super(false, id);
         client = new MessageClient();
         this.x = x;
         this.y = y;
-        temp = 0.0;
-        currentTemp = 0.0;
     }
 
     public void update(Canvas canvas) {
         if (registered){
-            canvas.drawText(this, "Requested temperature: " + temp + "*C", x, y);
-            //canvas.drawText(this, "Current Temperature: " + currentTemp + "*C", x, y+10);
+            if (isState()) {
+                canvas.draw(this, Color.green, new Ellipse2D.Double(x, y, 20, 20));
+                //canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y, 10, 5));
+                //canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y + 10, 5, 5));
+            } else {
+                canvas.draw(this, Color.red, new Ellipse2D.Double(x, y, 20, 20));
+                //canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y, 10, 5));
+                //canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y + 10, 5, 5));
+            }
         }else{
-            ProjectLogger.Warning("Thermostat not yet registered");
+            ProjectLogger.Warning("light not yet registered");
         }
     }
 
@@ -74,19 +79,11 @@ public class ThermostatObj extends Thermostat implements InterfaceScreenObject {
     public boolean isRegistered() {
         return registered;
     }
-    
-    public void setTemperature(Double temp) {
-        this.temp = temp;
-    }
-    
-    public void setCurrentTemperature(Double currentTemp) {
-        this.currentTemp = currentTemp;
-    }
 
     public void register_client() {
         client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
                 (String topic, String name, HashMap<String, String> args)->{
-                    if (name.contains(Device.THERMOSTAT) && name.split(Device.THERMOSTAT)[1].equals(Integer.toString(getId()))){
+                    if (name.contains(Device.LIGHT) && name.split(Device.LIGHT)[1].equals(Integer.toString(getId()))){
                         String reg = args.get("registered");
                         if (reg != null){
                             setRegistered(!isRegistered());

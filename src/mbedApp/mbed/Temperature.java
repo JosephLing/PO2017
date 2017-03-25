@@ -24,7 +24,7 @@ public class Temperature
      */
     public Temperature(MessageClient messageClient)
     {
-        this.messageClient = messageClient;
+        this.messageClient = new MessageClient();
         setCurrentTemp();
     }
 
@@ -35,10 +35,11 @@ public class Temperature
     public int sendUpateSignal() {
         setCurrentTemp();
         if(temp < MIN_ROOM_TEMP || temp > MAX_ROOM_TEMP) {
-            messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=21,current=" + temp + "}");
+//            messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=21,current=" + temp + "}");
+            messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:current=" + temp + "}", true);
             return 50000;
         }else{
-            messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:current=" + temp + "}");
+            messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:current=" + temp + "}", true);
             return 20000;
         }
     }

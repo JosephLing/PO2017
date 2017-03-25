@@ -1,6 +1,6 @@
-package mbedApp.room.objects;
+package mbedApp.gui.room.objects;
 
-import mbedApp.room.Canvas;
+import mbedApp.gui.room.Canvas;
 
 /**
  * Created by Joe on 21/02/2017.

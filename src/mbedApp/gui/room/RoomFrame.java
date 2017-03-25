@@ -1,16 +1,15 @@
-package mbedApp.room;
+package mbedApp.gui.room;
 
 import mbedApp.ProjectLogger;
 import mbedApp.devices.Device;
 import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
-import mbedApp.room.objects.LightObj;
-import mbedApp.room.objects.ThermostatObj;
+import mbedApp.gui.room.objects.LightObj;
+import mbedApp.gui.room.objects.ThermostatObj;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
-import java.util.Random;
 
 /**
  * RoomFrame does.............

@@ -1,18 +1,6 @@
-package mbedApp.room.objects;
+package mbedApp.gui.room.objects;
 
-import mbedApp.ProjectLogger;
-import mbedApp.devices.Device;
-import mbedApp.devices.Light;
-import mbedApp.devices.Thermostat;
-import mbedApp.mqtt.MQTT_TOPIC;
-import mbedApp.mqtt.MessageClient;
-import mbedApp.room.Canvas;
-
-import java.awt.Graphics;
-import java.util.HashMap;
-
-import java.awt.*;
-import java.awt.geom.*;
+import mbedApp.gui.room.Canvas;
 
 /**
  * Write a description of class TextObj here.

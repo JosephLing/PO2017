@@ -58,7 +58,7 @@ public class HomeAutomator {
         temperature = new Temperature(messageClient);
 
         settingUpDeviceRegisteration();
-        // This has to be last as it's blocking execution of other things!
+//         This has to be last as it's blocking execution of other things!
         ScreenInterface.main();
     }
 

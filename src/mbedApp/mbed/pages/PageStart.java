@@ -17,12 +17,6 @@ public class PageStart implements InterfaceUI {
     private TextBox textBox;
 
     public PageStart(int nextPage) {
-        /*
-            menu  status:on no. dev: 10
-
-            current temp: 20
-            desired temp: 25
-        */
         ButtonListener mainMenu = (isPressed) -> {
             if (isPressed){
                 ScreenInterface.setCurrentPage(nextPage);

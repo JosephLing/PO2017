@@ -1,4 +1,4 @@
-package mbedApp.room;
+package mbedApp.gui.room;
 
 /**
  * RoomMain does.............
