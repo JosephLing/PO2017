@@ -1,8 +1,9 @@
 mbedApp
 mbedApp.devices
+mbedApp.gui.events
+mbedApp.gui.room
+mbedApp.gui.room.objects
 mbedApp.mbed
 mbedApp.mbed.display
 mbedApp.mbed.pages
 mbedApp.mqtt
-mbedApp.room
-mbedApp.room.objects
