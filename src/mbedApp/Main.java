@@ -30,6 +30,7 @@ public class Main {
                     break;
                 case "events":
                     createEventApp();
+                    break;
                 default:
                     ProjectLogger.Log("no option found in args");
             }
