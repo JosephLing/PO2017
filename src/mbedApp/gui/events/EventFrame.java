@@ -30,8 +30,8 @@ public class EventFrame extends JFrame {
         System.out.println("-----");
 //        getFile("https://calendar.google.com/calendar/ical/josephling11%40gmail.com/private-34ea00d303b31413b8d556dfde44763c/basic.ics");
 //        getFile("www.kent.ac.uk/timetabling/ical/127379.ics");
-        String a = getFile("https://p60-calendars.icloud.com/published/2/KQpieZ-gmqxhEDixV83NnwiNFshbA0Kv7YrWnWT6RtG4vEt0ZavpPs_Yx2xnoQA8BOLACjFBfqzO4TiaLQUM1BADNcvK_J3GwAHbUY8btOA");
-        createCalender("a");
+        ArrayList<String> a = getFile("https://p60-calendars.icloud.com/published/2/KQpieZ-gmqxhEDixV83NnwiNFshbA0Kv7YrWnWT6RtG4vEt0ZavpPs_Yx2xnoQA8BOLACjFBfqzO4TiaLQUM1BADNcvK_J3GwAHbUY8btOA");
+        createCalender(a);
 
 
 
@@ -111,7 +111,7 @@ public class EventFrame extends JFrame {
         return (createUrlConnection("http://google.com") != null);
     }
 
-    public String getFile(String urlString){
+    public ArrayList<String> getFile(String urlString){
         URL url = null;
         boolean encodingUsed = true;
         boolean streamCreated = true;
@@ -174,15 +174,14 @@ public class EventFrame extends JFrame {
                     System.out.println("invalid content");
                     System.out.println(data.get(index));
                 }else{
-                    return data.stream().map(Object::toString)
-                            .collect(Collectors.joining("\n"));
+                    return data;
                 }
             }
         }else{
             System.out.println("invalid url");
         }
 
-        return "";
+        return data;
     }
 
 
@@ -200,20 +199,20 @@ public class EventFrame extends JFrame {
         String[] eventsDstart;
         if (cal.get(0).equals("BEGIN:VCALENDAR")) {
             if (cal.get(cal.size()-1).equals("END:VCALENDAR")) {
-                String[] versionData = cal.get(2).split("VERSION");
+                String[] versionData = cal.get(1).split(":");
+
                 if (versionData.length == 2) {
                     version = versionData[1];
                 }
-                if (!version.equals("2.0")) {
+                if (!version.contains("2.0")) {
                     parserError = true;
-                }else{
                     System.out.println("invlaid version");
                 }
 
                 if (! parserError){
                     while (index < cal.size() && ! parserError)
                     {
-                        if (cal.get(index).equals("BEGIN:VEVENT")){
+                        if (cal.get(index).contains("BEGIN:VEVENT")){
                             event = true;
                             icalEvents.add(new IcalEvent());
                             while (index < cal.size() && event && !parserError){
@@ -222,27 +221,32 @@ public class EventFrame extends JFrame {
                                     icalIndex ++;
                                 }else if (cal.get(index).contains("SUMMARY")){
                                     eventsSummary = cal.get(index).split("SUMMARY");
-                                    if (eventsSummary.length == 1){
+                                    if (eventsSummary.length == 2){
                                         icalEvents.get(icalIndex).setSummary(eventsSummary[1]);
                                     }else{
                                         parserError = true;
+                                        System.out.println("SUMMARY args");
                                     }
                                 } else if (cal.get(index).contains("DSTART;")) {
                                     eventsDstart = cal.get(index).split("DSTART;");
-                                    if (eventsDstart.length == 1){
+                                    if (eventsDstart.length == 2){
+                                        System.out.println(eventsDstart[0]);
+                                        System.out.println(eventsDstart[1]);
+                                        parserError
                                         eventsDstart = eventsDstart[1].split(":");
-                                        if (eventsDstart.length == 1) {
+                                        if (eventsDstart.length == 2) {
                                             icalEvents.get(icalIndex).setTimezone(eventsDstart[0]);
                                             icalEvents.get(icalIndex).setStart(eventsDstart[1]);
                                         }else{
+                                            System.out.println("DSTART args");
                                             parserError = true;
                                         }
                                     }else{
+                                        System.out.println("DSTART");
                                         parserError = true;
                                     }
-                                }else{
-                                    // do nothing :)
                                 }
+                                index ++;
                             }
 
                         } else{
@@ -251,9 +255,22 @@ public class EventFrame extends JFrame {
 
 
                     }
+                }else {
+                    System.out.println("could not find version or invalid version");
                 }
+            }else{
+                System.out.println("coulnd't find end");
             }
+        }else{
+            System.out.println("couldn't find start");
         }
+        System.out.println("error happened? " + parserError);
+        System.out.println("event state: " + event);
+        System.out.println("events: " + icalEvents.size());
+        System.out.println("index: " + index);
+        System.out.println("version: " + version);
+        icalEvents.stream().forEach(System.out::println);
+
     }
 
 
@@ -281,8 +298,9 @@ public class EventFrame extends JFrame {
         }
 
         public void setStart(String start) {
+            System.out.println(start);
             String[] a = start.split(":");
-            if (a.length == 1) {
+            if (a.length == 2) {
                 this.date = a[0];
                 this.start = Long.parseLong(a[1]);
             }
@@ -295,6 +313,11 @@ public class EventFrame extends JFrame {
 
         public void setTimezone(String timezone) {
             this.timezone = timezone;
+        }
+
+        @Override
+        public String toString() {
+            return summary + " | " + timezone + " | " + start;
         }
     }
 
