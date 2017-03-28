@@ -1,7 +1,6 @@
 package mbedApp.mbed;
 
 import mbedApp.ProjectLogger;
-import mbedApp.mbed.display.Menu;
 import mbedApp.mbed.pages.*;
 import mbedApp.mqtt.MessageClient;
 

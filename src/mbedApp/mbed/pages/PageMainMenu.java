@@ -1,6 +1,5 @@
 package mbedApp.mbed.pages;
 
-import mbedApp.ProjectLogger;
 import mbedApp.mbed.display.Menu;
 
 /**

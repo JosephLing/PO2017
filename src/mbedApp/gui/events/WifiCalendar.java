@@ -11,6 +11,18 @@ import java.util.ArrayList;
  */
 public class WifiCalendar {
 
+    private static String debugging = "";
+
+    public static String getDebugging() {
+        String deg = debugging;
+        debugging = "";
+        return deg;
+    }
+
+    public static void setDebugging(String newDebugging) {
+        debugging = newDebugging;
+    }
+
     public static String getUrlString(String urlString){
         if (urlString.contains("webcal://")){
             urlString = urlString.replace("webcal://", "");
@@ -111,14 +123,13 @@ public class WifiCalendar {
                 }
 
                 if (invalidContent){
-                    System.out.println("invalid content");
-                    System.out.println(data.get(index));
+                    setDebugging("invalid content: " + data.get(index));
                 }else{
                     return data;
                 }
             }
         }else{
-            System.out.println("invalid url");
+            setDebugging("invalid url");
         }
 
         return data;

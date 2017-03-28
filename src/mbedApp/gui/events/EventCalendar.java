@@ -1,7 +1,5 @@
 package mbedApp.gui.events;
 
-import java.util.ArrayList;
-
 /**
  * Created by Joe on 28/03/2017.
  */

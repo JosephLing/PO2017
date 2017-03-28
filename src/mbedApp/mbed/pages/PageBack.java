@@ -1,8 +1,6 @@
 package mbedApp.mbed.pages;
 
 import mbedApp.ProjectLogger;
-import mbedApp.mbed.ScreenInterface;
-import java.util.function.Predicate;
 /**
  * PageBack does.............
  *

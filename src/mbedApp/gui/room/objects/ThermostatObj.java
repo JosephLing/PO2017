@@ -3,11 +3,11 @@ package mbedApp.gui.room.objects;
 import mbedApp.ProjectLogger;
 import mbedApp.devices.Device;
 import mbedApp.devices.Thermostat;
+import mbedApp.gui.room.Canvas;
 import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
-import mbedApp.gui.room.Canvas;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.util.HashMap;
 
 

@@ -2,9 +2,6 @@ package mbedApp.mbed;
 
 import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
-import shed.mbed.Potentiometer;
-import sun.misc.DoubleConsts;
-import sun.misc.FloatConsts;
 
 
 /**

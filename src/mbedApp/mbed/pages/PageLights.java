@@ -2,12 +2,11 @@ package mbedApp.mbed.pages;
 
 import mbedApp.ProjectLogger;
 import mbedApp.devices.Device;
-import mbedApp.mbed.HomeAutomator;
-import mbedApp.mbed.display.Menu;
-import mbedApp.mbed.display.MenuLights;
-import mbedApp.mbed.display.TextBox;
-import java.util.HashMap;
 import mbedApp.devices.Light;
+import mbedApp.mbed.HomeAutomator;
+import mbedApp.mbed.display.MenuLights;
+
+import java.util.HashMap;
 
 /**
  * LightsPage does.............

@@ -1,7 +1,7 @@
 package mbedApp.gui.room.objects;
 
-import mbedApp.mqtt.MessageClient;
 import mbedApp.gui.room.Canvas;
+import mbedApp.mqtt.MessageClient;
 
 /**
  * Created by josephling on 12/02/2017.

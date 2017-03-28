@@ -2,8 +2,6 @@ package mbedApp.devices;
 
 
 import mbedApp.ProjectLogger;
-import mbedApp.mqtt.MQTT_TOPIC;
-import mbedApp.mqtt.MessageClient;
 
 import java.util.HashMap;
 

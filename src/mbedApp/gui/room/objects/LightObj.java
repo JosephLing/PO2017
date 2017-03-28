@@ -3,15 +3,13 @@ package mbedApp.gui.room.objects;
 import mbedApp.ProjectLogger;
 import mbedApp.devices.Device;
 import mbedApp.devices.Light;
+import mbedApp.gui.room.Canvas;
 import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
-import mbedApp.gui.room.Canvas;
-
-import java.awt.Graphics;
-import java.util.HashMap;
 
 import java.awt.*;
-import java.awt.geom.*;
+import java.awt.geom.Ellipse2D;
+import java.util.HashMap;
 
 
 

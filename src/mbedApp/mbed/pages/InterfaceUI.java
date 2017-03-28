@@ -1,8 +1,6 @@
 package mbedApp.mbed.pages;
 
 
-import mbedApp.devices.Light;
-
 /**
  * Created by josephling on 08/02/2017.
  */

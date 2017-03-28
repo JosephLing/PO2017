@@ -1,11 +1,24 @@
 package mbedApp.gui.events;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Created by Joe on 28/03/2017.
  */
 public class Calender {
+
+    private static String debugging = "";
+
+    public static String getDebugging() {
+        String deg = debugging;
+        debugging = "";
+        return deg;
+    }
+
+    public static void setDebugging(String newDebugging){
+        debugging = newDebugging;
+    }
 
     private ArrayList<EventCalendar> events;
 
@@ -19,7 +32,8 @@ public class Calender {
 
 
     public static Calender createCalender(ArrayList<String> cal) {
-        StringBuilder debugging = new StringBuilder();
+        setDebugging("");
+        ArrayList<String> debugging = new ArrayList<String>();
         long time = System.currentTimeMillis();
         boolean parserError = false;
         int index = 0;
@@ -38,7 +52,7 @@ public class Calender {
                 }
                 if (!version.contains("2.0")) {
                     parserError = true;
-                    debugging.append("invlaid version");
+                    debugging.add("invlaid version");
                 }
 
                 if (!parserError) {
@@ -56,7 +70,7 @@ public class Calender {
                                         icalEvents.get(icalIndex).setSummary(eventsSummary[1]);
                                     } else {
                                         parserError = true;
-                                        debugging.append("SUMMARY args");
+                                        debugging.add("SUMMARY args");
                                     }
                                 } else if (cal.get(index).contains("DTSTART;")) {
                                     eventsDstart = cal.get(index).split("DTSTART;");
@@ -67,11 +81,11 @@ public class Calender {
                                             icalEvents.get(icalIndex).setTimezone(eventsDstart[0]);
                                             icalEvents.get(icalIndex).setStart(eventsDstart[1]);
                                         } else {
-                                            debugging.append("DTSTART args");
+                                            debugging.add("DTSTART args");
                                             parserError = true;
                                         }
                                     } else {
-                                        debugging.append("DSTART");
+                                        debugging.add("DSTART");
                                         parserError = true;
                                     }
                                 }
@@ -82,17 +96,19 @@ public class Calender {
                         }
                     }
                 } else {
-                    debugging.append("could not find version or invalid version");
+                    debugging.add("could not find version or invalid version");
                 }
             } else {
-                debugging.append("coulnd't find end");
+                debugging.add("coulnd't find end");
             }
         } else {
-            debugging.append("couldn't find start");
+            debugging.add("couldn't find start");
         }
-        debugging.append("took " + (System.currentTimeMillis() - time) + " ms\nerror happened? " + parserError+
-                "\nevent state: " + event+"\nevents: " + icalEvents.size()+"\nindex: " + index+"\nversion: " + version);
-        icalEvents.forEach(debugging::append);
+        debugging.add("took " + (System.currentTimeMillis() - time) + " ms\nerror happened? " + parserError+
+                "\nevent state: " + event+"\nevents: " + icalEvents.size()+"\nindex: " + index+"\nical version: " + version);
+//        icalEvents.forEach(a->{debugging.add(a.toString());});
+        setDebugging(debugging.stream().map(Object::toString)
+                .collect(Collectors.joining("\n")));
         if (icalEvents != null){
             return new Calender(icalEvents);
         }

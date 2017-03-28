@@ -5,7 +5,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.awt.Graphics2D;
 
 /**
  * Canvas is a class to allow for simple graphical drawing on a canvas.

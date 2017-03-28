@@ -1,11 +1,8 @@
 package mbedApp;
-import java.util.HashMap;
 
-import mbedApp.mqtt.MQTT_TESTING;
-import mbedApp.mqtt.MQTT_TOPIC;
-import mbedApp.mqtt.MessageClient;
-import shed.mbed.MBedStateException;
 import mbedApp.gui.events.EventFrame;
+import mbedApp.mqtt.MQTT_TESTING;
+import shed.mbed.MBedStateException;
 
 public class Main {
     private static Main main;

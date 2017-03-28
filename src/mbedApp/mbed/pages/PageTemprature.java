@@ -1,9 +1,7 @@
 package mbedApp.mbed.pages;
 
 import mbedApp.mbed.HomeAutomator;
-import mbedApp.mbed.ScreenInterface;
 import mbedApp.mbed.display.TextBox;
-import mbedApp.mbed.Temperature;
 import shed.mbed.Potentiometer;
 import shed.mbed.PotentiometerListener;
 
