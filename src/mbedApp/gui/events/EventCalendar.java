@@ -29,8 +29,19 @@ public class EventCalendar {
         if (split.length == 2) {
             this.date = split[0];
             this.start = Long.parseLong(split[1]);
+        }else{
+            this.date = "none";
+            this.start = 0;
         }
 
+    }
+
+    public void setStart(long start) {
+        this.start = start;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getTimezone() {
@@ -46,10 +57,14 @@ public class EventCalendar {
         return summary + " | " + timezone + " | " + date + " | " + start;
     }
 
+    public String toMqtt(){
+        return date + ":" + "timezone=" + timezone + ",start=" + start + ",description="+summary;
+    }
+
+
     public Object[] toObjectArray(){
         return new String[]{summary, timezone, date,  Long.toString(start)};
     }
-
 
 
 

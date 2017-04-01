@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -14,57 +15,167 @@ import java.util.ArrayList;
  */
 public class EventFrame extends JFrame {
 
+    private static String[] TABLEHEADERS = new String[]{"summary", "timezone", "date", "start"};
+
     private JTextField urlTextField;
-    private JLabel response;
+    private JTextPane response;
     private JTable repsonseTable;
     private JScrollPane scrollPane;
     private String responseText;
 
+    private JTextArea mqttPreview;
+    private JButton submitMQTT;
+    private JButton createMqtt;
+
+    private Calender calender;
+    private String mqttData;
+    private String mqttCalendar;
+
+
     public EventFrame() throws HeadlessException {
         this.setTitle("Event sub");
         responseText = "";
+        mqttCalendar = "";
         createUrlInput();
         createTableInit();
-        setSize(500,500);
+        createMQTTSpace();
+        setSize(750,750);
         this.setVisible(true);
-
-//        ArrayList<String> a = WifiCalendar.getIcal("https://p60-calendars.icloud.com/published/2/KQpieZ-gmqxhEDixV83NnwiNFshbA0Kv7YrWnWT6RtG4vEt0ZavpPs_Yx2xnoQA8BOLACjFBfqzO4TiaLQUM1BADNcvK_J3GwAHbUY8btOA");
-
-//        createTable(a);
+        calender = null;
+        mqttData = "";
+        pack();
         renderText();
     }
 
     private void createTableInit(){
         // DefaultTableModel
-        DefaultTableModel model = new DefaultTableModel(new Object[2][3], new String[]{"summary", "timezone", "date", "start"});
+        DefaultTableModel model = new DefaultTableModel(new Object[2][3], TABLEHEADERS);
         //
         repsonseTable = new JTable(model);
         repsonseTable.getModel().getRowCount();
         scrollPane = new JScrollPane(repsonseTable);
 //        scrollPane.add(repsonseTable);
         repsonseTable.setFillsViewportHeight(true);
-        this.add(scrollPane, BorderLayout.CENTER);
+//        this.add(scrollPane, BorderLayout.CENTER);
+        this.add(scrollPane);
     }
 
-    private void createTable(ArrayList<String> a){
-        Object[][] data = null;
+
+    private void createMQTTSpace(){
+        JPanel container = new JPanel();
+        mqttPreview = new JTextArea("no mqtt data selected", 5, 42);
+        mqttPreview.setEditable(false);
+        mqttPreview.setAutoscrolls(true);
+        mqttPreview.setLineWrap(true);
+        JScrollPane scrollPane = new JScrollPane(mqttPreview, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.createVerticalScrollBar();
+        container.add(scrollPane, BorderLayout.SOUTH);
+        submitMQTT = new JButton("send mqtt events");
+        submitMQTT.addActionListener((ActionEvent e)->{sendMqttData();});
+        submitMQTT.setEnabled(false);
+        createMqtt = new JButton("create mqtt message");
+        createMqtt.addActionListener((ActionEvent e)->{createMqttData();});
+        createMqtt.setEnabled(false);
+        container.add(submitMQTT);
+        container.add(createMqtt, BorderLayout.WEST);
+        this.add(container, BorderLayout.SOUTH);
+    }
+
+
+
+    private void createUrlInput(){
+        JPanel panel = new JPanel();
+
+
+        urlTextField = new JTextField("", 42);
+        urlTextField.addActionListener((ActionEvent e)->{
+            onTextInput();});
+        panel.add(urlTextField, BorderLayout.WEST);
+        JButton fileChooser = new JButton("choose file");
+        fileChooser.addActionListener((ActionEvent e)->{
+            chooseFile();});
+        panel.add(fileChooser, BorderLayout.EAST);
+        response = new JTextPane();
+        response.setContentType("text/html");
+        response.setEditable(false);
+        JPanel panel1 = new JPanel();
+        panel1.add(response);
+        this.add(panel1, BorderLayout.EAST);
+        this.add(panel, BorderLayout.NORTH);
+        this.setJMenuBar(new JMenuBar());
+        this.getJMenuBar().add(new JMenuItem("Connected to the internet: " + WifiCalendar.wifiTest()));
+
+    }
+
+    private void makeCalendarTable(ArrayList<String> a){
         if (a.size() != 0) {
-            Calender calender = Calender.createCalender(a);
+            calender = Calender.createCalender(a);
             if (calender != null) {
-                data = calender.render();
+                createTable(calender.render());
             }
         }
-        if (data == null) {
-            data = new Object[1][3];
-            for (int i = 0; i < data.length; i++) {
-                data[i] = new Object[3];
-                for (int i1 = 0; i1 < data[i].length; i1++) {
-                    data[i][i1] = "a";
+
+    }
+
+
+
+
+
+    private void chooseFile(){
+        boolean fileWorked = false;
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.name")));
+        this.add(fileChooser);
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+            if (selectedFile.getName().endsWith(".ical") || selectedFile.getName().endsWith(".ics")) {
+                BufferedReader reader = null;
+                try{
+                    reader = new BufferedReader(new FileReader(selectedFile.getAbsolutePath()));
+                }catch (FileNotFoundException e){
+                    responseText = "File not found: " + selectedFile.getAbsolutePath();
                 }
+                String line;
+                ArrayList<String> data = new ArrayList<>();
+                if (reader != null) {
+                    try{
+                        while ((line = reader.readLine()) != null)
+                        {
+                            data.add(line);
+                        }
+                    }catch (IOException e){
+                        responseText = "invalid data found in file: " + selectedFile.getName();
+                    }
+//                    data.stream().forEach(System.out::println);
+                    renderTable(data);
+                    try{
+                        reader.close();
+                    }catch (IOException e){
+                        responseText = "Failed to close file: " + selectedFile.getName();
+                    }
+                    if (responseText.isEmpty()){
+                        fileWorked = true;
+                        // stupid solution but i am tired and its getting late...
+                    }
+                }
+            }else{
+                responseText = "Invalid file type: " + selectedFile.getName() + "\nPath: " + selectedFile.getAbsolutePath();
             }
+
         }
-        repsonseTable = new JTable(data, new String[]{"summary", "timezone", "date", "start"});
-//        scrollPane.add(repsonseTable);
+        if (!fileWorked){
+            renderText();
+        }
+
+        this.remove(fileChooser);
+
+    }
+
+
+    private void createTable(Object[][] data){
+        repsonseTable = new JTable(data, TABLEHEADERS);
         scrollPane.setViewportView(repsonseTable);
         repsonseTable.setFillsViewportHeight(true);
         scrollPane.revalidate();
@@ -74,39 +185,81 @@ public class EventFrame extends JFrame {
     }
 
 
-    private void createUrlInput(){
 
-        urlTextField = new JTextField();
-        urlTextField.setSize(150,20);
-        urlTextField.addActionListener((ActionEvent e)->{
-            onTextInput();});
-        this.add(urlTextField, BorderLayout.BEFORE_FIRST_LINE);
-        response = new JLabel();
-        response.setMinimumSize(new Dimension(150,20));
-        this.add(response, BorderLayout.EAST);
-
-
-
-        this.add(new JLabel("Connected to the internet: " + WifiCalendar.wifiTest()), BorderLayout.SOUTH);
-
-    }
-
-    private void onTextInput(){
-
-        // "https://p60-calendars.icloud.com/published/2/KQpieZ-gmqxhEDixV83NnwiNFshbA0Kv7YrWnWT6RtG4vEt0ZavpPs_Yx2xnoQA8BOLACjFBfqzO4TiaLQUM1BADNcvK_J3GwAHbUY8btOA"
-        ArrayList<String> a = WifiCalendar.getIcal(urlTextField.getText());
-        responseText += "file size: " + a.size() + "\n";
+    private void renderTable(ArrayList<String> a){
+        responseText += "n. lines: " + a.size() + "\n";
         if (a.size() != 0){
-            createTable(a);
+            makeCalendarTable(a);
+            createMqtt.setEnabled(true);
         }else{
+            // so if the table is being rendered but we don't want it to be there
+            if (calender != null) {
+                createTable(new Object[0][3]);
+            }
             responseText += "invalid link for ical\n";
+            calender = null;
+            createMqtt.setEnabled(false);
+
         }
+        createMqttDataPreview();
         renderText();
     }
 
+
+    private void onTextInput(){
+            // "https://p60-calendars.icloud.com/published/2/KQpieZ-gmqxhEDixV83NnwiNFshbA0Kv7YrWnWT6RtG4vEt0ZavpPs_Yx2xnoQA8BOLACjFBfqzO4TiaLQUM1BADNcvK_J3GwAHbUY8btOA"
+        renderTable(WifiCalendar.getIcal(urlTextField.getText()));
+
+    }
+
     private void renderText(){
-        response.setText("<html>"+(responseText+Calender.getDebugging()+WifiCalendar.getDebugging()).replace("\n","<br>")+"</html>");
+        response.setText("<html>Debug message:  <br>"+(responseText+Calender.getDebugging()+WifiCalendar.getDebugging()).replace("\n","<br>")+"</html>");
         responseText = "";
+
+    }
+
+
+    public void createMqttDataPreview(){
+        if (mqttCalendar != null){
+            if (!mqttCalendar.isEmpty()) {
+                mqttPreview.setText(mqttCalendar);
+                submitMQTT.setEnabled(true);
+            }else{
+                mqttPreview.setText("no rows selected");
+                submitMQTT.setEnabled(false);
+            }
+        }else{
+            mqttPreview.setText("no rows selected");
+            submitMQTT.setEnabled(false);
+        }
+    }
+
+    private void sendMqttData(){
+        System.out.println("Sending data: " + mqttPreview.getText());
+        createTable(new Object[1][4]);
+        calender = null;
+        mqttCalendar = "";
+        createMqttDataPreview();
+    }
+
+
+
+    private void createMqttData(){
+        StringBuilder events = new StringBuilder();
+        for (int i : repsonseTable.getSelectedRows()) {
+            // timezone: (String)repsonseTable.getModel().getValueAt(i, 1)
+            // date: (String)repsonseTable.getModel().getValueAt(i, 2)
+            // time: Long.parseLong((String) repsonseTable.getModel().getValueAt(i, 3))
+            events.append(
+                    "event"+i + "="
+                            +(String)repsonseTable.getModel().getValueAt(i, 1)
+                            +(String)repsonseTable.getModel().getValueAt(i, 2)
+                            +Long.parseLong((String) repsonseTable.getModel().getValueAt(i, 3))
+                            +","
+            );
+        }
+        mqttCalendar = "{events:" + events.toString() + "}";
+        createMqttDataPreview();
     }
 
 

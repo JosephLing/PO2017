@@ -30,6 +30,12 @@ public class Calender {
         return this.events.stream().map(EventCalendar::toObjectArray).toArray(a->new Object[this.events.size()][4]);
     }
 
+    public String toMqtt(){
+        // so one event per date atm
+        return "{" + this.events.stream().map(EventCalendar::toMqtt).collect(Collectors.joining("}{")) +"}";
+    }
+
+
 
     public static Calender createCalender(ArrayList<String> cal) {
         setDebugging("");
@@ -88,6 +94,14 @@ public class Calender {
                                         debugging.add("DSTART");
                                         parserError = true;
                                     }
+                                } else if (cal.get(index).contains("DTSTART:")) {
+                                    eventsDstart = cal.get(index).split("DTSTART:");
+                                    if (eventsDstart.length == 2) {
+                                        icalEvents.get(icalIndex).setStart(eventsDstart[1]);
+                                    } else {
+                                        debugging.add("DSTART");
+                                        parserError = true;
+                                    }
                                 }
                                 index++;
                             }
@@ -99,12 +113,14 @@ public class Calender {
                     debugging.add("could not find version or invalid version");
                 }
             } else {
+                parserError = true;
                 debugging.add("coulnd't find end");
             }
         } else {
+            parserError = true;
             debugging.add("couldn't find start");
         }
-        debugging.add("took " + (System.currentTimeMillis() - time) + " ms\nerror happened? " + parserError+
+        debugging.add("took " + (System.currentTimeMillis() - time) + " ms\nparser error: " + parserError+
                 "\nevent state: " + event+"\nevents: " + icalEvents.size()+"\nindex: " + index+"\nical version: " + version);
 //        icalEvents.forEach(a->{debugging.add(a.toString());});
         setDebugging(debugging.stream().map(Object::toString)
