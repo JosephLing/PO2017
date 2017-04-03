@@ -1,8 +1,13 @@
 package mbedApp;
 
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 import mbedApp.gui.events.EventFrame;
 import mbedApp.mqtt.MQTT_TESTING;
 import shed.mbed.MBedStateException;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Main {
     private static Main main;
@@ -74,26 +79,3 @@ public class Main {
     }
 }
 
-//    public static int answer(String s) {
-//        int size = 200;
-//        int ans = -1;
-//        String split;
-//        if (s.length() < size){
-//            int i = 0;
-//            int j = 1;
-//            while (i < s.length() && ans == -1){
-//                while (j < s.length() && ans == -1){
-//                    split = s.substring(i,j);
-//                    if (!s.replace(split, ".").replaceAll("[a-z]","ERROR").contains("ERROR")){
-//                        ans = s.replace(split,".").length();
-//                    }
-//                    j ++;
-//                }
-//                i ++;
-//                j = i;
-//            }
-//        }
-//        return ans;
-//    }
-//
-//}

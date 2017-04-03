@@ -85,7 +85,7 @@ public class Calender {
                                         eventsDstart = eventsDstart[1].split(":");
                                         if (eventsDstart.length == 2) {
                                             icalEvents.get(icalIndex).setTimezone(eventsDstart[0]);
-                                            icalEvents.get(icalIndex).setStart(eventsDstart[1]);
+                                            icalEvents.get(icalIndex).setDateAndStart(eventsDstart[1]);
                                         } else {
                                             debugging.add("DTSTART args");
                                             parserError = true;
@@ -97,7 +97,7 @@ public class Calender {
                                 } else if (cal.get(index).contains("DTSTART:")) {
                                     eventsDstart = cal.get(index).split("DTSTART:");
                                     if (eventsDstart.length == 2) {
-                                        icalEvents.get(icalIndex).setStart(eventsDstart[1]);
+                                        icalEvents.get(icalIndex).setDateAndStart(eventsDstart[1]);
                                     } else {
                                         debugging.add("DSTART");
                                         parserError = true;

@@ -6,7 +6,7 @@ package mbedApp.gui.events;
 public class EventCalendar {
 
     private String summary;
-    private long start;
+    private String start;
     private String timezone;
     private String date;
 
@@ -20,23 +20,23 @@ public class EventCalendar {
         this.summary = summary;
     }
 
-    public long getStart() {
+    public String getStart() {
         return start;
     }
 
-    public void setStart(String start) {
+    public void setDateAndStart(String start) {
         String[] split = start.split("T");
         if (split.length == 2) {
             this.date = split[0];
-            this.start = Long.parseLong(split[1]);
+            this.start = split[1];
         }else{
             this.date = "none";
-            this.start = 0;
+            this.start = "none";
         }
 
     }
 
-    public void setStart(long start) {
+    public void setStart(String start) {
         this.start = start;
     }
 
@@ -63,7 +63,7 @@ public class EventCalendar {
 
 
     public Object[] toObjectArray(){
-        return new String[]{summary, timezone, date,  Long.toString(start)};
+        return new String[]{summary, timezone, date,  start};
     }
 
 

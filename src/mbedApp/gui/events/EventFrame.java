@@ -1,11 +1,19 @@
 package mbedApp.gui.events;
 
+import mbedApp.mqtt.MQTT_TOPIC;
+import mbedApp.mqtt.MessageClient;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * EventFrame does.............
@@ -16,6 +24,7 @@ import java.util.ArrayList;
 public class EventFrame extends JFrame {
 
     private static String[] TABLEHEADERS = new String[]{"summary", "timezone", "date", "start"};
+    private static int colCount = 42;
 
     private JTextField urlTextField;
     private JTextPane response;
@@ -28,8 +37,9 @@ public class EventFrame extends JFrame {
     private JButton createMqtt;
 
     private Calender calender;
-    private String mqttData;
     private String mqttCalendar;
+
+    private MessageClient messageClient;
 
 
     public EventFrame() throws HeadlessException {
@@ -42,42 +52,50 @@ public class EventFrame extends JFrame {
         setSize(750,750);
         this.setVisible(true);
         calender = null;
-        mqttData = "";
         pack();
         renderText();
+        messageClient = new MessageClient();
+
+//        messageClient.advanceSubscribe(MQTT_TOPIC.EVENTS,
+//                (String topic, String name, HashMap<String, String> args)->{
+//                    System.out.println("topic: " + topic + "\nName: " + name + args.keySet()
+//                            .stream()
+//                            .map(a->{return "arg: " + a + "value: " + args.get(a);})
+//                            .collect(Collectors.joining("\n")));
+//                });
     }
 
     private void createTableInit(){
         // DefaultTableModel
         DefaultTableModel model = new DefaultTableModel(new Object[2][3], TABLEHEADERS);
-        //
         repsonseTable = new JTable(model);
         repsonseTable.getModel().getRowCount();
         scrollPane = new JScrollPane(repsonseTable);
-//        scrollPane.add(repsonseTable);
         repsonseTable.setFillsViewportHeight(true);
-//        this.add(scrollPane, BorderLayout.CENTER);
         this.add(scrollPane);
     }
 
 
     private void createMQTTSpace(){
         JPanel container = new JPanel();
-        mqttPreview = new JTextArea("no mqtt data selected", 5, 42);
+        mqttPreview = new JTextArea("no mqtt data selected", 5, colCount);
         mqttPreview.setEditable(false);
         mqttPreview.setAutoscrolls(true);
         mqttPreview.setLineWrap(true);
         JScrollPane scrollPane = new JScrollPane(mqttPreview, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.createVerticalScrollBar();
         container.add(scrollPane, BorderLayout.SOUTH);
+
         submitMQTT = new JButton("send mqtt events");
         submitMQTT.addActionListener((ActionEvent e)->{sendMqttData();});
         submitMQTT.setEnabled(false);
+        container.add(submitMQTT);
+
         createMqtt = new JButton("create mqtt message");
         createMqtt.addActionListener((ActionEvent e)->{createMqttData();});
         createMqtt.setEnabled(false);
-        container.add(submitMQTT);
         container.add(createMqtt, BorderLayout.WEST);
+
         this.add(container, BorderLayout.SOUTH);
     }
 
@@ -85,23 +103,24 @@ public class EventFrame extends JFrame {
 
     private void createUrlInput(){
         JPanel panel = new JPanel();
-
-
-        urlTextField = new JTextField("", 42);
+        urlTextField = new JTextField("", colCount);
         urlTextField.addActionListener((ActionEvent e)->{
             onTextInput();});
         panel.add(urlTextField, BorderLayout.WEST);
+
         JButton fileChooser = new JButton("choose file");
         fileChooser.addActionListener((ActionEvent e)->{
             chooseFile();});
         panel.add(fileChooser, BorderLayout.EAST);
+        this.add(panel, BorderLayout.NORTH);
+
         response = new JTextPane();
         response.setContentType("text/html");
         response.setEditable(false);
         JPanel panel1 = new JPanel();
         panel1.add(response);
         this.add(panel1, BorderLayout.EAST);
-        this.add(panel, BorderLayout.NORTH);
+
         this.setJMenuBar(new JMenuBar());
         this.getJMenuBar().add(new JMenuItem("Connected to the internet: " + WifiCalendar.wifiTest()));
 
@@ -129,7 +148,6 @@ public class EventFrame extends JFrame {
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
             if (selectedFile.getName().endsWith(".ical") || selectedFile.getName().endsWith(".ics")) {
                 BufferedReader reader = null;
                 try{
@@ -237,6 +255,7 @@ public class EventFrame extends JFrame {
     private void sendMqttData(){
         System.out.println("Sending data: " + mqttPreview.getText());
         createTable(new Object[1][4]);
+        messageClient.send(MQTT_TOPIC.EVENTS, mqttCalendar, true);
         calender = null;
         mqttCalendar = "";
         createMqttDataPreview();
@@ -252,14 +271,59 @@ public class EventFrame extends JFrame {
             // time: Long.parseLong((String) repsonseTable.getModel().getValueAt(i, 3))
             events.append(
                     "event"+i + "="
-                            +(String)repsonseTable.getModel().getValueAt(i, 1)
-                            +(String)repsonseTable.getModel().getValueAt(i, 2)
-                            +Long.parseLong((String) repsonseTable.getModel().getValueAt(i, 3))
+                            +dateToUNIXtime(
+                                    repsonseTable.getModel().getValueAt(i, 2)
+                                            +"T"
+                                            +repsonseTable.getModel().getValueAt(i, 3))
                             +","
             );
         }
         mqttCalendar = "{events:" + events.toString() + "}";
         createMqttDataPreview();
+        renderText();
+    }
+
+
+    public String dateToUNIXtime(String dateString){
+        String debug = "";
+//        dateString = "20170330T120000";
+        DateFormat dateFormat = null;
+        String date_string = "";
+        long unixTime = 0;
+        /*
+        30 03 2017
+        12000
+        TZID=Europe/London
+         */
+        if (dateString.length() == 15){
+            date_string = dateString.substring(6, 8)
+                    +" " + dateString.substring(4, 6)
+                    +" " + dateString.substring(0, 4)
+                    +" " + dateString.substring(9, 11)
+                    +":" + dateString.substring(11, 13)
+                    +":" + dateString.substring(13, 15)
+            + " GMT";
+            dateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss z");
+        }else{
+            debug = "invalid time format, do not support timezones quite yet...";
+        }
+        if (dateFormat != null) {
+            Date date = null;
+            try{
+                date = dateFormat.parse(date_string);
+            }catch (java.text.ParseException e){
+                debug = "invalid string data unable to parse the data";
+            }
+            if (date != null){
+                unixTime = (long) date.getTime()/1000;
+            }
+        }
+        if (!debug.isEmpty()){
+            responseText = response.getText() + "\n" + debug;
+        }
+        return Long.toString(unixTime);
+
+
     }
 
 

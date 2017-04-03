@@ -11,7 +11,9 @@ public enum MQTT_TOPIC {
     DEVICE_SET,
     DEVICE_CHANGE,
     CAT,
-    TEMPERATURE;
+    TEMPERATURE,
+    EVENTS;
+
 
 
     @Override
