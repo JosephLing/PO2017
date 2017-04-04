@@ -14,7 +14,7 @@ import java.util.HashMap;
  * @author josephling
  * @version 1.0 20/02/2017
  */
-public class PageLights implements InterfaceUI {
+public class  PageLights implements InterfaceUI {
 
     private MenuLights lighting;
     private String[] lightControls;

@@ -15,7 +15,7 @@ public class PageSettings implements InterfaceUI {
     public PageSettings(int[] indexPage) {
         String[] settingsTitles = {
                 "MQTT",
-                "Temprature",
+                "Events",
                 "back"
         };
 //        InterfaceUI[] settingsCmds = {

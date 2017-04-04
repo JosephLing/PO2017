@@ -46,7 +46,7 @@ public class ScreenInterface
 
     public static void main(){
         messageClient = new MessageClient();
-        pages = new InterfaceUI[9];
+        pages = new InterfaceUI[10];
 
         // 0 Start
         pages[START.getIndex()]     = new PageStart(MAINMENU.getIndex());
@@ -70,7 +70,7 @@ public class ScreenInterface
         // 4 settings
         pages[SETTINGS.getIndex()] = new PageSettings(new int[]{
                 TEST.getIndex(),
-                TEST.getIndex(),
+                EVENTS.getIndex(),
                 BACK.getIndex()
         });
 
@@ -85,6 +85,8 @@ public class ScreenInterface
 
         // 8 test
         pages[TEST.getIndex()] = new PageTest();
+
+        pages[EVENTS.getIndex()] = new PageEvents();
 
         ScreenInterface.currentPage = 0;
         running = true;

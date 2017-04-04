@@ -27,6 +27,7 @@ public abstract class ScrollableText {
 
     private ButtonListener up;
     private ButtonListener down;
+    private boolean buttons_set;
 
 
     /**

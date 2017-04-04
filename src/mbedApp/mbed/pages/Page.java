@@ -13,7 +13,8 @@ public enum Page {
     CREDITS     (5, 1),
     BACK        (6, -1),
     QUIT        (7, -1),
-    TEST        (8, 0);
+    TEST        (8, 0),
+    EVENTS      (9, 1);
 
 
     private final int currentIndex;
