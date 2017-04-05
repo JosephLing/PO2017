@@ -29,7 +29,7 @@ public class Main {
                     createEventApp();
                     break;
                 default:
-                    ProjectLogger.Log("no option found in args");
+                    ProjectLogger.Log("no option found in args\n args: room, mbed, testing, events");
             }
         }
     }

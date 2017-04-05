@@ -69,6 +69,7 @@ public class Device implements InterfaceDevice{
     @Override
     public void register(MessageClient client) {
         this.client = client;
+        assert true: "this shouldn't be being called Device";
         client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
                 (String topic, String name, HashMap<String, String> args)->{
             if (name.equals(getName()+getId())){

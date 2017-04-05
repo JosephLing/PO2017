@@ -1,7 +1,9 @@
 package mbedApp.mbed.pages;
 
 import mbedApp.mbed.HomeAutomator;
+import mbedApp.mbed.ScreenInterface;
 import mbedApp.mbed.display.TextBox;
+import mbedApp.mqtt.MQTT_TOPIC;
 import shed.mbed.Potentiometer;
 import shed.mbed.PotentiometerListener;
 
@@ -20,8 +22,8 @@ public class PageTemprature implements InterfaceUI {
     public PageTemprature() {
         potentiometer = HomeAutomator.getMBed().getPotentiometer1();
         potentiometerListener = (double value) -> {
-            System.out.println("asf" + value);
-//            messageClient.send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(value*10) + "}");
+//            System.out.println("asf" + value);
+            ScreenInterface.getMessageClient().send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(Math.round(value*30)) + "}");
         };
     }
 

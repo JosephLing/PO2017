@@ -39,6 +39,7 @@ public class RoomFrame extends JFrame {
         // set up lights
         lights = new HashMap<String, LightObj>();
         lights_registeredCount = 0;
+        registerDevices();
         init_lights();
         init_deviceChange();
         init_thermostat();
@@ -51,8 +52,16 @@ public class RoomFrame extends JFrame {
         while (true){
             drawEverything();
             canvas.wait(1000);
-            if (lights_registeredCount != lights.size()){
-                register_lights();
+            if (!thermostat.isRegistered() || lights_registeredCount != lights.size()) {
+                if (lights_registeredCount != lights.size()){
+                    register_lights();
+                    ProjectLogger.Warning(lights_registeredCount + "");
+                }
+                if (!thermostat.isRegistered()){
+                    register_thermostat();
+                }
+                canvas.wait(2500);
+
             }
         }
     }
@@ -74,9 +83,7 @@ public class RoomFrame extends JFrame {
     private void drawEverything(){
         // Draw lights
         for (LightObj light : lights.values()) {
-            if (light.isRegistered()){
-                light.update(canvas);
-            }
+            light.update(canvas);
         }
         
         if(thermostat.isRegistered()) {
@@ -87,20 +94,6 @@ public class RoomFrame extends JFrame {
     }
 
     public void init_lights(){
-        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
-            (String topic, String name, HashMap<String, String> args)->{
-                System.out.println(name);
-                for (LightObj light : lights.values()) {
-                    System.out.println(light.isRegistered());
-                    if (!light.isRegistered()){
-                        if ((light.getName()+light.getId()).equals(name)){
-                            light.setRegistered(true);
-                            lights_registeredCount ++;
-                        }
-                    }
-                }
-            });
-
         LightObj light = null;
         for (int i = 0; i < 10; i++) {
             light = new LightObj(i, 10 + i * 50, 10);
@@ -110,17 +103,35 @@ public class RoomFrame extends JFrame {
         register_lights();
     }
 
-    public void init_thermostat() {
-        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
-            (String topic, String name, HashMap<String, String> args)->{
-                if ((thermostat.getName()+thermostat.getId()).equals(name)){
-                    thermostat.setRegistered(true);
-                }
-            });
-            
-        thermostat = new ThermostatObj(0, 10, 100);
 
+    private void registerDevices(){
+        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
+                (String topic, String name, HashMap<String, String> args)->{
+                    for (LightObj light : lights.values()) {
+                        if (!light.isRegistered()){
+                            if ((light.getName()+light.getId()).equals(name)){
+                                light.setRegistered(true);
+                                lights_registeredCount ++;
+                            }
+                        }
+                    }
+                    if (thermostat != null){
+                        if ((thermostat.getName()+thermostat.getId()).equals(name)){
+                            thermostat.setRegistered(true);
+                        }
+                    }
+
+                });
+    }
+
+
+    private void register_thermostat(){
         thermostat.getMessageClient().send(MQTT_TOPIC.DEVICE_REGISTER,"{"+Device.THERMOSTAT+":id="+ thermostat.getId() +",temperature=0}");
+    }
+
+
+    public void init_thermostat() {
+        thermostat = new ThermostatObj(0, 10, 100);
     }
 
     /**

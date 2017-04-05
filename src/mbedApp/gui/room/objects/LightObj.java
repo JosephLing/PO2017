@@ -46,7 +46,8 @@ public class LightObj extends Light implements InterfaceScreenObject {
                 //canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y + 10, 5, 5));
             }
         }else{
-            ProjectLogger.Warning("light not yet registered");
+            canvas.draw(this, Color.blue, new Ellipse2D.Double(x, y, 20, 20));
+//            ProjectLogger.Warning("light not yet registered");
         }
     }
 
@@ -79,15 +80,16 @@ public class LightObj extends Light implements InterfaceScreenObject {
     }
 
     public void register_client() {
-        client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
-                (String topic, String name, HashMap<String, String> args)->{
-                    if (name.contains(Device.LIGHT) && name.split(Device.LIGHT)[1].equals(Integer.toString(getId()))){
-                        String reg = args.get("registered");
-                        if (reg != null){
-                            setRegistered(!isRegistered());
-                        }
-                    }
-                });
+        assert true: "this shouldn't be being called lightObj";
+//        client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
+//                (String topic, String name, HashMap<String, String> args)->{
+//                    if (name.contains(Device.LIGHT) && name.split(Device.LIGHT)[1].equals(Integer.toString(getId()))){
+//                        String reg = args.get("registered");
+//                        if (reg != null){
+//                            setRegistered(!isRegistered());
+//                        }
+//                    }
+//                });
     }
 
     public void setRegistered(boolean state) {

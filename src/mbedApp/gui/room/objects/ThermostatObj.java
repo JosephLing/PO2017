@@ -79,6 +79,7 @@ public class ThermostatObj extends Thermostat implements InterfaceScreenObject {
     }
 
     public void register_client() {
+        assert true: "this shouldn't be being called ThermoSat";
         client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
                 (String topic, String name, HashMap<String, String> args)->{
                     if (name.contains(Device.THERMOSTAT) && name.split(Device.THERMOSTAT)[1].equals(Integer.toString(getId()))){

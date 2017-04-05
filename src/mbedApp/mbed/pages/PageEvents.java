@@ -67,7 +67,7 @@ public class PageEvents implements InterfaceUI {
     public void open() {
         textBox = new TextBox(eventsString, backbutton);
         textBox.enableControls();
-        System.out.println(eventsString);
+//        System.out.println(eventsString);
     }
 
     @Override

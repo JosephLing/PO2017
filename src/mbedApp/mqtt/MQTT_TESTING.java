@@ -38,45 +38,47 @@ public class MQTT_TESTING {
 
 
     public static void testing(){
-        TEST client_reg;
-        int count;
-
-
-        client_reg = client();
-        server();
-        count = 0;
-        while (count < 10 && !client_reg.isReg()){
-            if (!client_reg.isReg()){
-                client.send(MQTT_TOPIC.DEVICE_SET, "{dev1:state=true}");
-            }else{
-                System.out.println("registered");
-            }
-            Main.sleep(1000);
-            count ++;
-        }
-        if (count >= 9){
-            System.err.println("error device not req");
-        }else{
-            System.err.println("success");
-        }
-
-        server();
-        client_reg = client();
-        count = 0;
-        while (count < 10 && !client_reg.isReg()){
-            if (!client_reg.isReg()){
-                client.send(MQTT_TOPIC.DEVICE_SET, "{dev1:state=true}");
-            }else{
-                System.out.println("registered");
-            }
-            Main.sleep(1000);
-            count ++;
-        }
-        if (count >= 9){
-            System.err.println("error device not req");
-        }else{
-            System.err.println("success");
-        }
+//        TEST client_reg;
+//        int count;
+//
+//
+//        client_reg = client();
+//        server();
+//        count = 0;
+//        while (count < 10 && !client_reg.isReg()){
+//            if (!client_reg.isReg()){
+//                client.send(MQTT_TOPIC.DEVICE_SET, "{dev1:state=true}");
+//            }else{
+//                System.out.println("registered");
+//            }
+//            Main.sleep(1000);
+//            count ++;
+//        }
+//        if (count >= 9){
+//            System.err.println("error device not req");
+//        }else{
+//            System.err.println("success");
+//        }
+//
+//        server();
+//        client_reg = client();
+//        count = 0;
+//        while (count < 10 && !client_reg.isReg()){
+//            if (!client_reg.isReg()){
+//                client.send(MQTT_TOPIC.DEVICE_SET, "{dev1:state=true}");
+//            }else{
+//                System.out.println("registered");
+//            }
+//            Main.sleep(1000);
+//            count ++;
+//        }
+//        if (count >= 9){
+//            System.err.println("error device not req");
+//        }else{
+//            System.err.println("success");
+//        }
+        MessageClient a = new MessageClient();
+        a.send(MQTT_TOPIC.DEVICE_SET, "{name:test=1}");
     }
 
 

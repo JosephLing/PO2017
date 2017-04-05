@@ -42,6 +42,7 @@ public class MessageClient {
             exception.printStackTrace();
             System.exit(0);
         }
+        client.setTimeToWait(100L);
         ProjectLogger.Log("MQTT Client: connected to broker successfully");
     }
 
