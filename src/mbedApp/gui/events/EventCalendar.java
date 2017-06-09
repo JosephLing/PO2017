@@ -11,7 +11,6 @@ public class EventCalendar {
     private String date;
 
 
-
     public String getSummary() {
         return summary;
     }
@@ -24,20 +23,20 @@ public class EventCalendar {
         return start;
     }
 
+    public void setStart(String start) {
+        this.start = start;
+    }
+
     public void setDateAndStart(String start) {
         String[] split = start.split("T");
         if (split.length == 2) {
             this.date = split[0];
             this.start = split[1];
-        }else{
+        } else {
             this.date = "none";
             this.start = "none";
         }
 
-    }
-
-    public void setStart(String start) {
-        this.start = start;
     }
 
     public void setDate(String date) {
@@ -57,15 +56,14 @@ public class EventCalendar {
         return summary + " | " + timezone + " | " + date + " | " + start;
     }
 
-    public String toMqtt(){
-        return date + ":" + "timezone=" + timezone + ",start=" + start + ",description="+summary;
+    public String toMqtt() {
+        return date + ":" + "timezone=" + timezone + ",start=" + start + ",description=" + summary;
     }
 
 
-    public Object[] toObjectArray(){
-        return new String[]{summary, timezone, date,  start};
+    public Object[] toObjectArray() {
+        return new String[]{summary, timezone, date, start};
     }
-
 
 
 }

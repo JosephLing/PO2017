@@ -1,12 +1,10 @@
 package mbedApp.mqtt;
 
-import mbedApp.ProjectLogger;
-import org.eclipse.paho.client.mqttv3.*;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import mbedApp.devices.InterfaceDeviceNew;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * MessageClient
@@ -14,196 +12,146 @@ import java.util.stream.Collectors;
  * @author josephling
  * @version 1.0 10/02/2017
  */
-public class MessageClient {
 
-    private MqttConfigReader config;
-    private MqttClient client;
-    /**
-     * Initialise a new MessageClient by connecting to the broker and setting up required variables.
-     * Note: This will exit the whole program if a connection cannot be made to the broker.
-     */
-    public MessageClient() {
-        // Get our configuration options
-        config = new MqttConfigReader();
-        MemoryPersistence memoryPersistence = new MemoryPersistence();
-        try {
-            ProjectLogger.Log("Connecting to " + config.getBroker() + " with ID " + config.getClientId());
+// TODO: think about changing the data type of topic??? we want it to be able to reference unique topics but have it be a dynamic collection of static names
 
-            // Set up our MQTT client
-            client = new MqttClient(config.getBroker(), config.getClientId(), memoryPersistence);
-            MqttConnectOptions clientConnectionOptions = new MqttConnectOptions();
-            clientConnectionOptions.setCleanSession(true);
 
-            // Actually connect
-            client.connect(clientConnectionOptions);
+public class MessageClient extends MQTT implements Runnable {
 
-        } catch(MqttException exception) {
-            ProjectLogger.Log("MQTT Client: Exception encountered when trying to connect to broker");
-            exception.printStackTrace();
-            System.exit(0);
-        }
-        client.setTimeToWait(100L);
-        ProjectLogger.Log("MQTT Client: connected to broker successfully");
-    }
+
+    private static Logger logger = Logger.getLogger(MessageClient.class.getName());
+    private final int timeout;
+    private final int sleepTime;
+    private boolean registered;
+    private String server;
+    private InterfaceDeviceNew device;
+    private long timeAlive;
+    private int maxRegisterAttempts;
 
     /**
-     * Subscribes to a topic and then applies to listener to the topic.
-     * @param topic string added to config.getTopic();
-     * @param listener IMqqtMessageListener
+     * used to create the default client
+     *
+     * @param server maybe not needed??
+     * @param device InterfaceDeviceNew
      */
-    public void subscribe(String topic, IMqttMessageListener listener){
-        try {
-            client.subscribe(config.getTopic() + "/" + topic, config.getQos(), listener);
-        } catch (MqttException e) {
-            e.printStackTrace();
+    public MessageClient(MQTT_TOPIC server, InterfaceDeviceNew device) {
+
+        super();
+        // not used but needs to be defined
+        timeout = 2000;
+        sleepTime = 2500;
+        maxRegisterAttempts = 5;
+
+
+        if (getClient() != null) {
+            if (getClient().isConnected()) {
+                initClient(server, device);
+            }
         }
     }
 
+
     /**
-     * Subscribes to a topic and then applies to listener to the topic.
-     * @param topic string added to config.getTopic();
-     * @param listener IMqqtMessageListener
+     * @param server
+     * @param device
      */
-    public void advanceSubscribe(MQTT_TOPIC topic, InterfaceAdvMsg listener){
-        /*
-        This is the format of a cmd {name:state=true,other=1}
+    private void initClient(MQTT_TOPIC server, InterfaceDeviceNew device) {
+        this.server = server.toString();
+        this.device = device;
+        registered = false;
 
-        InterfaceAdvMsg takes these values: (String topic, String name, String[][]args)
-        topic = config.getTopic() + "/" + topic.toString();
+        // stores the time of the latest ping
+        timeAlive = 0;
 
-        name = would be "name" for {name:state=true,other=1} or {ThisBitIsTheName:state=true,other=1}
-        or "ThisBitIsTheName" its the piece of text that comes after the '{' and before ':'.
 
-        After that we get the args:
-        - its formatted so {name:arg=value,arg2=value2} -> [[arg, value], [arg2, value2]]
-        - it won't work if you do {name:arg=value,value2}
-        - you can't have {name:arg={....}} as it won't be able to seperate them
-        - you can have as many arguments you like {name:argN=valN.....}
-
-         */
-        try {
-            client.subscribe(config.getTopic() + "/" + topic.toString(), config.getQos(),
-                    (String msgTopic, MqttMessage message)->{
-                        // so what we want to do is output the topic, but we also want to have
-                        // a String local var that isn't final so we copy topic into a final
-                        // then use msgTopic as a local String var
-                        final String topic_final = msgTopic;
-                        // here we just get rid of all the unwanted chars and convert the msg to a String
-                        msgTopic = (new String(message.getPayload())).replaceAll("\\s+","").replaceAll("\n", "");
-                        if (msgTopic.charAt(0) == '{'){
-                            // wants important to note here is that we require a '}' at the end
-                            // we do not end the program as soon as we come across one
-                            if (msgTopic.charAt(msgTopic.length()-1) == '}'){
-                                msgTopic = msgTopic.replaceAll("}","").replaceAll("\\{", "");
-                                final String name = msgTopic.split(":")[0];
-
-                                if (msgTopic.split(":").length == 1){
-                                    // in this case there is just {name}
-                                    listener.getMsg(topic_final, name, new HashMap<String, String>());
-                                }else{
-                                    // we convert {name:state=true,other=1} to a String[][]
-                                    // first step we grab "state=true,other=1"
-                                    // then we split it by ','
-                                    // then split it by '='
-                                    final String[][] test = Arrays.stream(msgTopic.split(":")[1].split(","))
-                                            .map(s -> s.split("=")).toArray(size -> new String[size][size]);
-
-                                    // so here we check to see whether or not its just one value
-                                    // per argument e.g. we want this {name:state=true,other=1}
-                                    // NOT {name:state=true=false,other=1}
-                                    // if it is wrong we throw an Exception
-                                    for (int i = 0; i < test.length; i++) {
-                                        if (test[i].length == 1){
-                                            throw new MqttExceptionParsingData("Syntax error ["+topic_final+"]["+name+"]: argument has no value " + test[i][0]);
-                                        }
-                                    }
-                                    // we take the String[][] and convert it to HashMap<String, String>
-                                    final HashMap<String, String> map =
-                                            (HashMap<String, String>) Arrays.stream(test)
-                                                    .collect(Collectors.toMap(e -> e[0], e -> e[1]));
-
-                                    listener.getMsg(topic_final, name, map);
+        // register device
+        this.advanceSubscribe(MQTT_TOPIC.DEVICE_SET + device.getTopic(),
+                (String topic, String name, HashMap<String, String> args) -> {
+                    switch (name) {
+                        case "register":
+                            if (Boolean.parseBoolean(args.get("registered"))) {
+                                if (!registered) {
+                                    registered = true;
+                                } else {
+                                    logger.log(Level.WARNING, "device already registered");
                                 }
-                            }else{
-                                throw new MqttExceptionParsingData("Syntax error: no '}' found at the end of " + msgTopic);
                             }
-                        }else{
-                            throw new MqttExceptionParsingData("Syntax error: no '{' found at the start of " + msgTopic);
-                        }
+                            break;
+
+                        case "ping":
+                            ping();
+                            timeAlive = System.nanoTime(); // so we store the last ping we sent.
+                            break;
+
+                        default:
+                            logger.log(Level.WARNING, "Warning MessageClient for Device: " + device.getTopic() + " no response found");
                     }
+                });
+
+        // keeping this alive
+        this.advanceSubscribe(MQTT_TOPIC.DEVICE_SET + device.getTopic(),
+                (String topic, String name, HashMap<String, String> args) -> {
+
+                });
+        registerDevice();
+    }
+
+    @Override
+    public void run() {
+        assert getClient() != null : "client is null for " + device.getTopic() + "thread";
+
+        logger.log(Level.INFO, "created thread for " + device.getTopic());
+        while (getClient().isConnected()) {
+            mainloop();
+        }
+        logger.log(Level.INFO, "finished thread for " + device.getTopic());
+
+    }
+
+    /**
+     * mainloop of the thread
+     */
+    private void mainloop() {
+        if (registered) {
+            if (System.nanoTime() > timeAlive - timeout) {
+                logger.log(Level.INFO, "Device [] timed out from server");
+                disconnect();
+            }
+        } else {
+            if (maxRegisterAttempts > 0) {
+                registerDevice();
+                maxRegisterAttempts--;
+            } else {
+                disconnect();
+            }
+        }
+        logger.log(Level.INFO, "sleeping for a " + sleepTime + " ms");
+        try {
+            Thread.sleep(sleepTime);
+        } catch (InterruptedException error) {
+            logger.log(Level.WARNING, "thread sleeping didn't work.... for device: " + device.getTopic());
+        }
+    }
+
+
+    /**
+     * used to respond to the server
+     */
+    private void ping() {
+        if (registered) {
+            // so we will respond instanly this could be a mistake later on...
+            // we want though to leave the control up to the server client
+            this.send(MQTT_TOPIC.KEEP_ALIVE.toString() + device.getTopic(),
+                    "{pingResponse:device= " + device.getTopic() + "}"
             );
-        } catch (MqttException e) {
-            e.printStackTrace();
+        }
+    }
+
+    private void registerDevice() {
+        if (!registered) {
+            this.send(server, "{" + device.getName() + ":id=" + device.getId() + "," + device.getParams() + "}");
         }
     }
 
 
-    /**
-     * formats current topic to be combined with the MQTT topic and a device
-     * @param topic MQTT_TOPIC
-     * @param device string
-     * @return string topic
-     */
-    private String getTopic(MQTT_TOPIC topic, String device){
-        return config.getTopic()+"/"+topic+"/"+device;
-    }
-
-    /**
-     * formats current topic to be combined with the MQTT topic
-     * @param topic MQTT_TOPIC
-     * @return string topic
-     */
-    private String getTopic(MQTT_TOPIC topic){
-        return config.getTopic()+"/"+topic;
-    }
-
-    /**
-     * Send a message to the MQTT broker (and therefore all connected clients on the same topic)
-     * @param topic The topic to send the message to (added to the base topic)
-     * @param content The content of the message you want to send
-     */
-    public void send(MQTT_TOPIC topic, String content) {
-        ProjectLogger.Log("sending message: " + content + " to " + config.getTopic() + "/" + topic);
-        try {
-            client.publish(getTopic(topic), content.getBytes(), 0, false);
-        } catch(MqttException exception) {
-            ProjectLogger.Log("MQTT Client: Exception encountered when trying to send message");
-            exception.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Send a message to the MQTT broker (and therefore all connected clients on the same topic)
-     * @param topic The topic to send the message to (added to the base topic)
-     * @param content The content of the message you want to send
-     * @param retained boolean message held on that topic until another message is sent that is
-     *                 retained
-     */
-    public void send(MQTT_TOPIC topic, String content, boolean retained) {
-        ProjectLogger.Log("sending message: " + content + " to " + config.getTopic() + "/" + topic);
-        try {
-            client.publish(getTopic(topic), content.getBytes(), 0, retained);
-        } catch(MqttException exception) {
-            ProjectLogger.Log("MQTT Client: Exception encountered when trying to send message");
-            exception.printStackTrace();
-        }
-    }
-
-    public void clearRetained(MQTT_TOPIC topic){
-        send(topic, "{blank}", true);
-    }
-
-    /**
-     * Disconnect from the broker.
-     */
-    public void disconnect() {
-        ProjectLogger.Log("MQTT Client: disconnecting from broker");
-        try {
-            client.disconnect();
-        } catch(MqttException exception) {
-            ProjectLogger.Log("MQTT Client: Exception encountered when trying to disconnect");
-            exception.printStackTrace();
-        }
-    }
 }

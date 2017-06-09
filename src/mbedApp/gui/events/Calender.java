@@ -9,6 +9,11 @@ import java.util.stream.Collectors;
 public class Calender {
 
     private static String debugging = "";
+    private ArrayList<EventCalendar> events;
+
+    public Calender(ArrayList<EventCalendar> events) {
+        this.events = events;
+    }
 
     public static String getDebugging() {
         String deg = debugging;
@@ -16,26 +21,9 @@ public class Calender {
         return deg;
     }
 
-    public static void setDebugging(String newDebugging){
+    public static void setDebugging(String newDebugging) {
         debugging = newDebugging;
     }
-
-    private ArrayList<EventCalendar> events;
-
-    public Calender(ArrayList<EventCalendar>events){
-        this.events = events;
-    }
-
-    public Object[][] render(){
-        return this.events.stream().map(EventCalendar::toObjectArray).toArray(a->new Object[this.events.size()][4]);
-    }
-
-    public String toMqtt(){
-        // so one event per date atm
-        return "{" + this.events.stream().map(EventCalendar::toMqtt).collect(Collectors.joining("}{")) +"}";
-    }
-
-
 
     public static Calender createCalender(ArrayList<String> cal) {
         setDebugging("");
@@ -120,14 +108,23 @@ public class Calender {
             parserError = true;
             debugging.add("couldn't find start");
         }
-        debugging.add("took " + (System.currentTimeMillis() - time) + " ms\nparser error: " + parserError+
-                "\nevent state: " + event+"\nevents: " + icalEvents.size()+"\nindex: " + index+"\nical version: " + version);
+        debugging.add("took " + (System.currentTimeMillis() - time) + " ms\nparser error: " + parserError +
+                "\nevent state: " + event + "\nevents: " + icalEvents.size() + "\nindex: " + index + "\nical version: " + version);
 //        icalEvents.forEach(a->{debugging.add(a.toString());});
         setDebugging(debugging.stream().map(Object::toString)
                 .collect(Collectors.joining("\n")));
-        if (icalEvents != null){
+        if (icalEvents != null) {
             return new Calender(icalEvents);
         }
         return null;
+    }
+
+    public Object[][] render() {
+        return this.events.stream().map(EventCalendar::toObjectArray).toArray(a -> new Object[this.events.size()][4]);
+    }
+
+    public String toMqtt() {
+        // so one event per date atm
+        return "{" + this.events.stream().map(EventCalendar::toMqtt).collect(Collectors.joining("}{")) + "}";
     }
 }

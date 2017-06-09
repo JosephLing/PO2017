@@ -14,7 +14,6 @@ import shed.mbed.LCD;
 public abstract class ScrollableText {
 
 
-
     private int screenWidth;
     private int screenHeight;
 
@@ -32,6 +31,7 @@ public abstract class ScrollableText {
 
     /**
      * Constructor:
+     *
      * @param msg String[] data that you want to display per line
      */
     public ScrollableText(String[] msg) {
@@ -43,42 +43,44 @@ public abstract class ScrollableText {
         menuSpacing = 10;
 
         down = (isPressed) -> {
-            if(isPressed) {
-                if (selected+1 < msg.length){
-                    selected ++;
+            if (isPressed) {
+                if (selected + 1 < msg.length) {
+                    selected++;
                 }
-            }};
+            }
+        };
 
         up = (isPressed) -> {
-            if(isPressed) {
-                if (selected-1 >= 0){
-                    selected --;
+            if (isPressed) {
+                if (selected - 1 >= 0) {
+                    selected--;
                 }
-            }};
+            }
+        };
     }
 
     /**
      * Uses a InterfaceScrollableText to allow you set what is done at the for the update_header, update_main and
      * update_footer. Currently will only display only 3 values.
      */
-    public void update(){
+    public void update() {
         //ProjectLogger.Log("update loop");
         getLcd().clear();
         int maxDisplay = screenHeight / menuSpacing;
         int index = 0;
-        if (maxDisplay < msgArray.length){
-            if (selected >= maxDisplay){
+        if (maxDisplay < msgArray.length) {
+            if (selected >= maxDisplay) {
                 index = selected - maxDisplay + 1;
             }
         }
         int y = 0;
         int count = 0;
         update_header(index, count, y);
-        while (y < screenHeight && count < maxDisplay && index < msgArray.length){
+        while (y < screenHeight && count < maxDisplay && index < msgArray.length) {
             y = menuSpacing * count;
             update_main(index, count, y);
-            count ++;
-            index ++;
+            count++;
+            index++;
         }
         y = menuSpacing * count;
         update_footer(index, count, y);
@@ -87,7 +89,7 @@ public abstract class ScrollableText {
     /**
      * enables the controls
      */
-    public void enableControls(){
+    public void enableControls() {
         ProjectLogger.Log("enabling controls for scrollable text");
         HomeAutomator.getMBed().getJoystickUp().addListener(up);
         HomeAutomator.getMBed().getJoystickDown().addListener(down);
@@ -96,7 +98,7 @@ public abstract class ScrollableText {
     /**
      * disables the controls
      */
-    public void disableControls(){
+    public void disableControls() {
         ProjectLogger.Log("disabling controls for scrollable text");
         HomeAutomator.getMBed().getJoystickDown().removeListener(down);
         HomeAutomator.getMBed().getJoystickUp().removeListener(up);
@@ -109,6 +111,10 @@ public abstract class ScrollableText {
 
     public String[] getMsgArray() {
         return msgArray;
+    }
+
+    public void setMsgArray(String[] msgArray) {
+        this.msgArray = msgArray;
     }
 
     public int getScreenWidth() {
@@ -130,31 +136,30 @@ public abstract class ScrollableText {
 
     /**
      * update method: update_header of out to lcd
+     *
      * @param index int
      * @param count int
-     * @param y int
+     * @param y     int
      */
     abstract void update_header(int index, int count, int y);
 
     /**
      * update method: update_main of out to lcd
+     *
      * @param index int
      * @param count int
-     * @param y int
+     * @param y     int
      */
     abstract void update_main(int index, int count, int y);
 
     /**
      * update method: update_footer of out to lcd
+     *
      * @param index int
      * @param count int
-     * @param y int
+     * @param y     int
      */
     abstract void update_footer(int index, int count, int y);
-
-    public void setMsgArray(String[] msgArray) {
-        this.msgArray = msgArray;
-    }
 
     private void sleep(long milliseconds) {
         try {

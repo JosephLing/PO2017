@@ -44,7 +44,7 @@ public class PageSettings implements InterfaceUI {
     }
 
     @Override
-    public Page getPage(){
+    public Page getPage() {
         return Page.SETTINGS;
     }
 }

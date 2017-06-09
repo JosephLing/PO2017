@@ -11,7 +11,7 @@ import mbedApp.mbed.display.TextBox;
  * @author josephling
  * @version 1.0 20/02/2017
  */
-public class PageQuit implements InterfaceUI{
+public class PageQuit implements InterfaceUI {
 
     private TextBox textBox;
 
@@ -42,7 +42,7 @@ public class PageQuit implements InterfaceUI{
     }
 
     @Override
-    public Page getPage(){
+    public Page getPage() {
         return Page.QUIT;
     }
 }

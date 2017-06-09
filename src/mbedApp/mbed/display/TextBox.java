@@ -18,29 +18,30 @@ public class TextBox extends ScrollableText {
         setFireButton(backButton1);
     }
 
-    public TextBox(String msg, ButtonListener backButton1, boolean render){
+    public TextBox(String msg, ButtonListener backButton1, boolean render) {
         super(msg.split("\n"));
         setFireButton(backButton1);
-        if (render){
+        if (render) {
             this.enableControls();
             this.update();
         }
 
     }
 
-    public void setText(String msg){
+    public void setText(String msg) {
         this.setMsgArray(msg.split("\n"));
     }
 
     private void setFireButton(ButtonListener backButtonNew) {
-        if (backButtonNew != null){
+        if (backButtonNew != null) {
             this.fireButton = (isPressed) -> {
                 this.disableControls();
                 backButtonNew.changed(isPressed);
             };
-        }else{
+        } else {
             System.out.println("dummy button created");
-            this.fireButton = (isPressed) -> {};
+            this.fireButton = (isPressed) -> {
+            };
         }
 
     }

@@ -13,7 +13,7 @@ import java.util.HashMap;
  * @author josephling
  * @version 1.0 10/02/2017
  */
-public class Device implements InterfaceDevice{
+public class Device implements InterfaceDevice {
 
     public static final String LIGHT = "Light";
     public static final String TEMP = "Temp";
@@ -31,6 +31,20 @@ public class Device implements InterfaceDevice{
 
     }
 
+    public static Device parseNewDevice(HashMap<String, String> args) {
+        return null;
+    }
+
+    public static String parseNewDeviceId(String name, HashMap<String, String> args) {
+        String newId = null;
+        if (args.get("id") != null) {
+            newId = name + args.get("id");
+        } else {
+            ProjectLogger.Warning("No Id found! for new light: " + name);
+        }
+        return newId;
+    }
+
     public boolean isDevice_registered() {
         return device_registered;
     }
@@ -40,21 +54,26 @@ public class Device implements InterfaceDevice{
     }
 
     @Override
-    public String toString(){
-        return getName()+id;
+    public String toString() {
+        return getName() + id;
     }
-
 
     /**
      * gets the name
+     *
      * @return name
      */
     public String getName() {
         return DEVICE;
     }
 
+    public String getParams() {
+        return "";
+    }
+
     /**
      * gets the id of the device
+     *
      * @return id
      */
     public int getId() {
@@ -69,35 +88,21 @@ public class Device implements InterfaceDevice{
     @Override
     public void register(MessageClient client) {
         this.client = client;
-        assert true: "this shouldn't be being called Device";
-        client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
-                (String topic, String name, HashMap<String, String> args)->{
-            if (name.equals(getName()+getId())){
-                String state = args.get("registered");
-                if (state != null){
-                    setDevice_registered(Boolean.parseBoolean(state));
-                    System.out.println(name);
-                }
-            }
-        });
+        assert true : "this shouldn't be being called Device";
+//        client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
+//                (String topic, String name, HashMap<String, String> args) -> {
+//                    if (name.equals(getName() + getId())) {
+//                        String state = args.get("registered");
+//                        if (state != null) {
+//                            setDevice_registered(Boolean.parseBoolean(state));
+//                            System.out.println(name);
+//                        }
+//                    }
+//                });
     }
 
     public MessageClient getClient() {
         return client;
-    }
-
-    public static Device parseNewDevice(HashMap<String, String> args){
-        return null;
-    }
-
-    public static String parseNewDeviceId(String name, HashMap<String, String> args){
-        String newId = null;
-        if (args.get("id") != null){
-            newId = name + args.get("id");
-        }else{
-            ProjectLogger.Warning("No Id found! for new light: " + name);
-        }
-        return newId;
     }
 }
 

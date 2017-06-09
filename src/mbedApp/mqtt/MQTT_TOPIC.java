@@ -3,7 +3,7 @@ package mbedApp.mqtt;
 /**
  * Used to specifiy what message came from where.
  * So that it is easier to specify.
- *
+ * <p>
  * Created by josephling on 13/02/2017.
  */
 public enum MQTT_TOPIC {
@@ -12,8 +12,8 @@ public enum MQTT_TOPIC {
     DEVICE_CHANGE,
     CAT,
     TEMPERATURE,
+    KEEP_ALIVE,
     EVENTS;
-
 
 
     @Override

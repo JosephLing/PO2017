@@ -5,16 +5,16 @@ package mbedApp.mbed.pages;
  */
 public enum Page {
 
-    START       (0, 0),
-    MAINMENU    (1, 0),
-    LIGHTS      (2, 1),
-    TEMP        (3, 1),
-    SETTINGS    (4, 1),
-    CREDITS     (5, 1),
-    BACK        (6, -1),
-    QUIT        (7, -1),
-    TEST        (8, 0),
-    EVENTS      (9, 1);
+    START(0, 0),
+    MAINMENU(1, 0),
+    LIGHTS(2, 1),
+    TEMP(3, 1),
+    SETTINGS(4, 1),
+    CREDITS(5, 1),
+    BACK(6, -1),
+    QUIT(7, -1),
+    TEST(8, 0),
+    EVENTS(9, 1);
 
 
     private final int currentIndex;

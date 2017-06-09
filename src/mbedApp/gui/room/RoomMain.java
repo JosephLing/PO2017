@@ -8,7 +8,7 @@ package mbedApp.gui.room;
  */
 public class RoomMain {
 
-    public static void main(){
+    public static void main() {
         RoomFrame test = new RoomFrame();
     }
 }

@@ -1,9 +1,7 @@
 package mbedApp.mbed.pages;
 
 import mbedApp.mbed.HomeAutomator;
-import mbedApp.mbed.ScreenInterface;
 import mbedApp.mbed.display.TextBox;
-import mbedApp.mqtt.MQTT_TOPIC;
 import shed.mbed.Potentiometer;
 import shed.mbed.PotentiometerListener;
 
@@ -23,11 +21,11 @@ public class PageTemprature implements InterfaceUI {
         potentiometer = HomeAutomator.getMBed().getPotentiometer1();
         potentiometerListener = (double value) -> {
 //            System.out.println("asf" + value);
-            ScreenInterface.getMessageClient().send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(Math.round(value*30)) + "}");
+//            ScreenInterface.getMessageClient().send(MQTT_TOPIC.TEMPERATURE, "{temp:new=" + Double.toString(Math.round(value*30)) + "}");
         };
     }
 
-    private String getText(){
+    private String getText() {
         return "Current Temperature\n" + HomeAutomator.getTemperatureDev().getTemprature() + "C";
     }
 
@@ -53,7 +51,7 @@ public class PageTemprature implements InterfaceUI {
     }
 
     @Override
-    public Page getPage(){
+    public Page getPage() {
         return Page.TEMP;
     }
 }

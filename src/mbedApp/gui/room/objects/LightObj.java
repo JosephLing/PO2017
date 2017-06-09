@@ -1,16 +1,11 @@
 package mbedApp.gui.room.objects;
 
-import mbedApp.ProjectLogger;
-import mbedApp.devices.Device;
 import mbedApp.devices.Light;
 import mbedApp.gui.room.Canvas;
-import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.util.HashMap;
-
 
 
 /**
@@ -35,7 +30,7 @@ public class LightObj extends Light implements InterfaceScreenObject {
     }
 
     public void update(Canvas canvas) {
-        if (registered){
+        if (registered) {
             if (isState()) {
                 canvas.draw(this, Color.green, new Ellipse2D.Double(x, y, 20, 20));
                 //canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y, 10, 5));
@@ -45,7 +40,7 @@ public class LightObj extends Light implements InterfaceScreenObject {
                 //canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y, 10, 5));
                 //canvas.draw(this, Color.blue, new Rectangle2D.Double(x, y + 10, 5, 5));
             }
-        }else{
+        } else {
             canvas.draw(this, Color.blue, new Ellipse2D.Double(x, y, 20, 20));
 //            ProjectLogger.Warning("light not yet registered");
         }
@@ -55,12 +50,12 @@ public class LightObj extends Light implements InterfaceScreenObject {
         return x;
     }
 
-    public int getY() {
-        return y;
-    }
-
     public void setX(int newX) {
         x = newX;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public void setY(int newY) {
@@ -79,8 +74,12 @@ public class LightObj extends Light implements InterfaceScreenObject {
         return registered;
     }
 
+    public void setRegistered(boolean state) {
+        registered = state;
+    }
+
     public void register_client() {
-        assert true: "this shouldn't be being called lightObj";
+        assert true : "this shouldn't be being called lightObj";
 //        client.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
 //                (String topic, String name, HashMap<String, String> args)->{
 //                    if (name.contains(Device.LIGHT) && name.split(Device.LIGHT)[1].equals(Integer.toString(getId()))){
@@ -90,9 +89,5 @@ public class LightObj extends Light implements InterfaceScreenObject {
 //                        }
 //                    }
 //                });
-    }
-
-    public void setRegistered(boolean state) {
-        registered = state;
     }
 }

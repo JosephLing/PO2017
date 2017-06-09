@@ -14,24 +14,25 @@ public interface InterfaceScreenObject {
     int getX();
 
     /**
-     * @return x coordinate
-     */
-    int getY();
-
-    /**
      * sets the x var
+     *
      * @param newX int
      */
     void setX(int newX);
 
     /**
+     * @return x coordinate
+     */
+    int getY();
+
+    /**
      * sets the y var
+     *
      * @param newY int
      */
     void setY(int newY);
 
     /**
-     *
      * @param client MessageClient
      */
     void addClient(MessageClient client);
@@ -40,19 +41,18 @@ public interface InterfaceScreenObject {
     void register_client();
 
     /**
-     *
      * @return boolean value if it has been registered
      */
     boolean isRegistered();
 
     /**
-     *
      * @param state boolean
      */
     void setRegistered(boolean state);
 
     /**
      * updates the obj and renders it to the frame
+     *
      * @param canvas custom Canvas object used to write to
      */
     void update(Canvas canvas);

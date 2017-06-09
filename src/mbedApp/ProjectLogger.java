@@ -11,17 +11,18 @@ import java.util.logging.Logger;
  */
 public class ProjectLogger {
 
-    private static final Logger  LOGGER = Logger.getLogger("mbedjl653");
+    private static final Logger LOGGER = Logger.getLogger("mbedjl653");
+
     {
 
     }
 
-    public static void Log(String msg){
+    public static void Log(String msg) {
         //        LOGGER.info(msg);
         System.out.println("Logging: " + msg);
     }
 
-    public static void Warning(String msg){
+    public static void Warning(String msg) {
         System.err.println("Logging: " + msg);
         //        LOGGER.warning(msg);
     }

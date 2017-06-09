@@ -8,7 +8,7 @@ import mbedApp.mbed.display.Menu;
  * @author josephling
  * @version 1.0 20/02/2017
  */
-public class PageMainMenu implements InterfaceUI{
+public class PageMainMenu implements InterfaceUI {
 
     private Menu mainMenu;
     private String[] itemNames;
@@ -16,7 +16,7 @@ public class PageMainMenu implements InterfaceUI{
 
     public PageMainMenu(int[] optionsIndex) {
         this.optionsIndex = optionsIndex;
-        itemNames = new String[]{"Lights", "Temprature", "Settings", "Credits","Back", "Quit"};
+        itemNames = new String[]{"Lights", "Temprature", "Settings", "Credits", "Back", "Quit"};
     }
 
     @Override
@@ -38,7 +38,7 @@ public class PageMainMenu implements InterfaceUI{
     }
 
     @Override
-    public Page getPage(){
+    public Page getPage() {
         return Page.MAINMENU;
     }
 }

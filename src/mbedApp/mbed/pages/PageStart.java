@@ -18,7 +18,7 @@ public class PageStart implements InterfaceUI {
 
     public PageStart(int nextPage) {
         ButtonListener mainMenu = (isPressed) -> {
-            if (isPressed){
+            if (isPressed) {
                 ScreenInterface.setCurrentPage(nextPage);
             }
         };
@@ -26,8 +26,8 @@ public class PageStart implements InterfaceUI {
 
     }
 
-    private String getText(){
-        return "Wake Up: 08:00\n"+ HomeAutomator.getDevices().size()+"\nDevices Reg.";
+    private String getText() {
+        return "Wake Up: 08:00\n" + HomeAutomator.getDevices().size() + "\nDevices Reg.";
     }
 
     @Override
@@ -47,7 +47,7 @@ public class PageStart implements InterfaceUI {
     }
 
     @Override
-    public Page getPage(){
+    public Page getPage() {
         return Page.START;
     }
 }

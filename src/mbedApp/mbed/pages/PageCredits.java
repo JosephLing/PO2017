@@ -32,7 +32,7 @@ public class PageCredits implements InterfaceUI {
     }
 
     @Override
-    public Page getPage(){
+    public Page getPage() {
         return Page.CREDITS;
     }
 }

@@ -1,4 +1,5 @@
 package mbedApp.mqtt;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -13,10 +14,10 @@ import java.util.UUID;
 public class MqttConfigReader {
 
 
-    private String topic        = null;
-    private int qos             = 0; // Default to 0
-    private String broker       = null;
-    private String clientId     = null;
+    private String topic = null;
+    private int qos = 0; // Default to 0
+    private String broker = null;
+    private String clientId = null;
 
     public MqttConfigReader() {
         readData();
@@ -24,19 +25,19 @@ public class MqttConfigReader {
         clientId = UUID.randomUUID().toString(); // have a unique client ID
     }
 
-    private void readData(){
+    private void readData() {
         Properties properties = new Properties();
         // grab the file data
         try {
             InputStream input = getClass().getResourceAsStream("mqtt.config");
             properties.load(input);
-            
+
             topic = properties.getProperty("topic");
             broker = properties.getProperty("broker");
-        } catch(IOException exception) {
+        } catch (IOException exception) {
             exception.printStackTrace();
         }
-     }
+    }
 
     public String getTopic() {
         return topic;

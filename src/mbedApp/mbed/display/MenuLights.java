@@ -2,8 +2,6 @@ package mbedApp.mbed.display;
 
 import mbedApp.devices.Light;
 import mbedApp.mbed.HomeAutomator;
-import mbedApp.mbed.ScreenInterface;
-import mbedApp.mqtt.MQTT_TOPIC;
 import shed.mbed.ButtonListener;
 import shed.mbed.PixelColor;
 
@@ -23,22 +21,22 @@ public class MenuLights extends Menu {
         // right = true
         // left = false
 
-        left = (isPressed) ->{
-            if (isPressed){
-                Light light =this.lights[getSelected()];
-                if (light != null){
-                    if (!light.isState()){
+        left = (isPressed) -> {
+            if (isPressed) {
+                Light light = this.lights[getSelected()];
+                if (light != null) {
+                    if (!light.isState()) {
                         light.setState(true);
                         changeLightState(light);
                     }
                 }
             }
         };
-        right = (isPressed) ->{
-            if (isPressed){
-                Light light =this.lights[getSelected()];
-                if (light != null){
-                    if (light.isState()){
+        right = (isPressed) -> {
+            if (isPressed) {
+                Light light = this.lights[getSelected()];
+                if (light != null) {
+                    if (light.isState()) {
                         light.setState(false);
                         changeLightState(light);
                     }
@@ -47,28 +45,28 @@ public class MenuLights extends Menu {
         };
     }
 
-    private void changeLightState(Light light){
-        ScreenInterface.getMessageClient().send(
-                MQTT_TOPIC.DEVICE_CHANGE,
-                "{"+light.getName()+light.getId()+":state="+light.isState()+"}"
-        );
+    private void changeLightState(Light light) {
+//        ScreenInterface.getMessageClient().send(
+//                MQTT_TOPIC.DEVICE_CHANGE,
+//                "{"+light.getName()+light.getId()+":state="+light.isState()+"}"
+//        );
     }
 
 
     @Override
     protected void update_main(int index, int count, int y) {
-        if (lights[index] != null){ // so not the back button
+        if (lights[index] != null) { // so not the back button
             String output = "[x][ ]";
-            if (!lights[index].isState()){
+            if (!lights[index].isState()) {
                 output = "[ ][x]";
             }
-            getLcd().print(80, y+2, output);
+            getLcd().print(80, y + 2, output);
         }
-        getLcd().drawLine(0,y,getScreenWidth(),y, PixelColor.BLACK);
-        getLcd().print(25, y+2, getMsgArray()[index]);
+        getLcd().drawLine(0, y, getScreenWidth(), y, PixelColor.BLACK);
+        getLcd().print(25, y + 2, getMsgArray()[index]);
 
-        if (index == getSelected()){
-            getLcd().drawCircle(20, y+getMenuSpacing()/2, 4, PixelColor.BLACK);
+        if (index == getSelected()) {
+            getLcd().drawCircle(20, y + getMenuSpacing() / 2, 4, PixelColor.BLACK);
         }
     }
 

@@ -21,15 +21,16 @@ public class Menu extends ScrollableText {
         super(msg);
         this.menuIndex = menuIndex;
         fire = (isPressed) -> {
-            if(isPressed) {
+            if (isPressed) {
                 this.runSelected();
-            }};
-        assert msg.length == menuIndex.length: "msg array not the same size as menuIndex";
+            }
+        };
+        assert msg.length == menuIndex.length : "msg array not the same size as menuIndex";
     }
 
-    public void runSelected(){
+    public void runSelected() {
         int selected = menuIndex[getSelected()];
-        if (selected != -1){
+        if (selected != -1) {
             this.disableControls();
             ScreenInterface.goToPage(selected);
         }
@@ -55,17 +56,17 @@ public class Menu extends ScrollableText {
     @Override
     protected void update_main(int index, int count, int y) {
         //ProjectLogger.Log("Menu update");
-        getLcd().drawLine(0,y,getScreenWidth(),y, PixelColor.BLACK);
-        getLcd().print(35, y+2, getMsgArray()[index]);
+        getLcd().drawLine(0, y, getScreenWidth(), y, PixelColor.BLACK);
+        getLcd().print(35, y + 2, getMsgArray()[index]);
 
-        if (index == getSelected()){
-            getLcd().drawCircle(20, y+getMenuSpacing()/2, 4, PixelColor.BLACK);
+        if (index == getSelected()) {
+            getLcd().drawCircle(20, y + getMenuSpacing() / 2, 4, PixelColor.BLACK);
         }
     }
 
     @Override
     protected void update_footer(int index, int count, int y) {
-        getLcd().drawLine(0,y,getScreenWidth(),y, PixelColor.BLACK);
+        getLcd().drawLine(0, y, getScreenWidth(), y, PixelColor.BLACK);
     }
 
     @Override

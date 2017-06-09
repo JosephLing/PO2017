@@ -1,8 +1,5 @@
 package mbedApp.mqtt;
 
-import mbedApp.Main;
-
-import java.util.HashMap;
 /**
  * MQTT_TESTING does.............
  *
@@ -13,31 +10,31 @@ public class MQTT_TESTING {
 
     private static MessageClient client;
 
-    private static TEST client(){
-        client = new MessageClient();
-        TEST client_reg = new TEST(false);
-        client.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER,
-                (String topic, String name, HashMap<String, String> args)->{
-                    if (args.get("reg") != null){
-                        client_reg.setReg(Boolean.parseBoolean(args.get("reg")));
-                    }
-                });
-        return client_reg;
-    }
+//    private static TEST client(){
+//        client = new MessageClient();
+//        TEST client_reg = new TEST(false);
+//        client.advanceSubscribe(MQTT_TOPIC.DEVICE_REGISTER,
+//                (String topic, String name, HashMap<String, String> args)->{
+//                    if (args.get("reg") != null){
+//                        client_reg.setReg(Boolean.parseBoolean(args.get("reg")));
+//                    }
+//                });
+//        return client_reg;
+//    }
+//
+//    private static void server(){
+//        MessageClient server = new MessageClient();
+//        MessageClient server_reg = new MessageClient();
+//
+////        server.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
+////                (String topic, String name, HashMap<String, String> args)->{
+////                    server_reg.send(MQTT_TOPIC.DEVICE_REGISTER, "{dev1:reg=true}");
+////                });
+//
+//    }
 
-    private static void server(){
-        MessageClient server = new MessageClient();
-        MessageClient server_reg = new MessageClient();
 
-        server.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
-                (String topic, String name, HashMap<String, String> args)->{
-                    server_reg.send(MQTT_TOPIC.DEVICE_REGISTER, "{dev1:reg=true}");
-                });
-
-    }
-
-
-    public static void testing(){
+    public static void testing() {
 //        TEST client_reg;
 //        int count;
 //
@@ -77,12 +74,12 @@ public class MQTT_TESTING {
 //        }else{
 //            System.err.println("success");
 //        }
-        MessageClient a = new MessageClient();
-        a.send(MQTT_TOPIC.DEVICE_SET, "{name:test=1}");
+//        MessageClient a = new MessageClient();
+//        a.send(MQTT_TOPIC.DEVICE_SET, "{name:test=1}");
     }
 
 
-    private static class TEST{
+    private static class TEST {
         private boolean reg;
 
         public TEST(boolean reg) {

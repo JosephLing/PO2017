@@ -23,8 +23,8 @@ public class WifiCalendar {
         debugging = newDebugging;
     }
 
-    public static String getUrlString(String urlString){
-        if (urlString.contains("webcal://")){
+    public static String getUrlString(String urlString) {
+        if (urlString.contains("webcal://")) {
             urlString = urlString.replace("webcal://", "");
         }
 
@@ -35,23 +35,23 @@ public class WifiCalendar {
     }
 
 
-    public static URLConnection createUrlConnection(String urlString){
+    public static URLConnection createUrlConnection(String urlString) {
         URL url = null;
         URLConnection conn = null;
-        try{
+        try {
             url = new URL(getUrlString(urlString));
-        }catch (MalformedURLException e){
+        } catch (MalformedURLException e) {
 
         }
-        if (url != null){
-            try{
+        if (url != null) {
+            try {
                 conn = url.openConnection();
                 conn.connect();
-            }catch (IOException e){
+            } catch (IOException e) {
             }
         }
-        if (conn != null){
-            if (conn.getHeaderFields().keySet().size() == 0){
+        if (conn != null) {
+            if (conn.getHeaderFields().keySet().size() == 0) {
                 conn = null;
             }
         }
@@ -59,51 +59,51 @@ public class WifiCalendar {
         return conn;
     }
 
-    public static boolean wifiTest(){
+    public static boolean wifiTest() {
         return (createUrlConnection("http://google.com") != null);
     }
 
-    public static ArrayList<String> getIcal(String urlString){
+    public static ArrayList<String> getIcal(String urlString) {
         URL url = null;
         boolean encodingUsed = true;
         boolean streamCreated = true;
         ArrayList<String> data = new ArrayList<String>();
-        if (!urlString.isEmpty()){
+        if (!urlString.isEmpty()) {
             urlString = getUrlString(urlString);
             // create a URL
-            try{
+            try {
                 url = new URL(getUrlString(urlString));
-            }catch (MalformedURLException e){
+            } catch (MalformedURLException e) {
 
             }
         }
 
-        if (url != null){
+        if (url != null) {
             InputStream in = null;
-            try{
+            try {
                 in = url.openStream();
-            }catch (IOException e){
+            } catch (IOException e) {
                 streamCreated = false;
             }
-            if (streamCreated){
+            if (streamCreated) {
 
                 // get the data
                 BufferedReader bufferedInputStream = null;
-                try{
-                    bufferedInputStream =  new BufferedReader(new InputStreamReader(in, "UTF-8"));
-                }catch (UnsupportedEncodingException e){
+                try {
+                    bufferedInputStream = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
                     encodingUsed = false;
                 }
                 if (!encodingUsed) {
                     bufferedInputStream = new BufferedReader(new InputStreamReader(in));
                 }
 
-                try{
+                try {
                     String s;
                     while ((s = bufferedInputStream.readLine()) != null) {
                         data.add(s);
                     }
-                }catch (IOException e){
+                } catch (IOException e) {
 
                 }
                 int index = 0;
@@ -111,24 +111,24 @@ public class WifiCalendar {
                 while (index < data.size() && !invalidContent) {
                     if (data.get(index).contains("<title>") && data.get(index).contains("301")) {
                         invalidContent = true;
-                    }else{
-                        index ++;
+                    } else {
+                        index++;
                     }
                 }
 
                 try {
                     in.close();
-                }catch (IOException e){
+                } catch (IOException e) {
 
                 }
 
-                if (invalidContent){
+                if (invalidContent) {
                     setDebugging("invalid content: " + data.get(index));
-                }else{
+                } else {
                     return data;
                 }
             }
-        }else{
+        } else {
             setDebugging("invalid url");
         }
 

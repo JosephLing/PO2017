@@ -1,7 +1,6 @@
 package mbedApp.gui.room;
 
 import mbedApp.ProjectLogger;
-import mbedApp.devices.Device;
 import mbedApp.gui.room.objects.LightObj;
 import mbedApp.gui.room.objects.ThermostatObj;
 import mbedApp.mqtt.MQTT_TOPIC;
@@ -27,7 +26,7 @@ public class RoomFrame extends JFrame {
 
     private ThermostatObj thermostat;
     private Double currentTemp;
-    
+
     private Graphics2D graphic;
 
     public RoomFrame() {
@@ -48,16 +47,30 @@ public class RoomFrame extends JFrame {
         main();
     }
 
-    public void main(){
-        while (true){
+    /**
+     * Pause the program for a specified amount of miliseconds
+     *
+     * @param millis the number of miliseconds to pause for
+     */
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ex) {
+            // Nothing we can do.
+        }
+
+    }
+
+    public void main() {
+        while (true) {
             drawEverything();
             canvas.wait(1000);
             if (!thermostat.isRegistered() || lights_registeredCount != lights.size()) {
-                if (lights_registeredCount != lights.size()){
+                if (lights_registeredCount != lights.size()) {
                     register_lights();
                     ProjectLogger.Warning(lights_registeredCount + "");
                 }
-                if (!thermostat.isRegistered()){
+                if (!thermostat.isRegistered()) {
                     register_thermostat();
                 }
                 canvas.wait(2500);
@@ -69,7 +82,7 @@ public class RoomFrame extends JFrame {
     /**
      * initialises the application window
      */
-    private void init_Jframe(){
+    private void init_Jframe() {
         setTitle("Room");
         setSize(600, 600);
         setLocationRelativeTo(null);
@@ -80,43 +93,42 @@ public class RoomFrame extends JFrame {
         canvas.setVisible(true);
     }
 
-    private void drawEverything(){
+    private void drawEverything() {
         // Draw lights
         for (LightObj light : lights.values()) {
             light.update(canvas);
         }
-        
-        if(thermostat.isRegistered()) {
+
+        if (thermostat.isRegistered()) {
             thermostat.update(canvas);
         }
-        
+
         canvas.drawText(this, "Current Temperature: " + currentTemp + " *C", 10, 200);
     }
 
-    public void init_lights(){
+    public void init_lights() {
         LightObj light = null;
         for (int i = 0; i < 10; i++) {
             light = new LightObj(i, 10 + i * 50, 10);
-            lights.put(light.getName()+light.getId(), light);
+            lights.put(light.getName() + light.getId(), light);
         }
 
         register_lights();
     }
 
-
-    private void registerDevices(){
+    private void registerDevices() {
         messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_SET,
-                (String topic, String name, HashMap<String, String> args)->{
+                (String topic, String name, HashMap<String, String> args) -> {
                     for (LightObj light : lights.values()) {
-                        if (!light.isRegistered()){
-                            if ((light.getName()+light.getId()).equals(name)){
+                        if (!light.isRegistered()) {
+                            if ((light.getName() + light.getId()).equals(name)) {
                                 light.setRegistered(true);
-                                lights_registeredCount ++;
+                                lights_registeredCount++;
                             }
                         }
                     }
-                    if (thermostat != null){
-                        if ((thermostat.getName()+thermostat.getId()).equals(name)){
+                    if (thermostat != null) {
+                        if ((thermostat.getName() + thermostat.getId()).equals(name)) {
                             thermostat.setRegistered(true);
                         }
                     }
@@ -124,11 +136,9 @@ public class RoomFrame extends JFrame {
                 });
     }
 
-
-    private void register_thermostat(){
-        thermostat.getMessageClient().send(MQTT_TOPIC.DEVICE_REGISTER,"{"+Device.THERMOSTAT+":id="+ thermostat.getId() +",temperature=0}");
+    private void register_thermostat() {
+//        thermostat.getMessageClient().send(MQTT_TOPIC.DEVICE_REGISTER,"{"+Device.THERMOSTAT+":id="+ thermostat.getId() +",temperature=0}");
     }
-
 
     public void init_thermostat() {
         thermostat = new ThermostatObj(0, 10, 100);
@@ -138,16 +148,16 @@ public class RoomFrame extends JFrame {
      * registers all the lights that haven't yet been registered
      * this is important for example if their isn't a controller for the devices yet.
      */
-    private void register_lights(){
+    private void register_lights() {
         ProjectLogger.Log("register lights");
         String lightId;
         for (LightObj lightObj : lights.values()) {
-            lightId = lightObj.getName()+lightObj.getId();
-            if (!lightObj.isRegistered()){
-                lights.get(lightId).getMessageClient()
-                .send(MQTT_TOPIC.DEVICE_REGISTER,
-                    "{"+Device.LIGHT+":state="+ lightObj.isState()+",id="+ lightObj.getId()+"}");
-            }
+            lightId = lightObj.getName() + lightObj.getId();
+//            if (!lightObj.isRegistered()){
+//                lights.get(lightId).getMessageClient()
+//                .send(MQTT_TOPIC.DEVICE_REGISTER,
+//                    "{"+Device.LIGHT+":state="+ lightObj.isState()+",id="+ lightObj.getId()+"}");
+//            }
         }
         sleep(1000);
 
@@ -158,45 +168,31 @@ public class RoomFrame extends JFrame {
      * response: alters lights hash map to the new change
      */
     private void init_deviceChange() {
-        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE, (String topic, String name, HashMap<String, String> args)->{
-                if (name.contains("Light")) {
-                    lights.get(name).setState(Boolean.parseBoolean(args.get("state")));
-                } else{
-                    System.err.println("wrong name");
-                }
-            });
+        messageClient.advanceSubscribe(MQTT_TOPIC.DEVICE_CHANGE, (String topic, String name, HashMap<String, String> args) -> {
+            if (name.contains("Light")) {
+                lights.get(name).setState(Boolean.parseBoolean(args.get("state")));
+            } else {
+                System.err.println("wrong name");
+            }
+        });
 
     }
-    
+
     /**
      * Checks for a new requested temperature
      */
     private void checkForTempChange() {
-       messageClient.advanceSubscribe(MQTT_TOPIC.TEMPERATURE, (String topic, String name, HashMap<String, String> args)->{
-                if (name.contains("temp")) {
-                    if(args.get("new") != null) {
-                        thermostat.setTemperature(Double.valueOf(args.get("new")));
-                    }
-                    if(args.get("current") != null) {
-                        currentTemp = Double.valueOf(args.get("current"));
-                    }
-                } else{
-                    System.err.println("wrong name");
+        messageClient.advanceSubscribe(MQTT_TOPIC.TEMPERATURE, (String topic, String name, HashMap<String, String> args) -> {
+            if (name.contains("temp")) {
+                if (args.get("new") != null) {
+                    thermostat.setTemperature(Double.valueOf(args.get("new")));
                 }
-            });
-    }
-
-    /**
-     * Pause the program for a specified amount of miliseconds
-     * @param millis the number of miliseconds to pause for
-     */
-    public static void sleep(long millis){
-        try {
-            Thread.sleep(millis);
-        }
-        catch (InterruptedException ex) {
-            // Nothing we can do.
-        }
-
+                if (args.get("current") != null) {
+                    currentTemp = Double.valueOf(args.get("current"));
+                }
+            } else {
+                System.err.println("wrong name");
+            }
+        });
     }
 }

@@ -1,6 +1,7 @@
 package mbedApp.mbed.pages;
 
 import mbedApp.ProjectLogger;
+
 /**
  * PageBack does.............
  *
@@ -25,7 +26,7 @@ public class PageBack implements InterfaceUI {
     }
 
     @Override
-    public Page getPage(){
+    public Page getPage() {
         return Page.BACK;
     }
 }
