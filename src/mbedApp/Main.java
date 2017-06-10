@@ -8,6 +8,11 @@ import mbedApp.mqtt.MQTT_TOPIC;
 import mbedApp.mqtt.MessageClient;
 import shed.mbed.MBedStateException;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Parameter;
+import java.util.Arrays;
+
 public class Main {
     private static Main main;
 
@@ -46,9 +51,10 @@ public class Main {
 //        createMbedApp();
 ////        sleep(1000);
 //        createRoomApp();
-        InterfaceDeviceNew test = new TestDevice();
-        MessageClient client = new MessageClient(MQTT_TOPIC.CAT, test);
-        client.run();
+        test();
+//        InterfaceDeviceNew test = new TestDevice();
+//        MessageClient client = new MessageClient(MQTT_TOPIC.CAT, test);
+//        client.run();
     }
 
 //    public static void createRoomApp() {
@@ -79,5 +85,41 @@ public class Main {
         }
 
     }
+
+    public static void test(){
+//        String  fmt = "%24s: %s%n";
+
+        TestDevice a = new TestDevice(false);
+        System.out.println(a);
+
+
+
+
+//        Constructor c =  a.getClass().getConstructors()[0];
+//        System.out.format("%s%n", c.toGenericString());
+//        Parameter[] params = c.getParameters();
+//        System.out.format(fmt, "Number of parameters", params.length);
+//        for (int i = 0; i < params.length; i++) {
+//            printParameter(params[i]);
+//        }
+    }
+
+    public static void printParameter(Parameter p) {
+        String  fmt = "%24s: %s%n";
+        for (Annotation annotation : p.getAnnotations()) {
+            System.out.println(annotation);
+        }
+        System.out.format(fmt, "Parameter class", p.getType());
+        System.out.format(fmt, "Parameter name", p.getName());
+        System.out.format(fmt, "Modifiers", p.getModifiers());
+        System.out.format(fmt, "Is implicit?", p.isImplicit());
+        System.out.format(fmt, "Is name present?", p.isNamePresent());
+        System.out.format(fmt, "Is synthetic?", p.isSynthetic());
+    }
+
+
+
+
+
 }
 

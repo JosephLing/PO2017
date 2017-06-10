@@ -1,9 +1,15 @@
 package mbedApp.mqtt;
 
+import sun.util.logging.PlatformLogger;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * MqttConfigReader does.............
@@ -13,13 +19,29 @@ import java.util.UUID;
  */
 public class MqttConfigReader {
 
+    private static Logger logger = Logger.getLogger(MessageClient.class.getName());
 
+    private InputStream input;
     private String topic = null;
     private int qos = 0; // Default to 0
     private String broker = null;
     private String clientId = null;
 
-    public MqttConfigReader() {
+
+    public MqttConfigReader(){
+        this(null);
+    }
+
+    public MqttConfigReader(String configFile) {
+        if (configFile == null){
+            input = getClass().getResourceAsStream("mqtt.config");
+        }else {
+            try{
+                input = new FileInputStream(configFile);
+            }catch (FileNotFoundException fileNotFound){
+
+            }
+        }
         readData();
         qos = 0;
         clientId = UUID.randomUUID().toString(); // have a unique client ID
@@ -29,13 +51,13 @@ public class MqttConfigReader {
         Properties properties = new Properties();
         // grab the file data
         try {
-            InputStream input = getClass().getResourceAsStream("mqtt.config");
             properties.load(input);
 
             topic = properties.getProperty("topic");
             broker = properties.getProperty("broker");
         } catch (IOException exception) {
-            exception.printStackTrace();
+            logger.log(Level.WARNING, "failed to load config file into properties");
+            System.exit(0);
         }
     }
 
